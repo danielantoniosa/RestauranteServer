@@ -5,10 +5,17 @@
  */
 package com.server.restauranteserver.servlets;
 
+import javax.servlet.annotation.WebInitParam;
+import javax.servlet.annotation.WebServlet;
+
 /**
  *
  * @author Daniel
  */
+@WebServlet(name = "AdicionarFuncionario", urlPatterns = {"/restaurante_server/AdicionarFuncionario"}, initParams = {
+    @WebInitParam(name ="funcionario", value = ""),
+    @WebInitParam(name = "nomeUsuario", value = ""),
+    @WebInitParam(name = "senha", value = "")})
 public class ExcluirFuncionario {
     
 }

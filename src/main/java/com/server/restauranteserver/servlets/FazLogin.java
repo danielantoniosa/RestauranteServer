@@ -49,7 +49,7 @@ public class FazLogin extends HttpServlet {
 
         } else {
             response.setHeader("auth", "0");
-            FuncionarioBEAN u = null;
+            SharedPreferencesBEAN u = null;
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));
