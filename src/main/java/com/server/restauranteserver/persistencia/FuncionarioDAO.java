@@ -6,12 +6,11 @@
 package com.server.restauranteserver.persistencia;
 
 import com.server.restauranteserver.beans.FuncionarioBEAN;
+import com.server.restauranteserver.beans.SharedPreferencesBEAN;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -68,7 +67,7 @@ public class FuncionarioDAO {
                 FuncionarioBEAN ca = new FuncionarioBEAN();
                 ca.setCodigo(rs.getInt(1));
                 ca.setSalario(rs.getInt(2));
-                ca.setDataAdmicao(rs.getDate(3)+"");
+                ca.setDataAdmicao(rs.getDate(3) + "");
                 ca.setDataNacimento(rs.getDate(4) + "");
                 ca.setTelefone(rs.getString(5));
                 ca.setEndereco(rs.getString(6));
@@ -219,6 +218,7 @@ public class FuncionarioDAO {
         }
 
     }
+
     public Boolean isExiste(String email) {
         String sql = "select funCodigo from funcionario where funEmail = ?;";
         boolean retorno = false;
@@ -290,6 +290,28 @@ public class FuncionarioDAO {
 
         return p;
 
+    }
+
+    public SharedPreferencesBEAN listarSharedPreferences(int cod) {
+        String sql = "select carNome,funCodigo,funEmail,funNome,funSenha from funcionario join cargo where funCodigo = ? and fun_carCodigo = carCodigo;";
+       SharedPreferencesBEAN ca = new SharedPreferencesBEAN();
+
+        try {
+            stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, cod);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                ca.setFunCargo(rs.getString(1));
+                ca.setFunCodigo(rs.getInt(2));
+                ca.setFunEmail(rs.getString(3));
+                ca.setFunNome(rs.getString(4));
+                ca.setFunSenha(rs.getString(5));                
+            }
+            stmt.close();
+            return ca;
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
     }
 
 }

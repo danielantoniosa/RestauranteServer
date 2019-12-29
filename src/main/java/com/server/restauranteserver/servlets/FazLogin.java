@@ -7,6 +7,7 @@ package com.server.restauranteserver.servlets;
 
 import com.server.restauranteserver.beans.FuncionarioBEAN;
 import com.google.gson.Gson;
+import com.server.restauranteserver.beans.SharedPreferencesBEAN;
 import com.server.restauranteserver.controle.ControleLogin;
 import com.server.restauranteserver.controle.FuncionarioControle;
 import java.io.IOException;
@@ -41,8 +42,7 @@ public class FazLogin extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            FuncionarioBEAN u = f.listarUm(cod);
-            System.out.println(u.getNome());
+            SharedPreferencesBEAN u = l.listarSharedPreferences(cod);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));

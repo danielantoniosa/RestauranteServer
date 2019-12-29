@@ -5,6 +5,7 @@
  */
 package com.server.restauranteserver.controle;
 
+import com.server.restauranteserver.beans.SharedPreferencesBEAN;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import com.server.restauranteserver.persistencia.FuncionarioDAO;
@@ -32,6 +33,10 @@ public class ControleLogin {
         }
         return modelo;
 
+    }
+
+    public SharedPreferencesBEAN listarSharedPreferences(int cod) {
+        return f.listarSharedPreferences(cod);
     }
 
 }
