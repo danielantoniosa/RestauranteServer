@@ -7,11 +7,8 @@ package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
 import com.server.restauranteserver.beans.CargoBEAN;
-import com.server.restauranteserver.beans.FuncionarioBEAN;
-import com.server.restauranteserver.beans.SharedPreferencesBEAN;
 import com.server.restauranteserver.controle.ControleCargo;
 import com.server.restauranteserver.controle.ControleLogin;
-import com.server.restauranteserver.controle.ControleFuncionario;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -25,10 +22,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "ListarCargos", urlPatterns = {"/restaurante_server/ListarCargos"}, initParams = {
+@WebServlet(name = "ListarCargoFuncionario", urlPatterns = {"/restaurante_server/ListarCargoFuncionario"}, initParams = {
+    @WebInitParam(name = "codFuncionario", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class ListarCargo extends HttpServlet {
+public class ListarCargoFuncionario extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
     ControleCargo con_cargo = new ControleCargo();
@@ -44,14 +42,14 @@ public class ListarCargo extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            ArrayList<CargoBEAN> u = con_cargo.listarCargos();
+            CargoBEAN u = con_cargo.listarCargoFuncionario(request.getParameter("codFuncionario"));
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-            ArrayList<CargoBEAN> u = null;
+           CargoBEAN u = null;
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));
@@ -68,3 +66,4 @@ public class ListarCargo extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 }
+

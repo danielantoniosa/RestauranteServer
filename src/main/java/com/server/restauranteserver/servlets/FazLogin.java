@@ -9,7 +9,7 @@ import com.server.restauranteserver.beans.FuncionarioBEAN;
 import com.google.gson.Gson;
 import com.server.restauranteserver.beans.SharedPreferencesBEAN;
 import com.server.restauranteserver.controle.ControleLogin;
-import com.server.restauranteserver.controle.FuncionarioControle;
+import com.server.restauranteserver.controle.ControleFuncionario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 public class FazLogin extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    FuncionarioControle f = new FuncionarioControle();
+    ControleFuncionario f = new ControleFuncionario();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

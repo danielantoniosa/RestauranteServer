@@ -159,21 +159,26 @@ public class CargoDAO {
         }
     }
 
-    public String listarPorFuncionario(int funcionario) {
-        String nome = "";
+    public CargoBEAN listarPorFuncionario(int funcionario) {
+        CargoBEAN ca = new CargoBEAN();
         String sql = "select carNome from funcionario join cargo where carCodigo = fun_carCodigo and funCodigo = " + funcionario + " ;";
         try {
             stmt = connection.prepareStatement(sql);
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                nome = rs.getString(1);
+                
+                ca.setCodigo(rs.getInt(1));
+                ca.setNome(rs.getString(2));
+                ca.setAtribuicao(rs.getString(3));
+                ca.setRequisito(rs.getString(4));
+               
             }
             stmt.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return nome;
+        return ca;
     }
 }

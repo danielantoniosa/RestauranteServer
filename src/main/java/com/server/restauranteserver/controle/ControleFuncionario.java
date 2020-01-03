@@ -14,7 +14,7 @@ import com.server.restauranteserver.persistencia.FuncionarioDAO;
  *
  * @author Daniel
  */
-public class FuncionarioControle {
+public class ControleFuncionario {
 
     private FuncionarioDAO f = new FuncionarioDAO();
 

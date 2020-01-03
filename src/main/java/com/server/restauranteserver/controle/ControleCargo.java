@@ -19,7 +19,7 @@ public class ControleCargo {
 
     public String adicionar(CargoBEAN c) {
 
-        if (car.localizarPorNome(c.getNome()).getNome() != null) {
+        if (car.localizarPorNome(c.getNome()).getNome() == null) {
             car.adicionar(c);
             return "Sucesso!!";
         } else {
@@ -39,5 +39,8 @@ public class ControleCargo {
 
     public ArrayList<CargoBEAN> listarCargos() {
         return car.listarALl();
+    }
+    public CargoBEAN listarCargoFuncionario(String funcionario) {
+        return car.listarPorFuncionario(Integer.parseInt(funcionario));
     }
 }
