@@ -65,7 +65,7 @@ public class FuncionarioDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 FuncionarioBEAN ca = new FuncionarioBEAN();
-                ca.setCodigo(rs.getInt(1));
+                 ca.setCodigo(rs.getInt(1));
                 ca.setSalario(rs.getInt(2));
                 ca.setDataAdmicao(rs.getDate(3) + "");
                 ca.setDataNacimento(rs.getDate(4) + "");
@@ -73,14 +73,13 @@ public class FuncionarioDAO {
                 ca.setEndereco(rs.getString(6));
                 ca.setNome(rs.getString(7));
                 ca.setUniforme(rs.getInt(8));
-                // ca.setFoto(rs.getBytes(9));                
-                ca.setCargo(rs.getInt(15));
+                //foto
                 ca.setEmail(rs.getString(10));
                 ca.setCPF(rs.getString(11));
                 ca.setRG(rs.getString(12));
                 ca.setSenha(rs.getString(13));
                 ca.setCartao(rs.getInt(14));
-                //ca.setCago(rs.getInt(16));
+                ca.setCargo(rs.getInt(15));
                 c.add(ca);
             }
             stmt.close();
@@ -166,7 +165,7 @@ public class FuncionarioDAO {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                ca.setCodigo(rs.getInt(1));
+                 ca.setCodigo(rs.getInt(1));
                 ca.setSalario(rs.getInt(2));
                 ca.setDataAdmicao(rs.getDate(3) + "");
                 ca.setDataNacimento(rs.getDate(4) + "");
@@ -174,11 +173,13 @@ public class FuncionarioDAO {
                 ca.setEndereco(rs.getString(6));
                 ca.setNome(rs.getString(7));
                 ca.setUniforme(rs.getInt(8));
-                ca.setCargo(rs.getInt(9));
+                //foto
                 ca.setEmail(rs.getString(10));
                 ca.setCPF(rs.getString(11));
                 ca.setRG(rs.getString(12));
                 ca.setSenha(rs.getString(13));
+                ca.setCartao(rs.getInt(14));
+                ca.setCargo(rs.getInt(15));
             }
             stmt.close();
             return ca;
@@ -205,11 +206,16 @@ public class FuncionarioDAO {
                 ca.setEndereco(rs.getString(6));
                 ca.setNome(rs.getString(7));
                 ca.setUniforme(rs.getInt(8));
-                ca.setCargo(rs.getInt(9));
+                //foto
                 ca.setEmail(rs.getString(10));
                 ca.setCPF(rs.getString(11));
                 ca.setRG(rs.getString(12));
                 ca.setSenha(rs.getString(13));
+                ca.setCartao(rs.getInt(14));
+                ca.setCargo(rs.getInt(15));
+                
+                
+                
             }
             stmt.close();
             return ca;

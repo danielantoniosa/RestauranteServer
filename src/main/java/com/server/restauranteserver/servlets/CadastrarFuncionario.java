@@ -7,7 +7,9 @@ package com.server.restauranteserver.servlets;
 
 import com.google.gson.GsonBuilder;
 import com.server.restauranteserver.beans.CargoBEAN;
+import com.server.restauranteserver.beans.FuncionarioBEAN;
 import com.server.restauranteserver.controle.ControleCargo;
+import com.server.restauranteserver.controle.ControleFuncionario;
 import com.server.restauranteserver.controle.ControleLogin;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -28,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 public class CadastrarFuncionario extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleCargo con_cargo = new ControleCargo();
+    ControleFuncionario con_fun = new ControleFuncionario();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -41,9 +43,9 @@ public class CadastrarFuncionario extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            CargoBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("cargo"), CargoBEAN.class);
+            FuncionarioBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("funcionario"), FuncionarioBEAN.class);
 
-            response.setHeader("sucesso", con_cargo.adicionar(c));
+            response.setHeader("sucesso", con_fun.cadastrar(c));
 
         } else {
             response.setHeader("auth", "0");

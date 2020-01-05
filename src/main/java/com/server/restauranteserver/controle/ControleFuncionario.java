@@ -5,10 +5,11 @@
  */
 package com.server.restauranteserver.controle;
 
+import com.server.restauranteserver.beans.CargoBEAN;
 import com.server.restauranteserver.beans.FuncionarioBEAN;
 import java.util.ArrayList;
 import com.server.restauranteserver.persistencia.FuncionarioDAO;
-
+import com.server.restauranteserver.util.GerarNumeros;
 
 /**
  *
@@ -32,15 +33,22 @@ public class ControleFuncionario {
     }
 
     public int gerarNumeroPonto() {
-        int valor = 0;
-        boolean para = true;
+        System.out.println("passou");
+        boolean para = false;
+        int valor = GerarNumeros.geraNumeroInterio(10);
         while (para) {
-            valor = (int) (Math.random() * 1000000000);
-            if (!f.numeroCartaoExistente(valor)) {
-                para = false;
+            if (f.numeroCartaoExistente(valor) == false) {
+                System.out.println("true" + " : " + valor);
+                para = true;
+                return valor;
             }
         }
+        System.out.println("passou");
         return valor;
+    }
+
+    public boolean numeroCartaoExistente(int valor) {
+        return f.numeroCartaoExistente(valor);
     }
 
     public ArrayList<FuncionarioBEAN> listarAll() {
@@ -57,8 +65,10 @@ public class ControleFuncionario {
         f.excluir(codExcluir);
     }
 
-    public FuncionarioBEAN listarUm(int cod) {
-        return f.localizar(cod);
+    public FuncionarioBEAN listarUm(String cod) {
+        return f.localizar(Integer.parseInt(cod));
     }
+
+    
 
 }

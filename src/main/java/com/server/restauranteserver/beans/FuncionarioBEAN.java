@@ -14,8 +14,6 @@ import java.util.Date;
 public class FuncionarioBEAN {
     private int codigo;
     private float salario;
-    //private Date dataAdmicao;
-    //private Date dataNacimento;
     private String dataAdmicao;
     private String dataNacimento;
     private String telefone;

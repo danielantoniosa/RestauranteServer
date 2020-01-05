@@ -12,7 +12,7 @@ import javax.servlet.annotation.WebServlet;
  *
  * @author Daniel
  */
-@WebServlet(name = "AdicionarFuncionario", urlPatterns = {"/restaurante_server/AdicionarFuncionario"}, initParams = {
+@WebServlet(name = "ExcluirFuncionario", urlPatterns = {"/restaurante_server/ExcluirFuncionario"}, initParams = {
     @WebInitParam(name ="funcionario", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
