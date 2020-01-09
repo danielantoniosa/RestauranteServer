@@ -27,36 +27,11 @@ public class ProdutoDAO {
         this.connection = ConnectionFactory.getConnection();
     }
 
+
     public ArrayList<Produtos> buscar(String produto) {
 
         ArrayList<Produtos> p = new ArrayList<>();
-        String sql = "SELECT proCodigo,proNome, proPreco FROM produto WHERE proNome LIKE '" + produto + "%';";
-
-        try {
-            stmt = connection.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Produtos pp = new Produtos();
-                pp.setCodigo(rs.getInt(1));
-                pp.setNome(rs.getString(2));
-                pp.setPreco(rs.getFloat(3));
-                p.add(pp);
-                // modelo.addElement(rs.getInt(1) + " : " + rs.getString(2) + String.format("%80s"," R$ " + rs.getFloat(3)+""));
-            }
-            stmt.close();
-
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
-
-        return p;
-
-    }
-
-    public ArrayList<Produtos> buscar(int produto) {
-
-        ArrayList<Produtos> p = new ArrayList<>();
-        String sql = "SELECT proCodigo,proNome, proPreco FROM produto WHERE proCodigo LIKE '" + produto + "%';";
+        String sql = "SELECT proCodigo,proNome, proPreco FROM produto WHERE proCodigo LIKE '" + produto + "%' or proNome LIKE '" + produto + "%';";
 
         try {
             stmt = connection.prepareStatement(sql);
@@ -80,7 +55,8 @@ public class ProdutoDAO {
     }
 
     public boolean adicionar(ProdutoBEAN c) {
-        String sql = "INSERT INTO produto (proNome, proPreco, proCusto, proDescricao, proArmonizacao,proPreparo,proTipo,proFoto)"
+        String sql = "INSERT INTO produto (proNome, proPreco, proCusto, proDescricao, proArmonizacao,"
+                + "proPreparo,proTipo,proFoto)"
                 + " VALUES (?, ?, ?, ?, ?, ?, ?,?);";
 
         try {
