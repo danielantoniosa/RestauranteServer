@@ -55,9 +55,9 @@ public class ProdutoDAO {
     }
 
     public boolean adicionar(ProdutoBEAN c) {
-        String sql = "INSERT INTO produto (proNome, proPreco, proCusto, proDescricao, proArmonizacao,"
+        String sql = "INSERT INTO produto (proNome, proPreco, proCusto,proQuantidade, proDescricao, proArmonizacao,"
                 + "proPreparo,proTipo,proFoto)"
-                + " VALUES (?, ?, ?, ?, ?, ?, ?,?);";
+                + " VALUES (?, ?, ?, ?, ?, ?, ?,?,?);";
 
         try {
             stmt = connection.prepareStatement(sql);
@@ -65,11 +65,12 @@ public class ProdutoDAO {
             stmt.setString(1, c.getNome());
             stmt.setFloat(2, c.getPreco());
             stmt.setFloat(3, c.getCusto());
-            stmt.setString(4, c.getDescricao());
-            stmt.setString(5, c.getArmonizacao());
-            stmt.setString(6, c.getPreparo());
-            stmt.setString(7, c.getTipo());
-            stmt.setBytes(8, c.getFoto());
+            stmt.setFloat(4, c.getQuantidade());
+            stmt.setString(5, c.getDescricao());
+            stmt.setString(6, c.getArmonizacao());
+            stmt.setString(7, c.getPreparo());
+            stmt.setString(8, c.getTipo());
+            stmt.setBytes(9, c.getFoto());
             stmt.execute();
             stmt.close();
             return true;
@@ -91,11 +92,12 @@ public class ProdutoDAO {
                 ca.setNome(rs.getString(2));
                 ca.setPreco(rs.getFloat(3));
                 ca.setCusto(rs.getFloat(4));
-                ca.setArmonizacao(rs.getString(5));
-                ca.setFoto(rs.getBytes(6));
-                ca.setPreparo(rs.getString(7));
-                ca.setDescricao(rs.getString(8));
-                ca.setTipo(rs.getString(9));
+                ca.setQuantidade(rs.getFloat(5));
+                ca.setArmonizacao(rs.getString(6));
+                ca.setFoto(rs.getBytes(7));
+                ca.setPreparo(rs.getString(8));
+                ca.setDescricao(rs.getString(9));
+                ca.setTipo(rs.getString(10));
                 c.add(ca);
             }
             stmt.close();
@@ -118,11 +120,12 @@ public class ProdutoDAO {
                 ca.setNome(rs.getString(2));
                 ca.setPreco(rs.getFloat(3));
                 ca.setCusto(rs.getFloat(4));
-                ca.setArmonizacao(rs.getString(5));
-                ca.setFoto(rs.getBytes(6));
-                ca.setPreparo(rs.getString(7));
-                ca.setDescricao(rs.getString(8));
-                ca.setTipo(rs.getString(9));
+                ca.setQuantidade(rs.getFloat(5));
+                ca.setArmonizacao(rs.getString(6));
+                ca.setFoto(rs.getBytes(7));
+                ca.setPreparo(rs.getString(8));
+                ca.setDescricao(rs.getString(9));
+                ca.setTipo(rs.getString(10));
             }
             stmt.close();
 
@@ -133,20 +136,21 @@ public class ProdutoDAO {
     }
 
     public void editar(ProdutoBEAN c) {
-        String sql = "update produto set proNome = ? , proPreco = ? , proCusto = ? , proDescricao = ?, proArmonizacao = ?"
+        String sql = "update produto set proNome = ? , proPreco = ? , proCusto = ? , proQuantidade = ?, proDescricao = ?, proArmonizacao = ?"
                 + ", proPreparo = ? , proTipo = ?, proFoto = ? where proCodigo = " + c.getCodigo() + ";";
 
         try {
             stmt = connection.prepareStatement(sql);
 
-            stmt.setString(1, c.getNome());
+           stmt.setString(1, c.getNome());
             stmt.setFloat(2, c.getPreco());
             stmt.setFloat(3, c.getCusto());
-            stmt.setString(4, c.getDescricao());
-            stmt.setString(5, c.getArmonizacao());
-            stmt.setString(6, c.getPreparo());
-            stmt.setString(7, c.getTipo());
-            stmt.setBytes(8, c.getFoto());
+            stmt.setFloat(4, c.getQuantidade());
+            stmt.setString(5, c.getDescricao());
+            stmt.setString(6, c.getArmonizacao());
+            stmt.setString(7, c.getPreparo());
+            stmt.setString(8, c.getTipo());
+            stmt.setBytes(9, c.getFoto());
 
             int l = stmt.executeUpdate();
             stmt.close();
@@ -168,11 +172,11 @@ public ArrayList<Produtos> listarProdutos() {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Produtos ca = new Produtos();
-                ca.setCodigo(rs.getInt(1));
+                 ca.setCodigo(rs.getInt(1));
                 ca.setNome(rs.getString(2));
                 ca.setPreco(rs.getFloat(3));
-                ca.setDescricao(rs.getString(8));
-                ca.setTipo("pedidos");
+                ca.setDescricao(rs.getString(9));
+                ca.setTipo(rs.getString(10));
                 c.add(ca);
             }
             stmt.close();
