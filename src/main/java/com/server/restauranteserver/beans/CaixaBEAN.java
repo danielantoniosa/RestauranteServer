@@ -19,6 +19,16 @@ public class CaixaBEAN {
     private float trocoIn;
     private float trocoFin;
     private String status;
+    private int funcioanrio;
+
+    public int getFuncioanrio() {
+        return funcioanrio;
+    }
+
+    public void setFuncioanrio(int funcioanrio) {
+        this.funcioanrio = funcioanrio;
+    }
+    
 
     public String getStatus() {
         return status;

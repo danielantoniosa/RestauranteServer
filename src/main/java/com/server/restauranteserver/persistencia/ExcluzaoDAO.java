@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import com.server.restauranteserver.persistencia.ConnectionFactory;
+import java.sql.Statement;
 
 /**
  *
@@ -27,34 +28,35 @@ public class ExcluzaoDAO {
         this.connection = ConnectionFactory.getConnection();
     }
 
-    public void inserir(ExcluzaoBEAN c) {
-        String sql = "INSERT INTO excluzao (advNome, advMotivo , advTime, advQTD, advOBS, adv_funCodigo, adv_venCodigo)"
-                + " VALUES (?, ?, ?, ?, ?, ?, ?);";
-        System.out.println("funcionario " + c.getFuncionario() + " venda " + c.getVenda());
+    public int inserir(ExcluzaoBEAN c) {
+        int lastId = 0;
+        String sql = "INSERT INTO excluzao (excMotivo , excTime, exc_funCodigo)"
+                + " VALUES (?, ?, ?);";
         try {
-            stmt = connection.prepareStatement(sql);
+            stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, c.getMotivo());
+            stmt.setString(2, c.getTime());
+            stmt.setInt(3, c.getFuncionario());
+            stmt.executeUpdate();
+            final ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                lastId = rs.getInt(1);
+            }
 
-            stmt.setString(1, c.getNome());
-            stmt.setString(2, c.getMotivo());
-            stmt.setString(3, c.getTime());
-            stmt.setFloat(4, c.getQuantidade());
-            stmt.setString(5, c.getObs());
-            stmt.setInt(6, c.getFuncionarioC());
-            stmt.setInt(7, c.getVenda());
-            stmt.execute();
             stmt.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return lastId;
     }
 
     public ArrayList<ExcluzaoBEAN> listarExclusaoVenda(int venda) {
         ArrayList<ExcluzaoBEAN> c = new ArrayList<>();
 
-        String sql = "select advCodigo, advNome, advMotivo, advQTD, advObs, advTime, funNome, venMesa\n"
-                + "	from excluzao join funcionario join venda\n"
-                + "		where  adv_funCodigo = funCodigo and venCodigo = adv_venCodigo and venCodigo ='" + venda + "' \n"
+        String sql = "select excCodigo,excMotivo , excTime, exc_funCodigo\n"
+                + "	from excluzao join pedido join venda\n"
+                + "		where  ped_excCodigo = excCodigo and venCodigo = ped_venCodigo and venCodigo ='" + venda + "' \n"
                 + "			group by venCodigo \n"
                 + "				order by venMesa;";
         try {
@@ -63,13 +65,9 @@ public class ExcluzaoDAO {
             while (rs.next()) {
                 ExcluzaoBEAN e = new ExcluzaoBEAN();
                 e.setCodigo(rs.getInt(1));
-                e.setNome(rs.getString(2));
-                e.setMotivo(rs.getString(3));
-                e.setQuantidade(rs.getFloat(4));
-                e.setObs(rs.getString(5));
-                e.setTime(rs.getString(6));
-                e.setFuncionario(rs.getString(7));
-                e.setVenda(rs.getInt(8));
+                e.setMotivo(rs.getString(2));
+                e.setTime(rs.getString(3));
+                e.setFuncionario(rs.getInt(4));
                 c.add(e);
             }
             stmt.close();
@@ -83,22 +81,16 @@ public class ExcluzaoDAO {
     public ExcluzaoBEAN listarUm(String cod) {
         ExcluzaoBEAN e = new ExcluzaoBEAN();
         System.out.println("Codigo " + cod);
-        String sql = "select advCodigo, advNome, advMotivo, advTime, advQTD, advObs,"
-                + " adv_funCodigo,adv_venCodigo, funNome from excluzao join funcionario where "
-                + "adv_funCodigo = funCodigo and advCodigo = " + cod + ";";
+        String sql = "select * from excluzao where "
+                + " excCodigo = " + cod + ";";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                e.setCodigo(rs.getInt(1));
-                e.setNome(rs.getString(2));
-                e.setMotivo(rs.getString(3));
-                e.setTime(rs.getString(4));
-                e.setQuantidade(rs.getFloat(5));
-                e.setObs(rs.getString(6));
-                e.setFuncionarioC(rs.getInt(7));
-                e.setVenda(rs.getInt(8));
-                e.setFuncionario(rs.getString(9));
+               e.setCodigo(rs.getInt(1));
+                e.setMotivo(rs.getString(2));
+                e.setTime(rs.getString(3));
+                e.setFuncionario(rs.getInt(4));
             }
             stmt.close();
 
@@ -111,9 +103,9 @@ public class ExcluzaoDAO {
     public ArrayList<ExcluzaoBEAN> listarExclusaoCaixa(int caixa) {
         ArrayList<ExcluzaoBEAN> c = new ArrayList<>();
 
-        String sql = "select advCodigo, advNome, advMotivo, advQTD, advObs, advTime, funNome, venMesa\n"
+        String sql = "select * \n"
                 + "	from excluzao join funcionario join venda\n"
-                + "		where  adv_funCodigo = funCodigo and venCodigo = adv_venCodigo and ven_caiCodigo =" + caixa + " \n"
+                + "		where  exc_funCodigo = funCodigo and venCodigo = adv_venCodigo and ven_caiCodigo =" + caixa + " \n"
                 + "			group by venCodigo \n"
                 + "				order by venMesa;";
         try {
@@ -122,13 +114,9 @@ public class ExcluzaoDAO {
             while (rs.next()) {
                 ExcluzaoBEAN e = new ExcluzaoBEAN();
                 e.setCodigo(rs.getInt(1));
-                e.setNome(rs.getString(2));
-                e.setMotivo(rs.getString(3));
-                e.setQuantidade(rs.getFloat(4));
-                e.setObs(rs.getString(5));
-                e.setTime(rs.getString(6));
-                e.setFuncionario(rs.getString(7));
-                e.setVenda(rs.getInt(8));
+                e.setMotivo(rs.getString(2));
+                e.setTime(rs.getString(3));
+                e.setFuncionario(rs.getInt(4));
                 c.add(e);
             }
             stmt.close();
