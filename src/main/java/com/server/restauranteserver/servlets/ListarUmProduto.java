@@ -6,7 +6,6 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
-import com.server.restauranteserver.beans.ProdutoBEAN;
 import com.server.restauranteserver.beans.Produtos;
 import com.server.restauranteserver.controle.ControleLogin;
 import com.server.restauranteserver.controle.ControleProduto;

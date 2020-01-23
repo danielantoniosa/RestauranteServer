@@ -6,10 +6,7 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.server.restauranteserver.beans.FuncionarioBEAN;
 import com.server.restauranteserver.beans.ProdutoBEAN;
-import com.server.restauranteserver.controle.ControleFuncionario;
 import com.server.restauranteserver.controle.ControleLogin;
 import com.server.restauranteserver.controle.ControleProduto;
 import java.io.IOException;
@@ -20,7 +17,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.DefaultComboBoxModel;
 
 /**
  *

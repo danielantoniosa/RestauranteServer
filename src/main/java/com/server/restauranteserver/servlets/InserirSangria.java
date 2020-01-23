@@ -5,12 +5,13 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.Gson;
-import com.server.restauranteserver.beans.DespesaBEAN;
-import com.server.restauranteserver.controle.ControleDespesa;
+import com.google.gson.GsonBuilder;
+import com.server.restauranteserver.beans.CaixaBEAN;
+import com.server.restauranteserver.beans.SangriaBEAN;
+import com.server.restauranteserver.controle.ControleCaixa;
 import com.server.restauranteserver.controle.ControleLogin;
+import com.server.restauranteserver.controle.ControleSangria;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -22,13 +23,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "ListarDespesas", urlPatterns = {"/restaurante_server/ListarDespesas"}, initParams = {
+@WebServlet(name = "InserirSangria", urlPatterns = {"/restaurante_server/InserirSangria"}, initParams = {
+    @WebInitParam(name = "sangria", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class ListarDespesas extends HttpServlet {
+public class InserirSangria extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleDespesa con_des = new ControleDespesa();
+    ControleSangria con = new ControleSangria();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -41,17 +43,12 @@ public class ListarDespesas extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            ArrayList<DespesaBEAN> u = con_des.listarALL();
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
+            SangriaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("sangria"), SangriaBEAN.class);
+            response.setHeader("sucesso", con.cadastrar(c));
 
         } else {
             response.setHeader("auth", "0");
-            ArrayList<DespesaBEAN> u = null;
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
+
         }
     }
 

@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "EditarDespesa", urlPatterns = {"/restaurante_server/EditarDespesa"}, initParams = {
+@WebServlet(name = "IncluirDespesa", urlPatterns = {"/restaurante_server/IncluirDespesa"}, initParams = {
     @WebInitParam(name = "despesa", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})

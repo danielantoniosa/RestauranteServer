@@ -5,10 +5,9 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.server.restauranteserver.beans.CaixaBEAN;
-import com.server.restauranteserver.beans.SharedPreferencesBEAN;
+
 import com.server.restauranteserver.controle.ControleCaixa;
 import com.server.restauranteserver.controle.ControleLogin;
 import java.io.IOException;

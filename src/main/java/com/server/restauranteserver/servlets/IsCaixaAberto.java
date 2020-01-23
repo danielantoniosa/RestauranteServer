@@ -5,15 +5,10 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.Gson;
-import com.server.restauranteserver.beans.CargoBEAN;
-import com.server.restauranteserver.beans.FuncionarioBEAN;
+
 import com.server.restauranteserver.controle.ControleCaixa;
-import com.server.restauranteserver.controle.ControleCargo;
-import com.server.restauranteserver.controle.ControleFuncionario;
 import com.server.restauranteserver.controle.ControleLogin;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;

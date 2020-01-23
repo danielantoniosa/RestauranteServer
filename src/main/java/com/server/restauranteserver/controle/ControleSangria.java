@@ -18,8 +18,10 @@ public class ControleSangria {
     private SangriaDAO s = new SangriaDAO();
     private ControleCaixa c = new ControleCaixa();
 
-    public void cadastrar(SangriaBEAN sangria) {
+    public String cadastrar(SangriaBEAN sangria) {
+        sangria.setCaixa(c.getCaixa());
         s.adicionar(sangria);
+        return "Sucesso!";
     }
 
     public ArrayList<SangriaBEAN> listarSangriasCaixa() {
