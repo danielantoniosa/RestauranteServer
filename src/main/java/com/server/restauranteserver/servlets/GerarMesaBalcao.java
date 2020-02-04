@@ -5,12 +5,10 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.GsonBuilder;
-import com.server.restauranteserver.beans.DespesaBEAN;
-import com.server.restauranteserver.controle.ControleDespesa;
+import com.server.restauranteserver.controle.ControleCaixa;
 import com.server.restauranteserver.controle.ControleLogin;
+import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -22,14 +20,13 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "IncluirDespesa", urlPatterns = {"/restaurante_server/IncluirDespesa"}, initParams = {
-    @WebInitParam(name = "despesa", value = ""),
+@WebServlet(name = "GerarMesaBalcao", urlPatterns = {"/restaurante_server/GerarMesaBalcao"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class IncluirDespesas extends HttpServlet {
+public class GerarMesaBalcao extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleDespesa con_des = new ControleDespesa();
+    ControleVenda con = new ControleVenda();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -42,9 +39,7 @@ public class IncluirDespesas extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            DespesaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("despesa"), DespesaBEAN.class);
-
-            response.setHeader("sucesso", con_des.adicionar(c));
+            response.setHeader("sucesso", con.gerarMesaBalcao() + "");
 
         } else {
             response.setHeader("auth", "0");

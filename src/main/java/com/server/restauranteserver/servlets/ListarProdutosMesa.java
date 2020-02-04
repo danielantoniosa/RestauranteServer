@@ -5,10 +5,12 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.GsonBuilder;
-import com.server.restauranteserver.beans.DespesaBEAN;
-import com.server.restauranteserver.controle.ControleDespesa;
+import com.google.gson.Gson;
+import com.server.restauranteserver.beans.ProdutoBEAN;
+import com.server.restauranteserver.beans.ProdutosGravados;
 import com.server.restauranteserver.controle.ControleLogin;
+import com.server.restauranteserver.controle.ControleProduto;
+import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -22,14 +24,15 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "IncluirDespesa", urlPatterns = {"/restaurante_server/IncluirDespesa"}, initParams = {
-    @WebInitParam(name = "despesa", value = ""),
+@WebServlet(name = "ListarProdutosMesa", urlPatterns = {"/restaurante_server/ListarProdutosMesa"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
-    @WebInitParam(name = "senha", value = "")})
-public class IncluirDespesas extends HttpServlet {
+    @WebInitParam(name = "senha", value = ""),
+    @WebInitParam(name = "mesa", value = "")
+})
+public class ListarProdutosMesa extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleDespesa con_des = new ControleDespesa();
+    ControleVenda con = new ControleVenda();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -42,13 +45,17 @@ public class IncluirDespesas extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            DespesaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("despesa"), DespesaBEAN.class);
-
-            response.setHeader("sucesso", con_des.adicionar(c));
+            ArrayList<ProdutosGravados> u = con.listarProdutosMesa(request.getParameter("mesa"));
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-
+            ArrayList<ProdutosGravados> u = null;
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
         }
     }
 

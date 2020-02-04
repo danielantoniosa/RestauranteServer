@@ -41,6 +41,7 @@ public class AbrirCaixa extends HttpServlet {
             throws ServletException, IOException {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
+            System.out.println("**********logou");
             response.setHeader("auth", "1");
             CaixaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("caixa"), CaixaBEAN.class);
             response.setHeader("sucesso", con_caixa.abrirCaixa(c));

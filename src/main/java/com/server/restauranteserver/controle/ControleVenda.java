@@ -16,8 +16,6 @@ import com.server.restauranteserver.persistencia.VendaDAO;
 import com.server.restauranteserver.util.Time;
 import java.util.ArrayList;
 
-
-
 /**
  *
  * @author Daniel
@@ -35,8 +33,13 @@ public class ControleVenda {
         return ven.listarVenda(getVenda(mesa));
     }
 
-    public void atualizaVenda(VendaBEAN v) {
-        ven.atualizaVenda(v);
+    public String atualizaVenda(VendaBEAN v) {
+        VendaBEAN venda = listarVenda(v.getMesa());
+        venda.setCheckOut(v.getCheckOut());      
+        venda.setPagamento(v.getPagamento());
+        venda.setValor(v.getValor());
+        ven.atualizaVenda(venda);
+        return "sucesso";
     }
 
     public int abrirMesa(VendaBEAN v) {
@@ -51,12 +54,12 @@ public class ControleVenda {
         return p.OFFImpressoAll(parseInt);
     }
 
-    /*public ArrayList<Mesa> getMesasAbertas() {
+    public ArrayList<Mesa> getMesasAbertas() {
         return ven.listarMesasAbertas();
-    }*/
+    }
 
-    public int getValorMesa(int mesa) {
-        int venda = getVenda(mesa);
+    public float getValorMesa(String mesa) {
+        int venda = getVenda(Integer.parseInt(mesa));
         return ven.getValorMesa(venda);
     }
 
@@ -108,8 +111,7 @@ public class ControleVenda {
         pro.setMotivo(motivo);
         pro.setTime(Time.getTime());
         pro.setFuncionario(funcionario);
-        p.excluir(pedido,e.inserirExclusao(pro));
-
+        p.excluir(pedido, e.inserirExclusao(pro));
         ;
     }
 

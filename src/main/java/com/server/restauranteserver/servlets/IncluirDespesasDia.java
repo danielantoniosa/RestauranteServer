@@ -7,7 +7,9 @@ package com.server.restauranteserver.servlets;
 
 import com.google.gson.GsonBuilder;
 import com.server.restauranteserver.beans.DespesaBEAN;
+import com.server.restauranteserver.beans.ExcluzaoBEAN;
 import com.server.restauranteserver.controle.ControleDespesa;
+import com.server.restauranteserver.controle.ControleExcluzao;
 import com.server.restauranteserver.controle.ControleLogin;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,11 +24,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "IncluirDespesa", urlPatterns = {"/restaurante_server/IncluirDespesa"}, initParams = {
-    @WebInitParam(name = "despesa", value = ""),
+@WebServlet(name = "IncluirDespesaDia", urlPatterns = {"/restaurante_server/IncluirDespesaDia"}, initParams = {
+    @WebInitParam(name = "exclusao", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class IncluirDespesas extends HttpServlet {
+public class IncluirDespesasDia extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
     ControleDespesa con_des = new ControleDespesa();
@@ -42,7 +44,7 @@ public class IncluirDespesas extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            DespesaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("despesa"), DespesaBEAN.class);
+            DespesaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("exclusao"), DespesaBEAN.class);
 
             response.setHeader("sucesso", con_des.adicionar(c));
 

@@ -5,12 +5,13 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.GsonBuilder;
-import com.server.restauranteserver.beans.DespesaBEAN;
-import com.server.restauranteserver.controle.ControleDespesa;
+import com.google.gson.Gson;
+import com.server.restauranteserver.beans.ExcluzaoBEAN;
+import com.server.restauranteserver.beans.Produtos;
+import com.server.restauranteserver.controle.ControleExcluzao;
 import com.server.restauranteserver.controle.ControleLogin;
+import com.server.restauranteserver.controle.ControleProduto;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -22,14 +23,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "IncluirDespesa", urlPatterns = {"/restaurante_server/IncluirDespesa"}, initParams = {
-    @WebInitParam(name = "despesa", value = ""),
+@WebServlet(name = "LocalizarExcluzao", urlPatterns = {"/restaurante_server/LocalizarExcluzao"}, initParams = {
+    @WebInitParam(name = "excluzao", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class IncluirDespesas extends HttpServlet {
+public class LocalizarPedidoCancelado extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleDespesa con_des = new ControleDespesa();
+    ControleExcluzao pro = new ControleExcluzao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -42,13 +43,17 @@ public class IncluirDespesas extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            DespesaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("despesa"), DespesaBEAN.class);
-
-            response.setHeader("sucesso", con_des.adicionar(c));
+            ExcluzaoBEAN u = pro.listarUm(request.getParameter("excluzao"));
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-
+            ExcluzaoBEAN u = null;
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
         }
     }
 

@@ -5,6 +5,7 @@
  */
 package com.server.restauranteserver.persistencia;
 
+import com.server.restauranteserver.beans.Mesa;
 import com.server.restauranteserver.beans.ProdutosGravados;
 import com.server.restauranteserver.beans.VendaBEAN;
 import java.sql.Connection;
@@ -74,12 +75,12 @@ public class VendaDAO {
                 v.setQRcode(rs.getString(2));
                 v.setCheckIn(rs.getString(3));
                 v.setCheckOut(rs.getString(4));
-                v.setCaixa(rs.getInt(5));
-                v.setValor(rs.getFloat(6));
-                v.setCusto(rs.getFloat(7));
-                v.setPagamento(rs.getInt(8));
-                v.setMesa(rs.getInt(9));
-                v.setStatus(rs.getString(10));
+                v.setValor(rs.getFloat(5));
+                v.setCusto(rs.getFloat(6));
+                v.setMesa(rs.getInt(7));
+                v.setStatus(rs.getString(8));
+                v.setPagamento(rs.getString(9));
+                v.setCaixa(rs.getInt(10));
 
             }
             stmt.close();
@@ -90,7 +91,31 @@ public class VendaDAO {
         return v;
     }
 
-   
+    public ArrayList<Mesa> listarMesasAbertas() {
+        ArrayList<Mesa> c = new ArrayList<>();
+
+        String sql = "select venMesa, sum(pedQTD*proPreco) \n"
+                + "from\n"
+                + " caixa join venda join pedido join produto \n"
+                + "	where\n"
+                + "    caiCodigo = ven_caiCodigo and ped_venCodigo = venCodigo \n"
+                + "    and ped_proCodigo = proCodigo and caiStatus = 'aberto'and venStatus = 'aberta' group by venMesa;";
+        try {
+            stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Mesa ca = new Mesa();
+                ca.setMesa(rs.getInt(1));
+                ca.setValor(rs.getFloat(2));
+                c.add(ca);
+            }
+            stmt.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+        return c;
+    }
 
     public void atualiza(VendaBEAN c) {
         String sql = "update venda_atual set caixa = ? , venda = ? , mesa = ?  where caixa = " + c.getCaixa() + ";";
@@ -178,8 +203,8 @@ public class VendaDAO {
         }
     }
 
-    public int getValorMesa(int venda) {
-        int total = 0;
+    public float getValorMesa(int venda) {
+        float total = 0;
         String sql = "select sum(pedQTD*proPreco) \n"
                 + "from\n"
                 + " caixa join venda join pedido join produto \n"
@@ -213,12 +238,12 @@ public class VendaDAO {
                 v.setQRcode(rs.getString(2));
                 v.setCheckIn(rs.getString(3));
                 v.setCheckOut(rs.getString(4));
-                v.setCaixa(rs.getInt(5));
-                v.setValor(rs.getFloat(6));
-                v.setCusto(rs.getFloat(7));
-                v.setPagamento(rs.getInt(8));
-                v.setMesa(rs.getInt(9));
-                v.setStatus(rs.getString(10));
+                v.setValor(rs.getFloat(5));
+                v.setCusto(rs.getFloat(6));
+                v.setMesa(rs.getInt(7));
+                v.setStatus(rs.getString(8));
+                v.setPagamento(rs.getString(9));
+                v.setCaixa(rs.getInt(10));
                 vendas.add(v);
 
             }
@@ -253,13 +278,13 @@ public class VendaDAO {
 
         String sql = "SELECT  proCodigo, proNome,sum(pedQTD) as unidades ,proPreco from \n"
                 + "produto join pedido join venda where venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and venStatus = 'fechada' and \n"
-                + "ven_caiCodigo = "+caixa+" group by proCodigo;";
+                + "ven_caiCodigo = " + caixa + " group by proCodigo;";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ProdutosGravados ca = new ProdutosGravados();
-                
+
                 ca.setCodProduto(rs.getInt(1));
                 ca.setNome(rs.getString(2));
                 ca.setQuantidade(rs.getFloat(3));
