@@ -8,10 +8,8 @@ package com.server.restauranteserver.controle;
 import com.server.restauranteserver.beans.Caixa;
 import com.server.restauranteserver.beans.CaixaBEAN;
 import com.server.restauranteserver.persistencia.CaixaDAO;
-import java.io.IOException;
 
 import com.server.restauranteserver.util.Time;
-import java.util.ArrayList;
 
 /**
  *
@@ -19,13 +17,13 @@ import java.util.ArrayList;
  */
 public class ControleCaixa {
 
-    private CaixaDAO c = new CaixaDAO();
-    private ControleDespesa d = new ControleDespesa();
-    private ControleSangria s = new ControleSangria();
+    private final CaixaDAO c = new CaixaDAO();
+    // private final ControleDespesa d = new ControleDespesa();
+    //private final ControleSangria s = new ControleSangria();
 
     public String isCaixaAberto() {
         CaixaBEAN caixa = c.listar();
-        if (caixa.getCodigo() > 0) {
+        if (caixa.getCodigo() != 0) {
             return "true";
         } else {
             return "false";
@@ -41,9 +39,9 @@ public class ControleCaixa {
         }
     }
 
-    public String abrirCaixa(CaixaBEAN c) {
+    public String abrirCaixa(CaixaBEAN ca) {
         if (isCaixaAberto().equals("false")) {
-            this.c.abrirCaixa(c);
+            c.abrirCaixa(ca);
             return "Abriu!!";
         } else {
             return "Caixa Já Aberto";
@@ -81,8 +79,8 @@ public class ControleCaixa {
 
     public Caixa listarValoresCaixa() {
         Caixa c = new Caixa();
-        c.setDespesas(d.getTotalDespesasCaixa());
-        c.setSangria(s.getTotalSangriasCaixa());
+        // c.setDespesas(d.getTotalDespesasCaixa());
+        // c.setSangria(s.getTotalSangriasCaixa());
         c.setSaldo(Float.parseFloat(getSaldoAtual()));
         c.setFaturamento(Float.parseFloat(getTotalVendido()));
         return c;

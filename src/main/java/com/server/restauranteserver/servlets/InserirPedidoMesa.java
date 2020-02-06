@@ -7,9 +7,12 @@ package com.server.restauranteserver.servlets;
 
 import com.google.gson.GsonBuilder;
 import com.server.restauranteserver.beans.CaixaBEAN;
-
+import com.server.restauranteserver.beans.PedidoBEAN;
+import com.server.restauranteserver.beans.SangriaBEAN;
 import com.server.restauranteserver.controle.ControleCaixa;
 import com.server.restauranteserver.controle.ControleLogin;
+import com.server.restauranteserver.controle.ControleSangria;
+import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
@@ -22,14 +25,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "AbrirCaixa", urlPatterns = {"/restaurante_server/AbrirCaixa"}, initParams = {
-    @WebInitParam(name = "caixa", value = ""),
+@WebServlet(name = "InserirPedidoMesa", urlPatterns = {"/restaurante_server/InserirPedidoMesa"}, initParams = {
+    @WebInitParam(name = "pedido", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class AbrirCaixa extends HttpServlet {
+public class InserirPedidoMesa extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleCaixa con_caixa = new ControleCaixa();
+    ControleVenda con = new ControleVenda();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -41,12 +44,9 @@ public class AbrirCaixa extends HttpServlet {
             throws ServletException, IOException {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
-            CaixaBEAN cai = new CaixaBEAN();
             response.setHeader("auth", "1");
-            CaixaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("caixa"), CaixaBEAN.class);
-            cai = c;
-            cai.setFuncioanrio(cod);
-            response.setHeader("sucesso", con_caixa.abrirCaixa(cai));
+            PedidoBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("pedido"), PedidoBEAN.class);
+            response.setHeader("sucesso", con.adicionar(c));
 
         } else {
             response.setHeader("auth", "0");

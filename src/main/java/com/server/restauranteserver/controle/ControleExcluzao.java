@@ -18,13 +18,12 @@ public class ControleExcluzao {
     private ExcluzaoDAO e = new ExcluzaoDAO();
 
     ControleCaixa caixa = new ControleCaixa();
-    ControleVenda v = new ControleVenda();
-
     public int inserirExclusao(ExcluzaoBEAN pro) {
         return e.inserir(pro);
     }
 
     public ArrayList<ExcluzaoBEAN> listarExclusaoVenda(String mesa) {
+        ControleVenda v = new ControleVenda();
         int venda = v.getVenda(Integer.parseInt(mesa));
         return e.listarExclusaoVenda(venda);
     }

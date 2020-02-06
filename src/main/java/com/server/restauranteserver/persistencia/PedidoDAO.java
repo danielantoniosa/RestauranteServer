@@ -53,7 +53,7 @@ public class PedidoDAO {
     public ArrayList<PedidoBEAN> listarAll() {
         ArrayList<PedidoBEAN> c = new ArrayList<PedidoBEAN>();
 
-        String sql = "select * from pedido where ped_excCodigo !> 0;";
+        String sql = "select * from pedido where ped_excCodigo is null;";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -83,7 +83,7 @@ public class PedidoDAO {
         String sql = "SELECT ped_venCodigo,ped_proCodigo, proNome,pedQTD, pedTime,venMesa, (proPreco * pedQTD) "
                 + "FROM produto join pedido join venda"
                 + " where"
-                + " venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and pedImpresso = 'of'and venMesa=" + mesa + " and venStatus = 'aberta' and ped_excCodigo !> 0;";
+                + " venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and pedImpresso = 'of'and venMesa=" + mesa + " and venStatus = 'aberta' and and ped_excCodigo is null;";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -112,7 +112,7 @@ public class PedidoDAO {
         String sql = "SELECT ped_venCodigo,ped_proCodigo, proNome,pedQTD, pedTime,venMesa, (proPreco * pedQTD) "
                 + "FROM produto join pedido join venda"
                 + " where"
-                + " venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and venMesa=" + mesa + " and venStatus = 'aberta' and ped_excCodigo !> 0;";
+                + " venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and venMesa=" + mesa + " and venStatus = 'aberta' and ped_excCodigo is null;";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -137,7 +137,7 @@ public class PedidoDAO {
     public PedidoBEAN localizar(int produto, int venda, String time) {
         PedidoBEAN ca = new PedidoBEAN();
 
-        String sql = "select * from pedido where ped_proCodigo = " + produto + " and ped_venCondigo = " + venda + " and pedTime = '" + time + "' and ped_excCodigo !> 0;";
+        String sql = "select * from pedido where ped_proCodigo = " + produto + " and ped_venCondigo = " + venda + " and pedTime = '" + time + "' and ped_excCodigo is null;";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();

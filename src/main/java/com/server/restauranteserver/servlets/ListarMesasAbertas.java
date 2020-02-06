@@ -6,9 +6,8 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
-import com.server.restauranteserver.beans.ExcluzaoBEAN;
 import com.server.restauranteserver.beans.Mesa;
-import com.server.restauranteserver.controle.ControleExcluzao;
+
 import com.server.restauranteserver.controle.ControleLogin;
 import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
@@ -50,7 +49,7 @@ public class ListarMesasAbertas extends HttpServlet {
 
         } else {
             response.setHeader("auth", "0");
-            ExcluzaoBEAN u = null;
+            ArrayList<Mesa> u = null;
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));

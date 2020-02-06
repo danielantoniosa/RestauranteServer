@@ -28,8 +28,8 @@ public class CaixaDAO {
     }
 
     public boolean abrirCaixa(CaixaBEAN c) {
-        String sql = "insert into caixa(caiData,caiIn,caiTrocoIn,caiStatus) values (?,?,?,?)";
-
+        String sql = "insert into caixa (caiData,caiIn,caiTrocoIn,caiStatus,cai_funCodigo) values (?,?,?,?,?)";
+        System.out.println("dados fun " + c.getFuncioanrio());
         try {
             stmt = connection.prepareStatement(sql);
 
@@ -37,18 +37,20 @@ public class CaixaDAO {
             stmt.setString(2, c.getIn());
             stmt.setFloat(3, c.getTrocoIn());
             stmt.setString(4, "aberto");
-
+            stmt.setInt(5, c.getFuncioanrio());
             stmt.execute();
             stmt.close();
-            return true;
+           
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+         return true;
     }
 
     public CaixaBEAN listar() {
 
         CaixaBEAN ca = new CaixaBEAN();
+        ca.setCodigo(0);
         String sql = "select * from caixa where caiStatus = 'aberto';";
         try {
             stmt = connection.prepareStatement(sql);
@@ -112,7 +114,7 @@ public class CaixaDAO {
         } catch (SQLException e) {
             throw new RuntimeException();
         }
-        
+
         return saldo;
     }
 
