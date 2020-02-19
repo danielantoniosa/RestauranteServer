@@ -94,12 +94,14 @@ public class VendaDAO {
     public ArrayList<Mesa> listarMesasAbertas() {
         ArrayList<Mesa> c = new ArrayList<>();
 
-        String sql = "select venMesa, sum(pedQTD*proPreco) \n"
-                + "from\n"
-                + " caixa join venda join pedido join produto \n"
+        String sql = "select (venMesa) as mesa ,\n"
+                + "					 COALESCE((select  sum(pedQTD*proPreco) \n"
+                + "						from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venStatus = 'aberta' and ped_excCodigo is null and mesa = venMesa ),0) as valor  \n"
+                + "	from\n"
+                + "		caixa join venda join pedido join produto \n"
                 + "	where\n"
-                + "    caiCodigo = ven_caiCodigo and ped_venCodigo = venCodigo \n"
-                + "    and ped_proCodigo = proCodigo and caiStatus = 'aberto'and venStatus = 'aberta' group by venMesa;";
+                + "		caiCodigo = ven_caiCodigo and ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and caiStatus = 'aberto'and venStatus = 'aberta'  \n"
+                + "			group by venMesa;";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -137,7 +139,7 @@ public class VendaDAO {
     }
 
     public void atualizaVenda(VendaBEAN c) {
-        String sql = "update venda set venCheckOut = '" + c.getCheckOut() + "' , venValor = " + c.getValor() + " , ven_pagCodigo = " + c.getPagamento() + " "
+        String sql = "update venda set venCheckOut = '" + c.getCheckOut() + "' , venValor = " + c.getValor() + " , venPagamento = '" + c.getPagamento() + "' "
                 + ", venStatus = 'fechada', venQRcode = '" + c.getQRcode() + "', venCusto = " + c.getCusto() + "  where venCodigo = " + c.getCodigo() + ";";
         try {
             stmt = connection.prepareStatement(sql);
@@ -154,7 +156,7 @@ public class VendaDAO {
 
     public boolean isPagamentoUtlizado(int pagamento) {
         int cod = 0;
-        String sql = "select venCodigo from venda where ven_pagCodigo = '" + pagamento + "';";
+        String sql = "select venCodigo from venda where venPagamento= '" + pagamento + "';";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -210,7 +212,7 @@ public class VendaDAO {
                 + " caixa join venda join pedido join produto \n"
                 + "	where\n"
                 + "    caiCodigo = ven_caiCodigo and ped_venCodigo = venCodigo \n"
-                + "    and ped_proCodigo = proCodigo and caiStatus = 'aberto'and venStatus = 'aberta'"
+                + "    and ped_proCodigo = proCodigo and caiStatus = 'aberto'and venStatus = 'aberta' and ped_excCodigo is null"
                 + " and venCodigo =" + venda + " group by venMesa;";
         try {
             stmt = connection.prepareStatement(sql);
@@ -277,7 +279,7 @@ public class VendaDAO {
         ArrayList<ProdutosGravados> c = new ArrayList<ProdutosGravados>();
 
         String sql = "SELECT  proCodigo, proNome,sum(pedQTD) as unidades ,proPreco from \n"
-                + "produto join pedido join venda where venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and venStatus = 'fechada' and \n"
+                + "produto join pedido join venda where venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and venStatus = 'fechada' and ped_excCodigo is null and\n"
                 + "ven_caiCodigo = " + caixa + " group by proCodigo;";
         try {
             stmt = connection.prepareStatement(sql);
@@ -297,6 +299,23 @@ public class VendaDAO {
             throw new RuntimeException();
         }
         return c;
+    }
+
+    public String isVendasAbertas(int caixa) {
+        int total = 0;
+        String sql = "SELECT count(venCodigo) FROM venda where ven_caiCodigo = " + caixa + " and venStatus = 'aberta';";
+        try {
+            stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                total = rs.getInt(1);
+            }
+            stmt.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+        return total + "";
     }
 
 }

@@ -12,6 +12,8 @@ import com.server.restauranteserver.controle.ControleDespesa;
 import com.server.restauranteserver.controle.ControleExcluzao;
 import com.server.restauranteserver.controle.ControleLogin;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
@@ -25,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Daniel
  */
 @WebServlet(name = "IncluirDespesaDia", urlPatterns = {"/restaurante_server/IncluirDespesaDia"}, initParams = {
-    @WebInitParam(name = "exclusao", value = ""),
+    @WebInitParam(name = "despesa", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
 public class IncluirDespesasDia extends HttpServlet {
@@ -44,9 +46,10 @@ public class IncluirDespesasDia extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            DespesaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("exclusao"), DespesaBEAN.class);
-
-            response.setHeader("sucesso", con_des.adicionar(c));
+            Type type = new TypeToken<ArrayList<DespesaBEAN>>() {
+            }.getType();
+            ArrayList<DespesaBEAN> c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("despesa"), type);
+            response.setHeader("sucesso", con_des.adicionarDespesaDia(c));
 
         } else {
             response.setHeader("auth", "0");

@@ -30,7 +30,7 @@ public class ExcluzaoDAO {
 
     public int inserir(ExcluzaoBEAN c) {
         int lastId = 0;
-        String sql = "INSERT INTO excluzao (excMotivo , excTime, exc_funCodigo)"
+        String sql = "INSERT INTO exclusao (excMotivo , excTime, exc_funCodigo)"
                 + " VALUES (?, ?, ?);";
         try {
             stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -54,9 +54,9 @@ public class ExcluzaoDAO {
     public ArrayList<ExcluzaoBEAN> listarExclusaoVenda(int venda) {
         ArrayList<ExcluzaoBEAN> c = new ArrayList<>();
 
-        String sql = "select excCodigo,excMotivo , excTime, exc_funCodigo\n"
-                + "	from excluzao join pedido join venda\n"
-                + "		where  ped_excCodigo = excCodigo and venCodigo = ped_venCodigo and venCodigo ='" + venda + "' \n"
+        String sql = "select excCodigo,excMotivo , excTime, funNome\n"
+                + "	from funcionario join exclusao join pedido join venda\n"
+                + "		where funCodigo = exc_funCodigo and ped_excCodigo = excCodigo and venCodigo = ped_venCodigo and venCodigo ='" + venda + "' \n"
                 + "			group by venCodigo \n"
                 + "				order by venMesa;";
         try {
@@ -67,7 +67,7 @@ public class ExcluzaoDAO {
                 e.setCodigo(rs.getInt(1));
                 e.setMotivo(rs.getString(2));
                 e.setTime(rs.getString(3));
-                e.setFuncionario(rs.getInt(4));
+                e.setFuncionarioN(rs.getString(4));
                 c.add(e);
             }
             stmt.close();
@@ -81,7 +81,7 @@ public class ExcluzaoDAO {
     public ExcluzaoBEAN listarUm(String cod) {
         ExcluzaoBEAN e = new ExcluzaoBEAN();
         System.out.println("Codigo " + cod);
-        String sql = "select * from excluzao where "
+        String sql = "select * from exclusao where "
                 + " excCodigo = " + cod + ";";
         try {
             stmt = connection.prepareStatement(sql);
@@ -104,7 +104,7 @@ public class ExcluzaoDAO {
         ArrayList<ExcluzaoBEAN> c = new ArrayList<>();
 
         String sql = "select * \n"
-                + "	from excluzao join funcionario join venda\n"
+                + "	from exclusao join funcionario join venda\n"
                 + "		where  exc_funCodigo = funCodigo and venCodigo = adv_venCodigo and ven_caiCodigo =" + caixa + " \n"
                 + "			group by venCodigo \n"
                 + "				order by venMesa;";

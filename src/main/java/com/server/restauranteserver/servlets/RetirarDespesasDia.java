@@ -5,13 +5,15 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.server.restauranteserver.beans.DespesaBEAN;
 import com.server.restauranteserver.beans.ExcluzaoBEAN;
-import com.server.restauranteserver.beans.ProdutoBEAN;
+import com.server.restauranteserver.controle.ControleDespesa;
 import com.server.restauranteserver.controle.ControleExcluzao;
 import com.server.restauranteserver.controle.ControleLogin;
-import com.server.restauranteserver.controle.ControleProduto;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
@@ -24,14 +26,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "ListarExcluzaoMesa", urlPatterns = {"/restaurante_server/ListarExcluzaoMesa"}, initParams = {
+@WebServlet(name = "RetirarDespesaDia", urlPatterns = {"/restaurante_server/RetirarDespesaDia"}, initParams = {
+    @WebInitParam(name = "despesa", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
-    @WebInitParam(name = "senha", value = ""),
-    @WebInitParam(name = "mesa", value = "")})
-public class ListarExclusaoMesa extends HttpServlet {
+    @WebInitParam(name = "senha", value = "")})
+public class RetirarDespesasDia extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleExcluzao pro = new ControleExcluzao();
+    ControleDespesa con_des = new ControleDespesa();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,17 +46,14 @@ public class ListarExclusaoMesa extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            ArrayList<ExcluzaoBEAN> u = pro.listarExclusaoVenda(request.getParameter("mesa"));
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
+            Type type = new TypeToken<ArrayList<DespesaBEAN>>() {
+            }.getType();
+            ArrayList<DespesaBEAN> c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("despesa"), type);
+            response.setHeader("sucesso", con_des.retirarDespesaDia(c));
 
         } else {
             response.setHeader("auth", "0");
-            ArrayList<ExcluzaoBEAN> u = null;
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
+
         }
     }
 

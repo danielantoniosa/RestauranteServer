@@ -6,11 +6,10 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
-import com.server.restauranteserver.beans.ExcluzaoBEAN;
-import com.server.restauranteserver.beans.ProdutoBEAN;
-import com.server.restauranteserver.controle.ControleExcluzao;
+import com.server.restauranteserver.beans.Mesa;
+
 import com.server.restauranteserver.controle.ControleLogin;
-import com.server.restauranteserver.controle.ControleProduto;
+import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -24,14 +23,15 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "ListarExcluzaoMesa", urlPatterns = {"/restaurante_server/ListarExcluzaoMesa"}, initParams = {
+@WebServlet(name = "TranferirMesa", urlPatterns = {"/restaurante_server/TranferirMesa"}, initParams = {
+    @WebInitParam(name = "mesaDestino", value = ""),
+    @WebInitParam(name = "mesaOrigem", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
-    @WebInitParam(name = "senha", value = ""),
-    @WebInitParam(name = "mesa", value = "")})
-public class ListarExclusaoMesa extends HttpServlet {
+    @WebInitParam(name = "senha", value = "")})
+public class TransferirMesa extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleExcluzao pro = new ControleExcluzao();
+    ControleVenda con = new ControleVenda();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,17 +44,11 @@ public class ListarExclusaoMesa extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            ArrayList<ExcluzaoBEAN> u = pro.listarExclusaoVenda(request.getParameter("mesa"));
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
+            response.setHeader("sucesso", con.transferirMesa(request.getParameter("mesaOrigem"), request.getParameter("mesaDestino")));
 
         } else {
             response.setHeader("auth", "0");
-            ArrayList<ExcluzaoBEAN> u = null;
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
+
         }
     }
 

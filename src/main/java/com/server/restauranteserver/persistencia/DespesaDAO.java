@@ -57,7 +57,6 @@ public class DespesaDAO {
                 ca.setNome(rs.getString(2));
                 ca.setDescricao(rs.getString(3));
                 ca.setPreco(rs.getFloat(4));
-                
 
                 c.add(ca);
             }
@@ -98,6 +97,17 @@ public class DespesaDAO {
         try {
             stmt = connection.prepareStatement(sql);
             stmt.setInt(1, cod);
+            stmt.execute();
+            stmt.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void retirarDespesa(int caixa, int cod) {
+        String sql = "delete from despesa_dia where ded_disCodigo = " + cod + " and ded_caiCodigo = " + caixa + ";";
+        try {
+            stmt = connection.prepareStatement(sql);
             stmt.execute();
             stmt.close();
         } catch (SQLException e) {

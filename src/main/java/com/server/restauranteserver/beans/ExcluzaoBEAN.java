@@ -14,6 +14,7 @@ public class ExcluzaoBEAN {
     private int codigo;
     private String motivo;
     private String time;
+    private String funcionarioN;
     private int funcionario;
 
     public int getCodigo() {
@@ -40,6 +41,14 @@ public class ExcluzaoBEAN {
         this.time = time;
     }
 
+    public String getFuncionarioN() {
+        return funcionarioN;
+    }
+
+    public void setFuncionarioN(String funcionarioN) {
+        this.funcionarioN = funcionarioN;
+    }
+
     public int getFuncionario() {
         return funcionario;
     }
@@ -47,6 +56,10 @@ public class ExcluzaoBEAN {
     public void setFuncionario(int funcionario) {
         this.funcionario = funcionario;
     }
+
+    
+
+ 
 
     
 }

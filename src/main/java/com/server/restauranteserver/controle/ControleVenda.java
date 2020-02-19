@@ -85,7 +85,7 @@ public class ControleVenda {
         }
     }
 
-    public void transferirMesa(String origem, String destino) {
+    public String transferirMesa(String origem, String destino) {
         VendaDAO ven = new VendaDAO();
         PedidoDAO p = new PedidoDAO();
         int des = getVenda(Integer.parseInt(destino));
@@ -94,6 +94,7 @@ public class ControleVenda {
         }
         p.transferirMesa(getVenda(Integer.parseInt(origem)), des);
         ven.excluir(getVenda(Integer.parseInt(origem)));
+        return "sucesso!";
     }
 
     public int getVenda(int mesa) {
@@ -115,23 +116,29 @@ public class ControleVenda {
         return Time.getTime();
     }
 
-    public void transferirProduto(int mesaOrigem, int mesaDestino, int pedido, String time) {
+    public String transferirPedido(String mesaDestino, String pedido) {
         PedidoDAO p = new PedidoDAO();
-        int des = getVenda(mesaDestino);
+        int destino = Integer.parseInt(mesaDestino);
+        int pedi = Integer.parseInt(pedido);
+        int des = getVenda(destino);
         if (des == 0) {
-            des = abrirMesa(mesaDestino + "");
+            des = abrirMesa(mesaDestino);
         }
-        p.transferir(getVenda(mesaOrigem), pedido, getVenda(mesaDestino), time);
+        p.transferir(pedi, getVenda(destino));
+        return "Sucesso";
     }
 
-    public void excluirPedido(int funcionario, String motivo, int pedido) {
+    public String excluirPedido(int funcionario, String motivo, String pedido) {
         ControleExcluzao e = new ControleExcluzao();
         PedidoDAO p = new PedidoDAO();
         ExcluzaoBEAN pro = new ExcluzaoBEAN();
         pro.setMotivo(motivo);
         pro.setTime(Time.getTime());
         pro.setFuncionario(funcionario);
-        p.excluir(pedido, e.inserirExclusao(pro));
+       
+        int ex = e.inserirExclusao(pro);
+        p.excluir(Integer.parseInt(pedido), ex);
+        return "sucesso!";
 
     }
 
@@ -167,6 +174,12 @@ public class ControleVenda {
         ControleCaixa cc = new ControleCaixa();
         VendaDAO ven = new VendaDAO();
         return ven.listarProdutosVendidosCaixa(cc.getCaixa());
+    }
+
+    public String isMesasAbertas() {
+       ControleCaixa cc = new ControleCaixa();
+        VendaDAO ven = new VendaDAO();
+        return ven.isVendasAbertas(cc.getCaixa()); 
     }
 
 }

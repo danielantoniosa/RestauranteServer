@@ -18,8 +18,7 @@ import com.server.restauranteserver.util.Time;
 public class ControleCaixa {
 
     private final CaixaDAO c = new CaixaDAO();
-    // private final ControleDespesa d = new ControleDespesa();
-    //private final ControleSangria s = new ControleSangria();
+    //
 
     public String isCaixaAberto() {
         CaixaBEAN caixa = c.listar();
@@ -78,9 +77,11 @@ public class ControleCaixa {
     }
 
     public Caixa listarValoresCaixa() {
+        ControleDespesa d = new ControleDespesa();
+        ControleSangria s = new ControleSangria();
         Caixa c = new Caixa();
-        // c.setDespesas(d.getTotalDespesasCaixa());
-        // c.setSangria(s.getTotalSangriasCaixa());
+        c.setDespesas(d.getTotalDespesasCaixa());
+        c.setSangria(s.getTotalSangriasCaixa());
         c.setSaldo(Float.parseFloat(getSaldoAtual()));
         c.setFaturamento(Float.parseFloat(getTotalVendido()));
         return c;

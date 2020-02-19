@@ -109,7 +109,7 @@ public class PedidoDAO {
     public ArrayList<ProdutosGravados> produtosMesa(int mesa) {
         ArrayList<ProdutosGravados> c = new ArrayList<ProdutosGravados>();
 
-        String sql = "SELECT ped_venCodigo,ped_proCodigo, proNome,pedQTD, pedTime,venMesa, (proPreco * pedQTD) "
+        String sql = "SELECT pedCodigo,ped_proCodigo, proNome,pedQTD, pedTime,venMesa, (proPreco * pedQTD) "
                 + "FROM produto join pedido join venda"
                 + " where"
                 + " venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and venMesa=" + mesa + " and venStatus = 'aberta' and ped_excCodigo is null;";
@@ -160,9 +160,9 @@ public class PedidoDAO {
         return ca;
     }
 
-    public void transferir(int origem, int produto, int destino, String time) {
+    public void transferir(int pedido, int destino) {
         String sql = "update pedido set ped_venCodigo = " + destino + "  "
-                + "where ped_proCodigo = " + produto + " and ped_venCodigo = " + origem + " and pedTime = '" + time + "' ;";
+                + "where pedCodigo = "+ pedido+" ;";
 
         try {
             stmt = connection.prepareStatement(sql);
@@ -179,11 +179,10 @@ public class PedidoDAO {
     }
 
     public void excluir(int codigo, int excluzao) {
-        String sql = "update pedido set ped_excCodigo = " + excluzao + " where pedCodigo = ? ;";
+        String sql = "update pedido set ped_excCodigo = " + excluzao + " where pedCodigo = "+codigo+" ;";
         try {
             stmt = connection.prepareStatement(sql);
-            stmt.setInt(1, codigo);
-            stmt.execute();
+            stmt.executeUpdate();
             stmt.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
