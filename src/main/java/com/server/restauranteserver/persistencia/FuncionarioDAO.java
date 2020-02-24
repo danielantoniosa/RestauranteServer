@@ -65,7 +65,7 @@ public class FuncionarioDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 FuncionarioBEAN ca = new FuncionarioBEAN();
-                 ca.setCodigo(rs.getInt(1));
+                ca.setCodigo(rs.getInt(1));
                 ca.setSalario(rs.getInt(2));
                 ca.setDataAdmicao(rs.getDate(3) + "");
                 ca.setDataNacimento(rs.getDate(4) + "");
@@ -165,7 +165,7 @@ public class FuncionarioDAO {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                 ca.setCodigo(rs.getInt(1));
+                ca.setCodigo(rs.getInt(1));
                 ca.setSalario(rs.getInt(2));
                 ca.setDataAdmicao(rs.getDate(3) + "");
                 ca.setDataNacimento(rs.getDate(4) + "");
@@ -213,9 +213,7 @@ public class FuncionarioDAO {
                 ca.setSenha(rs.getString(13));
                 ca.setCartao(rs.getInt(14));
                 ca.setCargo(rs.getInt(15));
-                
-                
-                
+
             }
             stmt.close();
             return ca;
@@ -246,8 +244,9 @@ public class FuncionarioDAO {
 
     }
 
-    public int Login(String email, String senha) {
-        String sql = "select funCodigo from funcionario where funEmail = '" + email + "' and funSenha = '" + senha + "';";
+    public int Login(String email, String senha, int emp) {
+        String sql = "select funCodigo from funcionario join admicao where adm_funCodigo = funCodigo and funEmail = '" + email
+                + "' and funSenha = '" + senha + "' and adm_empCodigo = " + emp + ";";
         int codigo = 0;
         try {
             stmt = connection.prepareStatement(sql);
@@ -300,7 +299,7 @@ public class FuncionarioDAO {
 
     public SharedPreferencesBEAN listarSharedPreferences(int cod) {
         String sql = "select carNome,funCodigo,funEmail,funNome,funSenha from funcionario join cargo where funCodigo = ? and fun_carCodigo = carCodigo;";
-       SharedPreferencesBEAN ca = new SharedPreferencesBEAN();
+        SharedPreferencesBEAN ca = new SharedPreferencesBEAN();
 
         try {
             stmt = connection.prepareStatement(sql);
@@ -311,7 +310,7 @@ public class FuncionarioDAO {
                 ca.setFunCodigo(rs.getInt(2));
                 ca.setFunEmail(rs.getString(3));
                 ca.setFunNome(rs.getString(4));
-                ca.setFunSenha(rs.getString(5));                
+                ca.setFunSenha(rs.getString(5));
             }
             stmt.close();
             return ca;

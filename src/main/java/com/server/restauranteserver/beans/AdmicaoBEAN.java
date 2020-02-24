@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author Daniel
  */
-public class Admicao {
+public class AdmicaoBEAN {
 
     private int funcionario;
     private int empresa;
