@@ -103,7 +103,8 @@ public class EmpresaDAO {
 
     public SharedPreferencesEmpresaBEAN Login(String email, String senha) {
         SharedPreferencesEmpresaBEAN s = new SharedPreferencesEmpresaBEAN();
-        String sql = "select empCodigo,empEmail, empSenha,empLogo,empFantazia from empresa where empEmail = '" + email + "' and empSenha = '" + senha + "';";
+        s.setEmpCodigo(0);
+        String sql = "select empCodigo,empEmail, empSenha,empLogo,empNomeFantazia from empresa where empEmail = '" + email + "' and empSenha = '" + senha + "';";
 
         try {
             stmt = connection.prepareStatement(sql);

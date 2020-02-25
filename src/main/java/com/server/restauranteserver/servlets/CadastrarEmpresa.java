@@ -12,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import com.google.gson.reflect.TypeToken;
+import com.server.restauranteserver.controle.ControleLogin;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -24,9 +25,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author Daniel
  */
 @WebServlet(name = "AdicionarEmpresa", urlPatterns = {"/restaurante_server/AdicionarEmpresa"}, initParams = {
+    @WebInitParam(name = "nomeUsuario", value = ""),
+    @WebInitParam(name = "senha", value = ""),
     @WebInitParam(name = "empresa", value = "")})
 public class CadastrarEmpresa extends HttpServlet {
-
     ControleEmpresa con = new ControleEmpresa();
 
     @Override
@@ -37,11 +39,8 @@ public class CadastrarEmpresa extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setHeader("auth", "1");
-        System.out.println("string "+ request.getParameter("empresa"));
-        
-        
-        EmpresaBEAN c = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().fromJson(request.getParameter("empresa"), EmpresaBEAN.class);
+
+        EmpresaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("empresa"), EmpresaBEAN.class);
 
         response.setHeader("sucesso", con.adicionarEmpresa(c));
 

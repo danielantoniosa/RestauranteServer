@@ -21,17 +21,22 @@ import com.server.restauranteserver.persistencia.SharedPreferences;
 public class ControleLogin {
 
     public int autenticaUsuario(String email, String senha) {
-        int emp = SharedPreferences.listar();
+        SharedPreferences s = new SharedPreferences();
+        int emp = s.listar();
         FuncionarioDAO f = new FuncionarioDAO();
         int funcionario = f.Login(email, senha, emp);
         return funcionario;
     }
 
     public SharedPreferencesEmpresaBEAN autenticaEmpresa(String email, String senha) {
+        SharedPreferences s = new SharedPreferences();
+        SharedPreferences s2 = new SharedPreferences();
         EmpresaDAO f = new EmpresaDAO();
         SharedPreferencesEmpresaBEAN emp = f.Login(email, senha);
-        SharedPreferences.excluir();
-        SharedPreferences.inserir(emp.getEmpCodigo());
+        if (emp.getEmpCodigo() > 0) {
+            s.excluir();
+            s2.inserir(emp.getEmpCodigo());
+        }
         return emp;
     }
 

@@ -5,8 +5,8 @@
  */
 package com.server.restauranteserver.servlets;
 
-
 import com.google.gson.Gson;
+import com.server.restauranteserver.beans.SharedPreferencesBEAN;
 import com.server.restauranteserver.beans.SharedPreferencesEmpresaBEAN;
 import com.server.restauranteserver.controle.ControleLogin;
 import java.io.IOException;
@@ -37,9 +37,17 @@ public class LoginEmpresa extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         SharedPreferencesEmpresaBEAN u = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().println(new Gson().toJson(u));
+        if (u.getEmpCodigo() > 0) {
+            response.setHeader("auth", "1");
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
+        } else {
+            response.setHeader("auth", "0");
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
+        }
 
     }
 
