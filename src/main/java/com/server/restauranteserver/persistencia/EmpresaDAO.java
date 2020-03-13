@@ -101,10 +101,10 @@ public class EmpresaDAO {
         return e;
     }
 
-    public SharedPreferencesEmpresaBEAN Login(String email, String senha) {
+    public SharedPreferencesEmpresaBEAN localizar(int cod) {
         SharedPreferencesEmpresaBEAN s = new SharedPreferencesEmpresaBEAN();
         s.setEmpCodigo(0);
-        String sql = "select empCodigo,empEmail, empSenha,empLogo,empNomeFantazia from empresa where empEmail = '" + email + "' and empSenha = '" + senha + "';";
+        String sql = "select empCodigo,empEmail, empSenha,empLogo,empNomeFantazia from empresa where empCodigo = " + cod + ";";
 
         try {
             stmt = connection.prepareStatement(sql);
@@ -118,6 +118,25 @@ public class EmpresaDAO {
             }
             stmt.close();
             return s;
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+
+    }
+
+    public int login(String email, String senha) {
+        int cod = 0;
+        String sql = "select empCodigo from empresa where empEmail = '" + email + "' and empSenha = '" + senha + "';";
+
+        try {
+            stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                cod = rs.getInt(1);
+
+            }
+            stmt.close();
+            return cod;
         } catch (SQLException e) {
             throw new RuntimeException();
         }

@@ -28,16 +28,19 @@ public class ControleLogin {
         return funcionario;
     }
 
-    public SharedPreferencesEmpresaBEAN autenticaEmpresa(String email, String senha) {
+    public void logar(String email, String senha) {
         SharedPreferences s = new SharedPreferences();
         SharedPreferences s2 = new SharedPreferences();
-        EmpresaDAO f = new EmpresaDAO();
-        SharedPreferencesEmpresaBEAN emp = f.Login(email, senha);
-        if (emp.getEmpCodigo() > 0) {
+        int cod = autenticaEmpresa(email, senha);
+        if (cod > 0) {
             s.excluir();
-            s2.inserir(emp.getEmpCodigo());
+            s2.inserir(cod);
         }
-        return emp;
+    }
+
+    public int autenticaEmpresa(String email, String senha) {
+        EmpresaDAO f = new EmpresaDAO();
+        return f.login(email, senha);
     }
 
     public DefaultComboBoxModel buscar(String produto) {
@@ -53,8 +56,16 @@ public class ControleLogin {
     }
 
     public SharedPreferencesBEAN listarSharedPreferences(int cod) {
+        SharedPreferences s = new SharedPreferences();
+        int emp = s.listar();
         FuncionarioDAO f = new FuncionarioDAO();
-        return f.listarSharedPreferences(cod);
+        return f.listarSharedPreferences(cod, emp);
+    }
+
+    public SharedPreferencesEmpresaBEAN listarSharedPreferencesEmpresa(int cod) {
+
+        EmpresaDAO f = new EmpresaDAO();
+        return f.localizar(cod);
     }
 
 }

@@ -5,11 +5,11 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.GsonBuilder;
-import com.server.restauranteserver.beans.CargoBEAN;
-import com.server.restauranteserver.beans.FuncionarioBEAN;
-import com.server.restauranteserver.controle.ControleCargo;
-import com.server.restauranteserver.controle.ControleFuncionario;
+import com.google.gson.Gson;
+import com.server.restauranteserver.beans.AdmicaoBEAN;
+import com.server.restauranteserver.beans.ExcluzaoBEAN;
+import com.server.restauranteserver.controle.ControleAdmicao;
+import com.server.restauranteserver.controle.ControleExcluzao;
 import com.server.restauranteserver.controle.ControleLogin;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -23,14 +23,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "EditarFuncionario", urlPatterns = {"/restaurante_server/EditarFuncionario"}, initParams = {
-    @WebInitParam(name ="funcionario", value = ""),
+@WebServlet(name = "LocalizarAdmicao", urlPatterns = {"/restaurante_server/LocalizarAdmicao"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
-    @WebInitParam(name = "senha", value = "")})
-public class EditarFuncionario extends HttpServlet {
+    @WebInitParam(name = "senha", value = ""),
+    @WebInitParam(name = "fucionario", value = "")})
+public class LocalizarAdmicao extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleFuncionario con_fun = new ControleFuncionario();
+    ControleAdmicao pro = new ControleAdmicao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -43,13 +43,17 @@ public class EditarFuncionario extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            FuncionarioBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("funcionario"), FuncionarioBEAN.class);
-
-            response.setHeader("sucesso", con_fun.cadastrar(c)+"");
+            AdmicaoBEAN u = pro.localizar(request.getParameter("funcionario"));
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-
+            AdmicaoBEAN u  = null;
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
         }
     }
 

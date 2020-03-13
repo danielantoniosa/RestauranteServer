@@ -36,13 +36,15 @@ public class LoginEmpresa extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        SharedPreferencesEmpresaBEAN u = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
-        if (u.getEmpCodigo() > 0) {
+        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        if (cod > 0) {
+            SharedPreferencesEmpresaBEAN u = l.listarSharedPreferencesEmpresa(cod);
             response.setHeader("auth", "1");
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));
         } else {
+            SharedPreferencesEmpresaBEAN u = null;
             response.setHeader("auth", "0");
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

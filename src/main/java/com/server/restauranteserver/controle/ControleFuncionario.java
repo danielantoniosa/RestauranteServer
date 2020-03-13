@@ -9,6 +9,7 @@ import com.server.restauranteserver.beans.CargoBEAN;
 import com.server.restauranteserver.beans.FuncionarioBEAN;
 import java.util.ArrayList;
 import com.server.restauranteserver.persistencia.FuncionarioDAO;
+import com.server.restauranteserver.persistencia.SharedPreferences;
 import com.server.restauranteserver.util.GerarNumeros;
 
 /**
@@ -23,12 +24,11 @@ public class ControleFuncionario {
         return f.funCargo(cod);
     }
 
-    public String cadastrar(FuncionarioBEAN fu) {
+    public int cadastrar(FuncionarioBEAN fu) {
         if (f.isExiste(fu.getEmail()) == false) {
-            f.adicionar(fu);
-            return "Cadastro Realizado com SUCESSO!!";
+            return f.adicionar(fu);
         } else {
-            return "Funcionario com email" + fu.getEmail() + " já CADASTRADO!!";
+            return 0;
         }
     }
 
@@ -52,7 +52,9 @@ public class ControleFuncionario {
     }
 
     public ArrayList<FuncionarioBEAN> listarAll() {
-        ArrayList<FuncionarioBEAN> retorno = f.listarALl();
+        SharedPreferences s = new SharedPreferences();
+        int emp = s.listar();
+        ArrayList<FuncionarioBEAN> retorno = f.listarALl(emp);
         return retorno;
 
     }
@@ -68,7 +70,5 @@ public class ControleFuncionario {
     public FuncionarioBEAN listarUm(String cod) {
         return f.localizar(Integer.parseInt(cod));
     }
-
-    
 
 }

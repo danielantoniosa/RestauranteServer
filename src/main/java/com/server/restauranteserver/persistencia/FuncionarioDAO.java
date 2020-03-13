@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -27,33 +28,88 @@ public class FuncionarioDAO {
         this.connection = ConnectionFactory.getConnection();
     }
 
-    public boolean adicionar(FuncionarioBEAN c) {
-        String sql = "INSERT INTO funcionario (funSalario, funDataAdmicao, funDataNascimento, funTelefone,"
-                + " funEndereco, funNome, funUniforme, funEmail, funCPF, funRG, funSenha,funNunCartao, fun_carCodigo)"
-                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);";
+    public int adicionar(FuncionarioBEAN c) {
+        int i = 0;
+        String sql = "INSERT INTO funcionario (funDataNascimento, funTelefone,"
+                + " funNome,funEmail, funCPF, funRG, funSenha,funLogradouro,"
+                + "funNumero, funBairro, funComplemento, funCidade, funUF, funCEP)"
+                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?);";
 
         try {
-            stmt = connection.prepareStatement(sql);
-
-            stmt.setFloat(1, c.getSalario());
-            stmt.setString(2, c.getDataAdmicao() + "");
-            stmt.setString(3, c.getDataNacimento() + "");
-            stmt.setString(4, c.getTelefone());
-            stmt.setString(5, c.getEndereco());
-            stmt.setString(6, c.getNome());
-            stmt.setInt(7, c.getUniforme());
-            stmt.setString(8, c.getEmail());
-            stmt.setString(9, c.getCPF());
-            stmt.setString(10, c.getRG());
-            stmt.setString(11, c.getSenha());
-            stmt.setInt(12, c.getCartao());
-            stmt.setInt(13, c.getCargo());
-            stmt.execute();
+            stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, c.getDataNacimento() + "");
+            stmt.setString(2, c.getTelefone());
+            stmt.setString(3, c.getNome());
+            stmt.setString(4, c.getEmail());
+            stmt.setString(5, c.getCPF());
+            stmt.setString(6, c.getRG());
+            stmt.setString(7, c.getSenha());
+            stmt.setString(8, c.getLogradouro());
+            stmt.setString(9, c.getNumero());
+            stmt.setString(10, c.getBairro());
+            stmt.setString(11, c.getComplemento());
+            stmt.setString(12, c.getCidade());
+            stmt.setString(13, c.getUf());
+            stmt.setString(14, c.getCep());
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                i = rs.getInt(1);
+            }
             stmt.close();
-            return true;
+            return i;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public ArrayList<FuncionarioBEAN> listarALl(int emp) {
+        ArrayList<FuncionarioBEAN> c = new ArrayList<>();
+
+        String sql = " select funCodigo,funDataNascimento ,funTelefone ,funNome,funFoto,funEmail,funCPF,funRG,funSenha"
+                + " ,funLogradouro,funNumero ,funBairro ,funComplemento ,funCidade ,funCEP,adm_CarCodigo, COALESCE(admDataSaida,'') as saida from funcionario join admicao"
+                + " where adm_funCodigo = funCodigo and adm_empCodigo = " + emp + ";";
+        try {
+            stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                FuncionarioBEAN ca = new FuncionarioBEAN();
+                ca.setCodigo(rs.getInt(1));
+                ca.setDataNacimento(rs.getDate(2) + "");
+                ca.setTelefone(rs.getString(3));
+                ca.setNome(rs.getString(4));
+                //foto
+                ca.setEmail(rs.getString(6));
+                ca.setCPF(rs.getString(7));
+                ca.setRG(rs.getString(8));
+                ca.setSenha(rs.getString(9));
+                ca.setLogradouro(rs.getString(10));
+                ca.setNumero(rs.getString(11));
+                ca.setBairro(rs.getString(12));
+                ca.setComplemento(rs.getString(13));
+                ca.setCidade(rs.getString(14));
+                ca.setUf(rs.getString(15));
+                ca.setCep(rs.getString(16));
+                int i = rs.getInt("adm_carCodigo");
+                if (i > 0) {
+                    ca.setStatus("Admitido");
+
+                } else {
+                    ca.setStatus("Aguardado Admição");
+                }
+                String j = rs.getString("saida");
+                if (j.equals("")) {
+                } else {
+                    ca.setStatus("Demitido");
+                }
+                c.add(ca);
+            }
+            stmt.close();
+            return c;
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+
     }
 
     public ArrayList<FuncionarioBEAN> listarALl() {
@@ -66,20 +122,21 @@ public class FuncionarioDAO {
             while (rs.next()) {
                 FuncionarioBEAN ca = new FuncionarioBEAN();
                 ca.setCodigo(rs.getInt(1));
-                ca.setSalario(rs.getInt(2));
-                ca.setDataAdmicao(rs.getDate(3) + "");
-                ca.setDataNacimento(rs.getDate(4) + "");
-                ca.setTelefone(rs.getString(5));
-                ca.setEndereco(rs.getString(6));
-                ca.setNome(rs.getString(7));
-                ca.setUniforme(rs.getInt(8));
+                ca.setDataNacimento(rs.getDate(2) + "");
+                ca.setTelefone(rs.getString(3));
+                ca.setNome(rs.getString(4));
                 //foto
-                ca.setEmail(rs.getString(10));
-                ca.setCPF(rs.getString(11));
-                ca.setRG(rs.getString(12));
-                ca.setSenha(rs.getString(13));
-                ca.setCartao(rs.getInt(14));
-                ca.setCargo(rs.getInt(15));
+                ca.setEmail(rs.getString(6));
+                ca.setCPF(rs.getString(7));
+                ca.setRG(rs.getString(8));
+                ca.setSenha(rs.getString(9));
+                ca.setLogradouro(rs.getString(10));
+                ca.setNumero(rs.getString(11));
+                ca.setBairro(rs.getString(12));
+                ca.setComplemento(rs.getString(13));
+                ca.setCidade(rs.getString(14));
+                ca.setUf(rs.getString(15));
+                ca.setCep(rs.getString(16));
                 c.add(ca);
             }
             stmt.close();
@@ -128,7 +185,7 @@ public class FuncionarioDAO {
         }
     }
 
-    public void editar(FuncionarioBEAN c) {
+    /* public void editar(FuncionarioBEAN c) {
         String sql = "update funcionario set funSalario = ? , funDataAdimicao"
                 + " = ? , funDataNascimento = ? , funTelefone = ?,"
                 + "funEndereco= ?, funUniforme = ?, funSenha = ?"
@@ -154,8 +211,7 @@ public class FuncionarioDAO {
             throw new RuntimeException(e);
         }
 
-    }
-
+    }*/
     public FuncionarioBEAN localizar(String email) {
         String sql = "select * from funcionario where funEmail = ?;";
         FuncionarioBEAN ca = new FuncionarioBEAN();
@@ -166,20 +222,21 @@ public class FuncionarioDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ca.setCodigo(rs.getInt(1));
-                ca.setSalario(rs.getInt(2));
-                ca.setDataAdmicao(rs.getDate(3) + "");
-                ca.setDataNacimento(rs.getDate(4) + "");
-                ca.setTelefone(rs.getString(5));
-                ca.setEndereco(rs.getString(6));
-                ca.setNome(rs.getString(7));
-                ca.setUniforme(rs.getInt(8));
+                ca.setDataNacimento(rs.getDate(2) + "");
+                ca.setTelefone(rs.getString(3));
+                ca.setNome(rs.getString(4));
                 //foto
-                ca.setEmail(rs.getString(10));
-                ca.setCPF(rs.getString(11));
-                ca.setRG(rs.getString(12));
-                ca.setSenha(rs.getString(13));
-                ca.setCartao(rs.getInt(14));
-                ca.setCargo(rs.getInt(15));
+                ca.setEmail(rs.getString(6));
+                ca.setCPF(rs.getString(7));
+                ca.setRG(rs.getString(8));
+                ca.setSenha(rs.getString(9));
+                ca.setLogradouro(rs.getString(10));
+                ca.setNumero(rs.getString(11));
+                ca.setBairro(rs.getString(12));
+                ca.setComplemento(rs.getString(13));
+                ca.setCidade(rs.getString(14));
+                ca.setUf(rs.getString(15));
+                ca.setCep(rs.getString(16));
             }
             stmt.close();
             return ca;
@@ -199,20 +256,21 @@ public class FuncionarioDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ca.setCodigo(rs.getInt(1));
-                ca.setSalario(rs.getInt(2));
-                ca.setDataAdmicao(rs.getDate(3) + "");
-                ca.setDataNacimento(rs.getDate(4) + "");
-                ca.setTelefone(rs.getString(5));
-                ca.setEndereco(rs.getString(6));
-                ca.setNome(rs.getString(7));
-                ca.setUniforme(rs.getInt(8));
+                ca.setDataNacimento(rs.getDate(2) + "");
+                ca.setTelefone(rs.getString(3));
+                ca.setNome(rs.getString(4));
                 //foto
-                ca.setEmail(rs.getString(10));
-                ca.setCPF(rs.getString(11));
-                ca.setRG(rs.getString(12));
-                ca.setSenha(rs.getString(13));
-                ca.setCartao(rs.getInt(14));
-                ca.setCargo(rs.getInt(15));
+                ca.setEmail(rs.getString(6));
+                ca.setCPF(rs.getString(7));
+                ca.setRG(rs.getString(8));
+                ca.setSenha(rs.getString(9));
+                ca.setLogradouro(rs.getString(10));
+                ca.setNumero(rs.getString(11));
+                ca.setBairro(rs.getString(12));
+                ca.setComplemento(rs.getString(13));
+                ca.setCidade(rs.getString(14));
+                ca.setUf(rs.getString(15));
+                ca.setCep(rs.getString(16));
 
             }
             stmt.close();
@@ -297,16 +355,18 @@ public class FuncionarioDAO {
 
     }
 
-    public SharedPreferencesBEAN listarSharedPreferences(int cod) {
-        String sql = "select carNome,funCodigo,funEmail,funNome,funSenha from funcionario join cargo where funCodigo = ? and fun_carCodigo = carCodigo;";
+    public SharedPreferencesBEAN listarSharedPreferences(int cod, int emp) {
+        String sql = "select COALESCE(adm_carCodigo,0),funCodigo,funEmail,funNome,funSenha \n"
+                + "from funcionario join admicao where funCodigo = adm_funCodigo and adm_empCodigo = ? and adm_funCodigo = ?;";
         SharedPreferencesBEAN ca = new SharedPreferencesBEAN();
 
         try {
             stmt = connection.prepareStatement(sql);
-            stmt.setInt(1, cod);
+            stmt.setInt(1, emp);
+            stmt.setInt(2, cod);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                ca.setFunCargo(rs.getString(1));
+                ca.setFunCargo(rs.getInt(1));
                 ca.setFunCodigo(rs.getInt(2));
                 ca.setFunEmail(rs.getString(3));
                 ca.setFunNome(rs.getString(4));

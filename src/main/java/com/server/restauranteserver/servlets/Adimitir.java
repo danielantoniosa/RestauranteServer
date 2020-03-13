@@ -5,11 +5,13 @@
  */
 package com.server.restauranteserver.servlets;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.server.restauranteserver.beans.AdmicaoBEAN;
 import com.server.restauranteserver.beans.CargoBEAN;
-import com.server.restauranteserver.beans.FuncionarioBEAN;
+import com.server.restauranteserver.beans.SharedPreferencesBEAN;
+import com.server.restauranteserver.controle.ControleAdmicao;
 import com.server.restauranteserver.controle.ControleCargo;
-import com.server.restauranteserver.controle.ControleFuncionario;
 import com.server.restauranteserver.controle.ControleLogin;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -23,14 +25,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "EditarFuncionario", urlPatterns = {"/restaurante_server/EditarFuncionario"}, initParams = {
-    @WebInitParam(name ="funcionario", value = ""),
+@WebServlet(name = "AdicionarAdmicao", urlPatterns = {"/restaurante_server/AdicionarAdmicao"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
-    @WebInitParam(name = "senha", value = "")})
-public class EditarFuncionario extends HttpServlet {
+    @WebInitParam(name = "senha", value = ""),
+    @WebInitParam(name = "admicao", value = "")})
+public class Adimitir extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleFuncionario con_fun = new ControleFuncionario();
+    ControleAdmicao con = new ControleAdmicao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -43,9 +45,8 @@ public class EditarFuncionario extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            FuncionarioBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("funcionario"), FuncionarioBEAN.class);
-
-            response.setHeader("sucesso", con_fun.cadastrar(c)+"");
+            AdmicaoBEAN c = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().fromJson(request.getParameter("admicao"), AdmicaoBEAN.class);
+            response.setHeader("sucesso", con.admitir(c));
 
         } else {
             response.setHeader("auth", "0");

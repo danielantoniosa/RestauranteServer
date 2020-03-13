@@ -15,11 +15,20 @@ public class AdmicaoBEAN {
 
     private int funcionario;
     private int empresa;
-    private Date admicao;
-    private Date saida;
+    private int cargo;
+    private String admicao;
+    private String saida;
     private int uniforme;
     private int cartaoPonto;
     private Float salario;
+
+    public int getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(int cargo) {
+        this.cargo = cargo;
+    }
 
     public int getFuncionario() {
         return funcionario;
@@ -37,21 +46,23 @@ public class AdmicaoBEAN {
         this.empresa = empresa;
     }
 
-    public Date getAdmicao() {
+    public String getAdmicao() {
         return admicao;
     }
 
-    public void setAdmicao(Date admicao) {
+    public void setAdmicao(String admicao) {
         this.admicao = admicao;
     }
 
-    public Date getSaida() {
+    public String getSaida() {
         return saida;
     }
 
-    public void setSaida(Date saida) {
+    public void setSaida(String saida) {
         this.saida = saida;
     }
+
+   
 
     public int getUniforme() {
         return uniforme;
