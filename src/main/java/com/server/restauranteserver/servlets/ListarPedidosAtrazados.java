@@ -5,12 +5,15 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.GsonBuilder;
-import com.server.restauranteserver.beans.CaixaBEAN;
-
-import com.server.restauranteserver.controle.ControleCaixa;
+import com.google.gson.Gson;
+import com.server.restauranteserver.beans.ExcluzaoBEAN;
+import com.server.restauranteserver.beans.Pedido;
+import com.server.restauranteserver.controle.ControleExcluzao;
 import com.server.restauranteserver.controle.ControleLogin;
+import com.server.restauranteserver.controle.ControlePedido;
+import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -22,14 +25,13 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "AbrirCaixa", urlPatterns = {"/restaurante_server/AbrirCaixa"}, initParams = {
-    @WebInitParam(name = "caixa", value = ""),
+@WebServlet(name = "ListarPedidosAtrazados", urlPatterns = {"/restaurante_server/ListarPedidosAtrazados"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class AbrirCaixa extends HttpServlet {
+public class ListarPedidosAtrazados extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleCaixa con_caixa = new ControleCaixa();
+    ControlePedido con = new ControlePedido();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -39,18 +41,20 @@ public class AbrirCaixa extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
-            
             response.setHeader("auth", "1");
-            CaixaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("caixa"), CaixaBEAN.class);
-           
-            c.setFuncioanrio(cod);
-            response.setHeader("sucesso", con_caixa.abrirCaixa(c));
+            ArrayList<Pedido> u = con.listarPedidosAtrazados(cod);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-
+            ArrayList<Pedido> u = null;
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
         }
     }
 

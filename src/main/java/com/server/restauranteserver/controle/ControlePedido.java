@@ -5,11 +5,15 @@
  */
 package com.server.restauranteserver.controle;
 
+import com.server.restauranteserver.beans.Pedido;
 import com.server.restauranteserver.beans.ProdutoBEAN;
 import com.server.restauranteserver.beans.Produtos;
+import com.server.restauranteserver.persistencia.PedidoDAO;
 import com.server.restauranteserver.persistencia.ProdutoDAO;
+import com.server.restauranteserver.util.Horas;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
+
 /**
  *
  * @author Daniel
@@ -58,6 +62,28 @@ public class ControlePedido {
             pro.add(produto);
         }
         return pro;
+    }
+
+    public ArrayList<Pedido> listarPedidos(int emp) {
+        ControleCaixa cai = new ControleCaixa();
+        PedidoDAO ped = new PedidoDAO();
+        int caixa = cai.getCaixa();
+        ArrayList<Pedido> pedidos = ped.listarPedidosAbertos(emp, caixa);
+        return pedidos;
+    }
+    public ArrayList<Pedido> listarPedidosRealizados(int emp) {
+        ControleCaixa cai = new ControleCaixa();
+        PedidoDAO ped = new PedidoDAO();
+        int caixa = cai.getCaixa();
+        ArrayList<Pedido> pedidos = ped.listarPedidosRealizados(emp, caixa);
+        return pedidos;
+    }
+    public ArrayList<Pedido> listarPedidosAtrazados(int emp) {
+        ControleCaixa cai = new ControleCaixa();
+        PedidoDAO ped = new PedidoDAO();
+        int caixa = cai.getCaixa();
+        ArrayList<Pedido> pedidos = ped.listarPedidosAtrazados(emp, caixa);
+        return pedidos;
     }
 
     public Produtos buscarUm(String combo) {

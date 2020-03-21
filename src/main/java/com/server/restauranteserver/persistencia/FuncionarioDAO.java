@@ -33,7 +33,7 @@ public class FuncionarioDAO {
         String sql = "INSERT INTO funcionario (funDataNascimento, funTelefone,"
                 + " funNome,funEmail, funCPF, funRG, funSenha,funLogradouro,"
                 + "funNumero, funBairro, funComplemento, funCidade, funUF, funCEP)"
-                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?);";
+                + " VALUES (?, ?, ?, ?, ?, ?,md5(?), ?, ?, ?, ?, ?,?,?);";
 
         try {
             stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -304,10 +304,10 @@ public class FuncionarioDAO {
 
     public int Login(String email, String senha, int emp) {
         String sql = "select funCodigo from funcionario join admicao where adm_funCodigo = funCodigo and funEmail = '" + email
-                + "' and funSenha = '" + senha + "' and adm_empCodigo = " + emp + ";";
+                + "' and funSenha = md5('" + senha + "') and adm_empCodigo = " + emp + ";";
         int codigo = 0;
         try {
-            stmt = connection.prepareStatement(sql);
+            stmt = connection.prepareStatement(sql); 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 codigo = rs.getInt(1);

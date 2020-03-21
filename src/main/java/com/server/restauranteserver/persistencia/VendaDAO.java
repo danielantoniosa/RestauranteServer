@@ -43,12 +43,12 @@ public class VendaDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return getVenda(c.getCheckIn());
+        return getVenda(c.getCheckIn(), c.getCaixa());
     }
 
-    private int getVenda(String hora) {
+    private int getVenda(String hora, int caixa) {
         int cod = 0;
-        String sql = "select venCodigo from venda where venCheckIn = '" + hora + "';";
+        String sql = "select venCodigo from venda where venCheckIn = '" + hora + "' and ven_caiCodigo =" + caixa + " ;";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -91,16 +91,16 @@ public class VendaDAO {
         return v;
     }
 
-    public ArrayList<Mesa> listarMesasAbertas() {
+    public ArrayList<Mesa> listarMesasAbertas(int caixa) {
         ArrayList<Mesa> c = new ArrayList<>();
 
         String sql = "select (venMesa) as mesa ,\n"
                 + "					 COALESCE((select  sum(pedQTD*proPreco) \n"
-                + "						from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venStatus = 'aberta' and ped_excCodigo is null and mesa = venMesa ),0) as valor  \n"
+                + "						from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and ven_caiCodigo= " + caixa + " and venStatus = 'aberta' and ped_excCodigo is null and mesa = venMesa ),0) as valor  \n"
                 + "	from\n"
                 + "		caixa join venda join pedido join produto \n"
                 + "	where\n"
-                + "		caiCodigo = ven_caiCodigo and ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and caiStatus = 'aberto'and venStatus = 'aberta'  \n"
+                + "		caiCodigo = ven_caiCodigo and ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and ven_caiCodigo = " + caixa + " and caiStatus = 'aberto'and venStatus = 'aberta'  \n"
                 + "			group by venMesa;";
         try {
             stmt = connection.prepareStatement(sql);
@@ -119,28 +119,9 @@ public class VendaDAO {
         return c;
     }
 
-    public void atualiza(VendaBEAN c) {
-        String sql = "update venda_atual set caixa = ? , venda = ? , mesa = ?  where caixa = " + c.getCaixa() + ";";
-        try {
-            stmt = connection.prepareStatement(sql);
-
-            stmt.setInt(1, c.getCaixa());
-            stmt.setInt(2, c.getCodigo());
-            stmt.setInt(3, c.getMesa());
-            int l = stmt.executeUpdate();
-            stmt.close();
-            if (l > 0) {
-                System.out.println("Foram alterados " + l + " linhas");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
     public void atualizaVenda(VendaBEAN c) {
         String sql = "update venda set venCheckOut = '" + c.getCheckOut() + "' , venValor = " + c.getValor() + " , venPagamento = '" + c.getPagamento() + "' "
-                + ", venStatus = 'fechada', venQRcode = '" + c.getQRcode() + "', venCusto = " + c.getCusto() + "  where venCodigo = " + c.getCodigo() + ";";
+                + ", venStatus = 'fechada', venQRcode = '" + c.getQRcode() + "', venCusto = " + c.getCusto() + "  where venCodigo = " + c.getCodigo() + " and ven_caiCodigo = " + c.getCaixa() + ";";
         try {
             stmt = connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
@@ -154,9 +135,9 @@ public class VendaDAO {
 
     }
 
-    public boolean isPagamentoUtlizado(int pagamento) {
+    public boolean isPagamentoUtlizado(int pagamento, int caixa) {
         int cod = 0;
-        String sql = "select venCodigo from venda where venPagamento= '" + pagamento + "';";
+        String sql = "select venCodigo from venda where venPagamento= '" + pagamento + "' and ven_caiCodigo = " + caixa + ";";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -176,9 +157,9 @@ public class VendaDAO {
         }
     }
 
-    public int getVenda(int mesa) {
+    public int getVenda(int mesa, int caixa) {
         int cod = 0;
-        String sql = "select venCodigo from venda where venMesa = " + mesa + " and venStatus = 'aberta';";
+        String sql = "select venCodigo from venda where venMesa = " + mesa + " and venStatus = 'aberta' and ven_caiCodigo = " + caixa + ";";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();

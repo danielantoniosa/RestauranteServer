@@ -23,7 +23,8 @@ public class ControleVenda {
 
     public VendaBEAN listarVenda(int mesa) {
         VendaDAO ven = new VendaDAO();
-        int venda = ven.getVenda(mesa);
+        ControleCaixa cc = new ControleCaixa();
+        int venda = ven.getVenda(mesa, cc.getCaixa());
         return ven.listarVenda(venda);
     }
 
@@ -39,19 +40,24 @@ public class ControleVenda {
 
     public int abrirMesa(VendaBEAN v) {
         VendaDAO ven = new VendaDAO();
+        ControleCaixa cc = new ControleCaixa();
+        v.setCaixa(cc.getCaixa());
         return ven.abrirMesa(v);
     }
 
     public String adicionar(PedidoBEAN venda) {
         int mesa = venda.getVenda();
+        ControleCaixa cc = new ControleCaixa();
+        int caixa = cc.getCaixa();
+        System.out.println("caixa " + caixa);
         PedidoDAO p = new PedidoDAO();
         VendaDAO ven = new VendaDAO();
-        int v = ven.getVenda(mesa);
+        int v = ven.getVenda(mesa, caixa);
         if (v != 0) {
             venda.setVenda(v);
             p.adicionar(venda);
         } else {
-            int nvenda = abrirMesa(mesa + "");
+            int nvenda = abrirMesa(mesa + "", caixa);
             venda.setVenda(nvenda);
             p.adicionar(venda);
         }
@@ -65,7 +71,8 @@ public class ControleVenda {
 
     public ArrayList<Mesa> getMesasAbertas() {
         VendaDAO ven = new VendaDAO();
-        return ven.listarMesasAbertas();
+        ControleCaixa cc = new ControleCaixa();
+        return ven.listarMesasAbertas(cc.getCaixa());
     }
 
     public float getValorMesa(String mesa) {
@@ -78,7 +85,8 @@ public class ControleVenda {
         //verificar se mesa esta aberta
         VendaDAO ven = new VendaDAO();
         PedidoDAO p = new PedidoDAO();
-        if (ven.getVenda(Integer.parseInt(text)) != 0) {
+        ControleCaixa cc = new ControleCaixa();
+        if (ven.getVenda(Integer.parseInt(text), cc.getCaixa()) != 0) {
             return p.produtosMesa(Integer.parseInt(text));
         } else {
             return null;
@@ -88,9 +96,11 @@ public class ControleVenda {
     public String transferirMesa(String origem, String destino) {
         VendaDAO ven = new VendaDAO();
         PedidoDAO p = new PedidoDAO();
+        ControleCaixa ca = new ControleCaixa();
+        int caixa = ca.getCaixa();
         int des = getVenda(Integer.parseInt(destino));
         if (des == 0) {
-            des = abrirMesa(destino);
+            des = abrirMesa(destino, caixa);
         }
         p.transferirMesa(getVenda(Integer.parseInt(origem)), des);
         ven.excluir(getVenda(Integer.parseInt(origem)));
@@ -99,14 +109,14 @@ public class ControleVenda {
 
     public int getVenda(int mesa) {
         VendaDAO ven = new VendaDAO();
-        return ven.getVenda(mesa);
+        ControleCaixa cc = new ControleCaixa();
+        return ven.getVenda(mesa, cc.getCaixa());
     }
 
-    private int abrirMesa(String mesa) {
+    private int abrirMesa(String mesa, int caixa) {
         VendaDAO ven = new VendaDAO();
-        ControleCaixa ca = new ControleCaixa();
         VendaBEAN v = new VendaBEAN();
-        v.setCaixa(ca.getCaixa());
+        v.setCaixa(caixa);
         v.setCheckIn(getHoraAtual());
         v.setMesa(Integer.parseInt(mesa));
         return ven.abrirMesa(v);
@@ -118,11 +128,13 @@ public class ControleVenda {
 
     public String transferirPedido(String mesaDestino, String pedido) {
         PedidoDAO p = new PedidoDAO();
+        ControleCaixa ca = new ControleCaixa();
+        int caixa = ca.getCaixa();
         int destino = Integer.parseInt(mesaDestino);
         int pedi = Integer.parseInt(pedido);
         int des = getVenda(destino);
         if (des == 0) {
-            des = abrirMesa(mesaDestino);
+            des = abrirMesa(mesaDestino, caixa);
         }
         p.transferir(pedi, getVenda(destino));
         return "Sucesso";
@@ -135,7 +147,7 @@ public class ControleVenda {
         pro.setMotivo(motivo);
         pro.setTime(Time.getTime());
         pro.setFuncionario(funcionario);
-       
+
         int ex = e.inserirExclusao(pro);
         p.excluir(Integer.parseInt(pedido), ex);
         return "sucesso!";
@@ -177,9 +189,9 @@ public class ControleVenda {
     }
 
     public String isMesasAbertas() {
-       ControleCaixa cc = new ControleCaixa();
+        ControleCaixa cc = new ControleCaixa();
         VendaDAO ven = new VendaDAO();
-        return ven.isVendasAbertas(cc.getCaixa()); 
+        return ven.isVendasAbertas(cc.getCaixa());
     }
 
 }

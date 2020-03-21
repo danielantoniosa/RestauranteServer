@@ -20,6 +20,16 @@ public class CaixaBEAN {
     private float trocoFin;
     private String status;
     private int funcioanrio;
+    private int empresa;
+
+    public int getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(int empresa) {
+        this.empresa = empresa;
+    }
+    
 
     public int getFuncioanrio() {
         return funcioanrio;
