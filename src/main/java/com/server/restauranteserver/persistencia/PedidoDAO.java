@@ -283,7 +283,7 @@ public void mudarStatusAtrazado(int pedido) {
     }
 public void mudarStatusRealizado(int pedido) {
         String sql = "update pedido set pedStatus = 'Realizado'  "
-                + "where pedCodigo = " + pedido + " ;";
+                + "where pedCodigo = " + pedido + "  ;";
 
         try {
             stmt = connection.prepareStatement(sql);

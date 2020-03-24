@@ -17,7 +17,7 @@ import java.sql.SQLException;
  */
 public class SharedPreferences {
 
-    private  Connection connection;
+    private Connection connection;
 
     private PreparedStatement stmt;
 
@@ -25,7 +25,7 @@ public class SharedPreferences {
         this.connection = ConnectionFactory.getConnection();
     }
 
-    public  void inserir(int cod) {
+    public void inserir(int cod) {
         String sql = "insert into shared_preferences (empCodigo)values (?);";
         try {
             stmt = connection.prepareStatement(sql);
@@ -39,6 +39,8 @@ public class SharedPreferences {
     }
 
     public int listar() {
+        Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt;
         int cod = 0;
         String sql = "select * from shared_preferences ;";
         try {
@@ -54,7 +56,7 @@ public class SharedPreferences {
         return cod;
     }
 
-    public  void excluir() {
+    public void excluir() {
         String sql = "delete from shared_preferences where empCodigo > 0;";
         try {
             stmt = connection.prepareStatement(sql);

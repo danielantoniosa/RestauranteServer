@@ -7,7 +7,6 @@ package com.server.restauranteserver.controle;
 
 import com.server.restauranteserver.beans.Caixa;
 import com.server.restauranteserver.beans.CaixaBEAN;
-import com.server.restauranteserver.beans.SharedPreferencesEmpresaBEAN;
 import com.server.restauranteserver.persistencia.CaixaDAO;
 
 import com.server.restauranteserver.util.Time;
@@ -21,29 +20,20 @@ public class ControleCaixa {
     private final CaixaDAO c = new CaixaDAO();
     //
 
-    public String isCaixaAberto() {
+    public int isCaixaAberto() {
         int cc = SharedPreferencesControl.listarEmpresa();
         CaixaBEAN caixa = c.listar(cc);
-        if (caixa.getCodigo() != 0) {
-            return "true";
-        } else {
-            return "false";
-        }
+        return caixa.getCodigo();
     }
 
     public int getCaixa() {
-        if (isCaixaAberto().equals("true")) {
-            CaixaBEAN ca = this.listar();
-            return ca.getCodigo();
-        } else {
-            return 0;
-        }
+        return isCaixaAberto();
     }
 
     public String abrirCaixa(CaixaBEAN ca) {
         int caixa = SharedPreferencesControl.listarEmpresa();
         ca.setEmpresa(caixa);
-        if (isCaixaAberto().equals("false")) {
+        if (isCaixaAberto() == 0) {
             c.abrirCaixa(ca);
             return "Abriu!!";
         } else {
@@ -67,10 +57,10 @@ public class ControleCaixa {
     }
 
     public String getSaldoAtual() {
-        int caixa = SharedPreferencesControl.listarEmpresa();
-
-        if (isCaixaAberto().equals("true")) {
-            float saldo = c.getSaldoAtual(getCaixa(), caixa);
+        int emp = SharedPreferencesControl.listarEmpresa();
+        int caixa = getCaixa();
+        if (caixa > 0) {
+            float saldo = c.getSaldoAtual(caixa, emp);
             return saldo + "";
         } else {
             return "-1";

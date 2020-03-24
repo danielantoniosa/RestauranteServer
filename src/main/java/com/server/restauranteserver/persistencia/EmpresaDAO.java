@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 /**
  *
  * @author Daniel
@@ -127,7 +128,7 @@ public class EmpresaDAO {
     public int login(String email, String senha) {
         int cod = 0;
         String sql = "select empCodigo from empresa where empEmail = '" + email + "' and empSenha = '" + senha + "';";
-
+        System.out.println(sql);
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
