@@ -70,5 +70,8 @@ public class ControleFuncionario {
     public FuncionarioBEAN listarUm(String cod) {
         return f.localizar(Integer.parseInt(cod));
     }
+    public FuncionarioBEAN listarUm(int cod) {
+        return f.localizar(cod);
+    }
 
 }

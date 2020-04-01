@@ -5,6 +5,7 @@
  */
 package com.server.restauranteserver.controle;
 
+import com.google.zxing.WriterException;
 import com.server.restauranteserver.beans.ExcluzaoBEAN;
 import com.server.restauranteserver.beans.Mesa;
 import com.server.restauranteserver.beans.PedidoBEAN;
@@ -12,7 +13,10 @@ import com.server.restauranteserver.beans.ProdutosGravados;
 import com.server.restauranteserver.beans.VendaBEAN;
 import com.server.restauranteserver.persistencia.PedidoDAO;
 import com.server.restauranteserver.persistencia.VendaDAO;
+import com.server.restauranteserver.util.QRCode;
 import com.server.restauranteserver.util.Time;
+import com.server.restauranteserver.util.Util;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -45,7 +49,7 @@ public class ControleVenda {
         return ven.abrirMesa(v);
     }
 
-    public String adicionar(PedidoBEAN venda) {
+    public String adicionar(PedidoBEAN venda) throws WriterException, IOException {
         int mesa = venda.getVenda();
         ControleCaixa cc = new ControleCaixa();
         int caixa = cc.getCaixa();
@@ -93,7 +97,7 @@ public class ControleVenda {
         }
     }
 
-    public String transferirMesa(String origem, String destino) {
+    public String transferirMesa(String origem, String destino) throws WriterException, IOException {
         VendaDAO ven = new VendaDAO();
         PedidoDAO p = new PedidoDAO();
         ControleCaixa ca = new ControleCaixa();
@@ -113,20 +117,23 @@ public class ControleVenda {
         return ven.getVenda(mesa, cc.getCaixa());
     }
 
-    private int abrirMesa(String mesa, int caixa) {
+    private int abrirMesa(String mesa, int caixa) throws WriterException, IOException {
         VendaDAO ven = new VendaDAO();
         VendaBEAN v = new VendaBEAN();
         v.setCaixa(caixa);
         v.setCheckIn(getHoraAtual());
         v.setMesa(Integer.parseInt(mesa));
-        return ven.abrirMesa(v);
+        int venda = ven.abrirMesa(v);
+        byte[] qr = QRCode.getQRCodeImage(Util.geraStringQRCodeVenda(venda, Integer.parseInt(mesa)), 350, 350);
+        ven.inserirQRCode(qr,venda);
+        return venda;
     }
 
     private String getHoraAtual() {
         return Time.getTime();
     }
 
-    public String transferirPedido(String mesaDestino, String pedido) {
+    public String transferirPedido(String mesaDestino, String pedido) throws WriterException, IOException {
         PedidoDAO p = new PedidoDAO();
         ControleCaixa ca = new ControleCaixa();
         int caixa = ca.getCaixa();

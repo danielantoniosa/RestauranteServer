@@ -5,34 +5,31 @@
  */
 package com.server.restauranteserver.servlets;
 
+import com.server.restauranteserver.beans.FuncionarioBEAN;
 import com.google.gson.Gson;
-import com.server.restauranteserver.beans.ExcluzaoBEAN;
-import com.server.restauranteserver.beans.Pedido;
-import com.server.restauranteserver.controle.ControleExcluzao;
+import com.server.restauranteserver.beans.SharedPreferencesBEAN;
 import com.server.restauranteserver.controle.ControleLogin;
-import com.server.restauranteserver.controle.ControlePedido;
-import com.server.restauranteserver.controle.ControleVenda;
+import com.server.restauranteserver.controle.ControleFuncionario;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author Daniel
+ * @author Guilherme
  */
-@WebServlet(name = "AlterarPedido", urlPatterns = {"/restaurante_server/AlterarPedido"}, initParams = {
+@WebServlet(name = "FazLoginGarcom", urlPatterns = {"/restaurante_server/FazLoginGarcom"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
-    @WebInitParam(name = "senha", value = ""),
-    @WebInitParam(name = "pedido", value = "")})
-public class AlterarPedido extends HttpServlet {
+    @WebInitParam(name = "senha", value = "")})
+public class FazLoginGarcom extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControlePedido con = new ControlePedido();
+    ControleFuncionario f = new ControleFuncionario();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -42,18 +39,17 @@ public class AlterarPedido extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
-        System.out.println("Passou pelo alterar pedido");
+        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            ArrayList<Pedido> u = con.alterarPedido(request.getParameter("pedido"),cod);
+            FuncionarioBEAN u = f.listarUm(cod);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-            ArrayList<Pedido> u = null;
+            FuncionarioBEAN u = null;
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));
@@ -69,4 +65,5 @@ public class AlterarPedido extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
 }

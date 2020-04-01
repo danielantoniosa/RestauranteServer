@@ -6,12 +6,15 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
+import com.google.zxing.WriterException;
 import com.server.restauranteserver.beans.Mesa;
 
 import com.server.restauranteserver.controle.ControleLogin;
 import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -44,7 +47,11 @@ public class TransferirMesa extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            response.setHeader("sucesso", con.transferirMesa(request.getParameter("mesaOrigem"), request.getParameter("mesaDestino")));
+            try {
+                response.setHeader("sucesso", con.transferirMesa(request.getParameter("mesaOrigem"), request.getParameter("mesaDestino")));
+            } catch (WriterException ex) {
+                Logger.getLogger(TransferirMesa.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         } else {
             response.setHeader("auth", "0");

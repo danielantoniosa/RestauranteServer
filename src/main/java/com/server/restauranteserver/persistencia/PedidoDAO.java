@@ -30,18 +30,17 @@ public class PedidoDAO {
 
     public boolean adicionar(PedidoBEAN c) {
         String sql = "INSERT INTO pedido (pedTime, pedQTD,"
-                + " pedObs,pedImpresso,ped_proCodigo,ped_venCodigo,pedStatus )"
-                + " VALUES (?, ?, ?, ?, ?, ?,?);";
+                + " pedObs,ped_proCodigo,ped_venCodigo,pedStatus )"
+                + " VALUES (?, ?, ?, ?, ?, ?);";
 
         try {
             stmt = connection.prepareStatement(sql);
             stmt.setString(1, c.getTime());
             stmt.setFloat(2, c.getQuantidade());
             stmt.setString(3, c.getObservacao());
-            stmt.setString(4, "of");
-            stmt.setInt(5, c.getProduto());
-            stmt.setInt(6, c.getVenda());
-            stmt.setString(7, "Pendente");
+            stmt.setInt(4, c.getProduto());
+            stmt.setInt(5, c.getVenda());
+            stmt.setString(6, "Pendente");
             stmt.execute();
             stmt.close();
             return true;
@@ -63,7 +62,7 @@ public class PedidoDAO {
                 ca.setTime(rs.getString(2));
                 ca.setQuantidade(rs.getFloat(3));
                 ca.setObservacao(rs.getString(4));
-                ca.setImpresso(rs.getString(5));
+                ca.setTimeF(rs.getString(5));
                 ca.setExcluzao(rs.getInt(6));
                 ca.setProduto(rs.getInt(7));
                 ca.setVenda(rs.getInt(8));
@@ -137,7 +136,7 @@ public class PedidoDAO {
     public ArrayList<Pedido> listarPedidosAbertos(int empresa, int caixa) {
         ArrayList<Pedido> c = new ArrayList<Pedido>();
 
-        String sql = "SELECT pedCodigo,proNome,venMesa,pedQTD, pedTime,proPreparo,pedObs\n"
+        String sql = "SELECT pedCodigo,proNome,venMesa,pedQTD, pedTime,proPreparo,pedObs,pedTimeF\n"
                 + "                FROM empresa join caixa join venda join pedido join produto\n"
                 + "                where\n"
                 + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
@@ -154,6 +153,7 @@ public class PedidoDAO {
                 ca.setHora_pedido(rs.getString(5));
                 ca.setTempo_preparo(rs.getString(6));
                 ca.setObservacao(rs.getString(7));
+                ca.setHora_final(rs.getString(8));
                 c.add(ca);
             }
             stmt.close();
@@ -166,7 +166,7 @@ public class PedidoDAO {
     public ArrayList<Pedido> listarPedidosAtrazados(int empresa, int caixa) {
         ArrayList<Pedido> c = new ArrayList<Pedido>();
 
-        String sql = "SELECT pedCodigo,proNome,venMesa,pedQTD, pedTime,proPreparo,pedObs\n"
+        String sql = "SELECT pedCodigo,proNome,venMesa,pedQTD, pedTime,proPreparo,pedObs,pedTimeF\n"
                 + "                FROM empresa join caixa join venda join pedido join produto\n"
                 + "                where\n"
                 + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
@@ -176,13 +176,14 @@ public class PedidoDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
-                ca.setCodigo(rs.getInt(1));
+                 ca.setCodigo(rs.getInt(1));
                 ca.setProduto(rs.getString(2));
                 ca.setMesa(rs.getInt(3));
                 ca.setQuantidade(rs.getFloat(4));
                 ca.setHora_pedido(rs.getString(5));
                 ca.setTempo_preparo(rs.getString(6));
                 ca.setObservacao(rs.getString(7));
+                ca.setHora_final(rs.getString(8));
                 c.add(ca);
             }
             stmt.close();
@@ -195,7 +196,7 @@ public class PedidoDAO {
     public ArrayList<Pedido> listarPedidosRealizados(int empresa, int caixa) {
         ArrayList<Pedido> c = new ArrayList<Pedido>();
 
-        String sql = "SELECT pedCodigo,proNome,venMesa,pedQTD, pedTime,proPreparo,pedObs\n"
+        String sql = "SELECT pedCodigo,proNome,venMesa,pedQTD, pedTime,proPreparo,pedObs,pedTimeF\n"
                 + "                FROM empresa join caixa join venda join pedido join produto\n"
                 + "                where\n"
                 + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
@@ -205,13 +206,14 @@ public class PedidoDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
-                ca.setCodigo(rs.getInt(1));
+                  ca.setCodigo(rs.getInt(1));
                 ca.setProduto(rs.getString(2));
                 ca.setMesa(rs.getInt(3));
                 ca.setQuantidade(rs.getFloat(4));
                 ca.setHora_pedido(rs.getString(5));
                 ca.setTempo_preparo(rs.getString(6));
                 ca.setObservacao(rs.getString(7));
+                ca.setHora_final(rs.getString(8));
                 c.add(ca);
             }
             stmt.close();
@@ -233,7 +235,7 @@ public class PedidoDAO {
                 ca.setTime(rs.getString(2));
                 ca.setQuantidade(rs.getFloat(3));
                 ca.setObservacao(rs.getString(4));
-                ca.setImpresso(rs.getString(5));
+                ca.setTimeF(rs.getString(5));
                 ca.setExcluzao(rs.getInt(6));
                 ca.setProduto(rs.getInt(7));
                 ca.setVenda(rs.getInt(8));
@@ -281,9 +283,9 @@ public void mudarStatusAtrazado(int pedido) {
         }
 
     }
-public void mudarStatusRealizado(int pedido) {
-        String sql = "update pedido set pedStatus = 'Realizado'  "
-                + "where pedCodigo = " + pedido + "  ;";
+public void mudarStatusRealizado(int pedido,String horas) {
+        String sql = "update pedido set pedStatus = 'Realizado', pedTimeF ='"+horas+"'  "
+                + "where pedCodigo = " + pedido + ";";
 
         try {
             stmt = connection.prepareStatement(sql);

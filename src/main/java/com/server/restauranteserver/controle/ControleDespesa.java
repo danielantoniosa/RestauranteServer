@@ -8,15 +8,13 @@ package com.server.restauranteserver.controle;
 import com.server.restauranteserver.beans.DespesaBEAN;
 import com.server.restauranteserver.persistencia.DespesaDAO;
 import java.util.ArrayList;
-import persistencia.DespesaDiaDAO;
+
 
 /**
  *
  * @author Daniel
  */
 public class ControleDespesa {
-
-    private DespesaDiaDAO desdia = new DespesaDiaDAO();
     private DespesaDAO d = new DespesaDAO();
     private ControleCaixa c = new ControleCaixa();
 

@@ -18,7 +18,7 @@ public class PedidoBEAN {
     private String time;
     private Float quantidade;
     private String observacao;
-    private  String impresso;
+    private  String timeF;
     private int excluzao;
     private int produto;
     private int venda;
@@ -55,13 +55,14 @@ public class PedidoBEAN {
         this.observacao = observacao;
     }
 
-    public String getImpresso() {
-        return impresso;
+    public String getTimeF() {
+        return timeF;
     }
 
-    public void setImpresso(String impresso) {
-        this.impresso = impresso;
+    public void setTimeF(String timeF) {
+        this.timeF = timeF;
     }
+
 
     public int getExcluzao() {
         return excluzao;

@@ -15,7 +15,7 @@ public class Pedido {
     //se está atrazado, finalizado, ou preparando
     private String status;
     private String observacao;
-    private String tempo_gasto;
+    private String hora_final;
 
     public int getMesa() {
         return mesa;
@@ -24,15 +24,15 @@ public class Pedido {
     public void setMesa(int mesa) {
         this.mesa = mesa;
     }
+
+    public String getHora_final() {
+        return hora_final;
+    }
+
+    public void setHora_final(String hora_final) {
+        this.hora_final = hora_final;
+    }
     
-
-    public String getTempo_gasto() {
-        return tempo_gasto;
-    }
-
-    public void setTempo_gasto(String tempo_gasto) {
-        this.tempo_gasto = tempo_gasto;
-    }
 
     public int getCodigo() {
         return codigo;

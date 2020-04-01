@@ -6,6 +6,7 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.GsonBuilder;
+import com.google.zxing.WriterException;
 import com.server.restauranteserver.beans.CaixaBEAN;
 import com.server.restauranteserver.beans.PedidoBEAN;
 import com.server.restauranteserver.beans.SangriaBEAN;
@@ -14,6 +15,8 @@ import com.server.restauranteserver.controle.ControleLogin;
 import com.server.restauranteserver.controle.ControleSangria;
 import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -46,7 +49,11 @@ public class InserirPedidoMesa extends HttpServlet {
         if (cod > 0) {
             response.setHeader("auth", "1");
             PedidoBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("pedido"), PedidoBEAN.class);
-            response.setHeader("sucesso", con.adicionar(c));
+            try {
+                response.setHeader("sucesso", con.adicionar(c));
+            } catch (WriterException ex) {
+                Logger.getLogger(InserirPedidoMesa.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         } else {
             response.setHeader("auth", "0");

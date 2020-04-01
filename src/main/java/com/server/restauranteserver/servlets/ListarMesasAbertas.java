@@ -39,8 +39,9 @@ public class ListarMesasAbertas extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int codE = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
-        if (cod > 0) {
+        if (cod > 0 || codE > 0) {
             response.setHeader("auth", "1");
             ArrayList<Mesa> u = con.getMesasAbertas();
             response.setContentType("application/json");

@@ -73,12 +73,9 @@ public class ControlePedido {
     }
 
     public ArrayList<Pedido> alterarPedido(String p, int emp) {
-        ControleCaixa cai = new ControleCaixa();
         PedidoDAO ped = new PedidoDAO();
-        int caixa = cai.getCaixa();
-        ped.mudarStatusRealizado(Integer.parseInt(p));
-        ArrayList<Pedido> pedidos = ped.listarPedidosAbertos(emp, caixa);
-        return pedidos;
+        ped.mudarStatusRealizado(Integer.parseInt(p),Horas.getTime());
+        return listarPedidos(emp);
     }
 
     public ArrayList<Pedido> listarPedidosRealizados(int emp) {

@@ -1,6 +1,9 @@
 package com.server.restauranteserver.util;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.util.Calendar;
+import java.util.Date;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -44,4 +47,13 @@ public class Horas {
         }
     }
 
+    public static String getTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        Date data = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(data);
+        Date data_atual = cal.getTime();
+        String hora_atual = dateFormat.format(data_atual);       
+        return hora_atual;
+    }
 }

@@ -304,10 +304,11 @@ public class FuncionarioDAO {
 
     public int Login(String email, String senha, int emp) {
         String sql = "select funCodigo from funcionario join admicao where adm_funCodigo = funCodigo and funEmail = '" + email
-                + "' and funSenha = md5('" + senha + "') and adm_empCodigo = " + emp + ";";
+                + "' and funSenha = '" + senha + "' and adm_empCodigo = " + emp + ";";
+        System.out.println(sql);
         int codigo = 0;
         try {
-            stmt = connection.prepareStatement(sql); 
+            stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 codigo = rs.getInt(1);

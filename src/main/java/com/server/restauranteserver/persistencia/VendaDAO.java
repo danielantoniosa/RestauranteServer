@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -29,21 +30,43 @@ public class VendaDAO {
     }
 
     public int abrirMesa(VendaBEAN c) {
+        int lastId = 0;
         String sql = "insert into venda(venCheckIn,venMesa,ven_caiCodigo, venStatus) values (?,?,?,?)";
         System.out.println(" check in " + c.getCheckIn() + " mesa " + c.getMesa() + " caixa " + c.getCaixa());
         try {
-            stmt = connection.prepareStatement(sql);
+            stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, c.getCheckIn());
             stmt.setInt(2, c.getMesa());
             stmt.setInt(3, c.getCaixa());
             stmt.setString(4, "aberta");
-            stmt.execute();
+            stmt.executeUpdate();
+            final ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                lastId = rs.getInt(1);
+            }
+
             stmt.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return getVenda(c.getCheckIn(), c.getCaixa());
+        
+        return lastId;
+    }
+    //INSERE QRCODE NA VENDA
+    public void inserirQRCode(byte[] qr, int cod) {
+        String sql = "update venda set venQRcode = " + qr+ "  where venCodigo = " + cod + ";";
+        try {
+            stmt = connection.prepareStatement(sql);
+            int l = stmt.executeUpdate();
+            stmt.close();
+            if (l > 0) {
+                System.out.println("Foram alterados " + l + " linhas");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private int getVenda(String hora, int caixa) {
@@ -72,7 +95,7 @@ public class VendaDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 v.setCodigo(rs.getInt(1));
-                v.setQRcode(rs.getString(2));
+                v.setQRcode(rs.getBytes(2));
                 v.setCheckIn(rs.getString(3));
                 v.setCheckOut(rs.getString(4));
                 v.setValor(rs.getFloat(5));
@@ -94,21 +117,24 @@ public class VendaDAO {
     public ArrayList<Mesa> listarMesasAbertas(int caixa) {
         ArrayList<Mesa> c = new ArrayList<>();
 
-        String sql = "select (venMesa) as mesa ,\n"
-                + "					 COALESCE((select  sum(pedQTD*proPreco) \n"
-                + "						from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and ven_caiCodigo= " + caixa + " and venStatus = 'aberta' and ped_excCodigo is null and mesa = venMesa ),0) as valor  \n"
-                + "	from\n"
-                + "		caixa join venda join pedido join produto \n"
-                + "	where\n"
-                + "		caiCodigo = ven_caiCodigo and ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and ven_caiCodigo = " + caixa + " and caiStatus = 'aberto'and venStatus = 'aberta'  \n"
-                + "			group by venMesa;";
+        String sql = "select (venMesa) as mesa , venStatus,\n"
+                + "COALESCE((select  sum(pedQTD*proPreco) \n"
+                + "from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo "
+                + "and ven_caiCodigo= " + caixa + " and venStatus = 'aberta' and ped_excCodigo is null and mesa = venMesa ),0) "
+                + "as valor from\n"
+                + "caixa join venda join pedido join produto \n"
+                + "where \n"
+                + "caiCodigo = ven_caiCodigo and ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and ven_caiCodigo = " + caixa +
+                " and caiStatus = 'aberto'and venStatus = 'aberta'  \n"
+                + "group by venMesa;";
         try {
             stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Mesa ca = new Mesa();
                 ca.setMesa(rs.getInt(1));
-                ca.setValor(rs.getFloat(2));
+                ca.setStatus(rs.getString(2));
+                ca.setValor(rs.getFloat(3));
                 c.add(ca);
             }
             stmt.close();
@@ -218,7 +244,7 @@ public class VendaDAO {
             while (rs.next()) {
                 VendaBEAN v = new VendaBEAN();
                 v.setCodigo(rs.getInt(1));
-                v.setQRcode(rs.getString(2));
+                v.setQRcode(rs.getBytes(2));
                 v.setCheckIn(rs.getString(3));
                 v.setCheckOut(rs.getString(4));
                 v.setValor(rs.getFloat(5));

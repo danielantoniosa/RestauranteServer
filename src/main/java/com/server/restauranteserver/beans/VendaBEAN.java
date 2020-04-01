@@ -11,7 +11,7 @@ package com.server.restauranteserver.beans;
  */
 public class VendaBEAN {
     private int codigo;
-    private String QRcode;
+    private byte[] QRcode;
     private String checkIn;
     private String checkOut;
     private float valor;
@@ -45,13 +45,14 @@ public class VendaBEAN {
         this.codigo = codigo;
     }
 
-    public String getQRcode() {
+    public byte[] getQRcode() {
         return QRcode;
     }
 
-    public void setQRcode(String QRcode) {
+    public void setQRcode(byte[] QRcode) {
         this.QRcode = QRcode;
     }
+
 
     public String getCheckIn() {
         return checkIn;
