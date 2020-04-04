@@ -62,7 +62,35 @@ public class FuncionarioDAO {
             throw new RuntimeException(e);
         }
     }
+    public int adicionarAdm(FuncionarioBEAN c) {
+        int i = 0;
+        String sql = "INSERT INTO funcionario ("
+                + "funEmail,funSenha,funLogradouro,"
+                + "funNumero, funBairro, funComplemento, funCidade, funUF, funCEP)"
+                + " VALUES (?,md5(?), ?, ?, ?, ?, ?,?,?);";
 
+        try {
+            stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, c.getEmail());
+            stmt.setString(2, c.getSenha());
+            stmt.setString(3, c.getLogradouro());
+            stmt.setString(4, c.getNumero());
+            stmt.setString(5, c.getBairro());
+            stmt.setString(6, c.getComplemento());
+            stmt.setString(7, c.getCidade());
+            stmt.setString(8, c.getUf());
+            stmt.setString(9, c.getCep());
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                i = rs.getInt(1);
+            }
+            stmt.close();
+            return i;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public ArrayList<FuncionarioBEAN> listarALl(int emp) {
         ArrayList<FuncionarioBEAN> c = new ArrayList<>();
 
@@ -185,22 +213,31 @@ public class FuncionarioDAO {
         }
     }
 
-    /* public void editar(FuncionarioBEAN c) {
-        String sql = "update funcionario set funSalario = ? , funDataAdimicao"
-                + " = ? , funDataNascimento = ? , funTelefone = ?,"
-                + "funEndereco= ?, funUniforme = ?, funSenha = ?"
+    public void editar(FuncionarioBEAN c) {
+        String sql = "update funcionario set funDataNascimento = ? , funTelefone = ? ,"
+                + " funNome = ? ,funEmail = ? , funCPF = ? , funRG = ? , funSenha = ? ,funLogradouro = ? ,"
+                + "funNumero = ? , funBairro = ? , funComplemento = ? , funCidade = ? , funUF = ? , funCEP = ?, funFoto = ? "
                 + " where funCodigo = " + c.getCodigo() + ";";
+        System.out.println(sql);
+        System.out.println("Data :" + c.getDataNacimento());
 
         try {
             stmt = connection.prepareStatement(sql);
-
-            stmt.setFloat(1, c.getSalario());
-            stmt.setString(2, c.getDataAdmicao());
-            stmt.setString(3, c.getDataNacimento());
-            stmt.setString(4, c.getTelefone());
-            stmt.setString(5, c.getEndereco());
-            stmt.setInt(7, c.getUniforme());
-            stmt.setString(12, c.getSenha());
+            stmt.setString(1, c.getDataNacimento() + "");
+            stmt.setString(2, c.getTelefone());
+            stmt.setString(3, c.getNome());
+            stmt.setString(4, c.getEmail());
+            stmt.setString(5, c.getCPF());
+            stmt.setString(6, c.getRG());
+            stmt.setString(7, c.getSenha());
+            stmt.setString(8, c.getLogradouro());
+            stmt.setString(9, c.getNumero());
+            stmt.setString(10, c.getBairro());
+            stmt.setString(11, c.getComplemento());
+            stmt.setString(12, c.getCidade());
+            stmt.setString(13, c.getUf());
+            stmt.setString(14, c.getCep());
+            stmt.setBytes(15, c.getFoto());
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -211,7 +248,8 @@ public class FuncionarioDAO {
             throw new RuntimeException(e);
         }
 
-    }*/
+    }
+
     public FuncionarioBEAN localizar(String email) {
         String sql = "select * from funcionario where funEmail = ?;";
         FuncionarioBEAN ca = new FuncionarioBEAN();

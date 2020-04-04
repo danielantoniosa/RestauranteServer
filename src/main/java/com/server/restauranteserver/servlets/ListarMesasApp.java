@@ -5,13 +5,13 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.GsonBuilder;
-import com.server.restauranteserver.beans.CargoBEAN;
-import com.server.restauranteserver.beans.FuncionarioBEAN;
-import com.server.restauranteserver.controle.ControleCargo;
-import com.server.restauranteserver.controle.ControleFuncionario;
+import com.google.gson.Gson;
+import com.server.restauranteserver.beans.Mesa;
+
 import com.server.restauranteserver.controle.ControleLogin;
+import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -23,14 +23,13 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "EditarFuncionario", urlPatterns = {"/restaurante_server/EditarFuncionario"}, initParams = {
-    @WebInitParam(name = "funcionario", value = ""),
+@WebServlet(name = "ListarMesaAberta", urlPatterns = {"/restaurante_server/ListarMesaAberta"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class EditarFuncionario extends HttpServlet {
+public class ListarMesasApp extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleFuncionario con_fun = new ControleFuncionario();
+    ControleVenda con = new ControleVenda();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -40,16 +39,28 @@ public class EditarFuncionario extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int codE = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
-        if (cod > 0) {
+        if (cod > 0 || codE > 0) {
             response.setHeader("auth", "1");
-            FuncionarioBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("funcionario"), FuncionarioBEAN.class);
-            con_fun.atuaizar(c);
-            response.setHeader("sucesso", "Sucesso");
+            ArrayList<Mesa> u = con.getMesaAberta();
+            if (u != null) {
+                //sucesso
+                response.setHeader("sucesso", "1");
+            } else {
+                //caixa não aberto
+                response.setHeader("sucesso", "0");
+            }
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-
+            ArrayList<Mesa> u = null;
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
         }
     }
 

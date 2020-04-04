@@ -8,20 +8,29 @@ package com.server.restauranteserver.beans;
 import java.sql.Time;
 import java.util.Date;
 
-
 /**
  *
  * @author Daniel
  */
 public class PedidoBEAN {
+
     private int codigo;
     private String time;
     private Float quantidade;
     private String observacao;
-    private  String timeF;
+    private String timeF;
+    private String status;
     private int excluzao;
     private int produto;
     private int venda;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public int getCodigo() {
         return codigo;
@@ -63,7 +72,6 @@ public class PedidoBEAN {
         this.timeF = timeF;
     }
 
-
     public int getExcluzao() {
         return excluzao;
     }
@@ -88,7 +96,4 @@ public class PedidoBEAN {
         this.venda = venda;
     }
 
-  
-    
-    
 }

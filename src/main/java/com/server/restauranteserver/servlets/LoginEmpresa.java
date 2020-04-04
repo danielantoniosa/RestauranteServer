@@ -39,6 +39,7 @@ public class LoginEmpresa extends HttpServlet {
         int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             SharedPreferencesEmpresaBEAN u = l.listarSharedPreferencesEmpresa(cod);
+            l.loga(cod);
             response.setHeader("auth", "1");
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

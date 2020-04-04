@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 
 /**
@@ -28,14 +29,15 @@ public class EmpresaDAO {
         this.connection = ConnectionFactory.getConnection();
     }
 
-    public String adcionar(EmpresaBEAN c) {
+    public int adcionar(EmpresaBEAN c) {
+        int i = 0;
         String sql = "INSERT INTO empresa (empRazaoSocial,empNomeFantazia,empCNPJ,empInsEstadual,"
                 + "empEmail,empTelefone,empSenha,empDataCadastro,empExpiraLicenca,empLogradouro,"
                 + "empNumero,empBairro,empComplemento,empCidade,empUF,empCEP)"
                 + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            stmt = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
 
             stmt.setString(1, c.getRazaoSocial());
             stmt.setString(2, c.getFantazia());
@@ -53,13 +55,17 @@ public class EmpresaDAO {
             stmt.setString(14, c.getCidade());
             stmt.setString(15, c.getUf());
             stmt.setString(16, c.getCep());
-            stmt.execute();
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                i = rs.getInt(1);
+            }
             stmt.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return "Sucesso!";
+        return i;
 
     }
 

@@ -8,6 +8,7 @@ package com.server.restauranteserver.controle;
 import com.server.restauranteserver.beans.AdmicaoBEAN;
 import com.server.restauranteserver.persistencia.AdmicaoDAO;
 import com.server.restauranteserver.persistencia.SharedPreferences;
+import com.server.restauranteserver.util.Time;
 
 /**
  *
@@ -45,5 +46,15 @@ public class ControleAdmicao {
         AdmicaoDAO a = new AdmicaoDAO();
         a.excluir(ad);
         return "sucesso";
+    }
+
+   public void admitir(int codFun, int codEmp) {
+       AdmicaoDAO a = new AdmicaoDAO();
+       AdmicaoBEAN ad = new AdmicaoBEAN();
+       ad.setEmpresa(codEmp);
+       ad.setFuncionario(codFun);
+       ad.setAdmicao(Time.getData());
+       a.admitir(ad);
+
     }
 }

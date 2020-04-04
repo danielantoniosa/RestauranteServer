@@ -50,12 +50,14 @@ public class VendaDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        
+
         return lastId;
     }
+
     //INSERE QRCODE NA VENDA
     public void inserirQRCode(byte[] qr, int cod) {
-        String sql = "update venda set venQRcode = " + qr+ "  where venCodigo = " + cod + ";";
+        String sql = "update venda set venQRcode = '" + qr + "'  where venCodigo = " + cod + ";";
+        System.out.println(sql);
         try {
             stmt = connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
@@ -114,6 +116,38 @@ public class VendaDAO {
         return v;
     }
 
+    public ArrayList<Mesa> listarMesaAberta(int caixa) {
+        ArrayList<Mesa> c = new ArrayList<>();
+
+        String sql = "select (venMesa) as mesa , venStatus, venCodigo,\n"
+                + "                COALESCE((select  sum(pedQTD*proPreco) \n"
+                + "                from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo \n"
+                + "                and ven_caiCodigo = " + caixa + " and venStatus = 'aberta' and ped_excCodigo is null and mesa = venMesa ),0) \n"
+                + "                as valor from \n"
+                + "                caixa join venda  \n"
+                + "                where  caiCodigo = ven_caiCodigo and ven_caiCodigo = " + caixa + " \n"
+                + "				and caiStatus = 'aberto'and venStatus = 'aberta'  \n"
+                + "                group by venMesa;";
+        System.out.println(sql);
+        try {
+            stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Mesa ca = new Mesa();
+                ca.setMesa(rs.getInt(1));
+                ca.setStatus(rs.getString(2));
+                ca.setVenda(rs.getInt(3));
+                ca.setValor(rs.getFloat(4));
+                c.add(ca);
+            }
+            stmt.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+        return c;
+    }
+
     public ArrayList<Mesa> listarMesasAbertas(int caixa) {
         ArrayList<Mesa> c = new ArrayList<>();
 
@@ -124,8 +158,8 @@ public class VendaDAO {
                 + "as valor from\n"
                 + "caixa join venda join pedido join produto \n"
                 + "where \n"
-                + "caiCodigo = ven_caiCodigo and ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and ven_caiCodigo = " + caixa +
-                " and caiStatus = 'aberto'and venStatus = 'aberta'  \n"
+                + "caiCodigo = ven_caiCodigo and ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and ven_caiCodigo = " + caixa
+                + " and caiStatus = 'aberto'and venStatus = 'aberta'  \n"
                 + "group by venMesa;";
         try {
             stmt = connection.prepareStatement(sql);

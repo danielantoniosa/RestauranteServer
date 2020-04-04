@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -28,28 +29,33 @@ public class PedidoDAO {
         this.connection = ConnectionFactory.getConnection();
     }
 
-    public boolean adicionar(PedidoBEAN c) {
-        String sql = "INSERT INTO pedido (pedTime, pedQTD,"
-                + " pedObs,ped_proCodigo,ped_venCodigo,pedStatus )"
+    public int adicionar(PedidoBEAN c) {
+        int i = 0;
+        String sql = "INSERT INTO pedido (pedTime,pedQTD,"
+                + " pedObs,ped_venCodigo,ped_proCodigo,pedStatus )"
                 + " VALUES (?, ?, ?, ?, ?, ?);";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, c.getTime());
             stmt.setFloat(2, c.getQuantidade());
             stmt.setString(3, c.getObservacao());
-            stmt.setInt(4, c.getProduto());
-            stmt.setInt(5, c.getVenda());
+            stmt.setInt(4, c.getVenda());
+            stmt.setInt(5, c.getProduto());
             stmt.setString(6, "Pendente");
-            stmt.execute();
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                i = rs.getInt(1);
+            }
             stmt.close();
-            return true;
+            return i;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ArrayList<PedidoBEAN> listarAll() {
+   /* public ArrayList<PedidoBEAN> listarAll() {
         ArrayList<PedidoBEAN> c = new ArrayList<PedidoBEAN>();
 
         String sql = "select * from pedido where ped_excCodigo is null;";
@@ -60,12 +66,11 @@ public class PedidoDAO {
                 PedidoBEAN ca = new PedidoBEAN();
                 ca.setCodigo(rs.getInt(1));
                 ca.setTime(rs.getString(2));
-                ca.setQuantidade(rs.getFloat(3));
-                ca.setObservacao(rs.getString(4));
+                ca.setObservacao(rs.getString(3));
+                ca.setStatus(rs.getString(4));
                 ca.setTimeF(rs.getString(5));
                 ca.setExcluzao(rs.getInt(6));
-                ca.setProduto(rs.getInt(7));
-                ca.setVenda(rs.getInt(8));
+                ca.setVenda(rs.getInt(7));
                 c.add(ca);
             }
             stmt.close();
@@ -74,36 +79,7 @@ public class PedidoDAO {
             throw new RuntimeException();
         }
         return c;
-    }
-
-    public ArrayList<ProdutosGravados> OFFImpressoAll(int mesa) {
-        ArrayList<ProdutosGravados> c = new ArrayList<ProdutosGravados>();
-
-        String sql = "SELECT ped_venCodigo,ped_proCodigo, proNome,pedQTD, pedTime,venMesa, (proPreco * pedQTD) "
-                + "FROM produto join pedido join venda"
-                + " where"
-                + " venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and pedImpresso = 'of'and venMesa=" + mesa + " and venStatus = 'aberta' and and ped_excCodigo is null;";
-        try {
-            stmt = connection.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                ProdutosGravados ca = new ProdutosGravados();
-                ca.setCodPedidVenda(rs.getInt(1));
-                ca.setCodProduto(rs.getInt(2));
-                ca.setNome(rs.getString(3));
-                ca.setQuantidade(rs.getFloat(4));
-                ca.setTime(rs.getString(5));
-                ca.setMesa(rs.getInt(6));
-                ca.setValor(rs.getFloat(7));
-                c.add(ca);
-            }
-            stmt.close();
-
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
-        return c;
-    }
+    }*/
 
     public ArrayList<ProdutosGravados> produtosMesa(int mesa) {
         ArrayList<ProdutosGravados> c = new ArrayList<ProdutosGravados>();
@@ -176,7 +152,7 @@ public class PedidoDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
-                 ca.setCodigo(rs.getInt(1));
+                ca.setCodigo(rs.getInt(1));
                 ca.setProduto(rs.getString(2));
                 ca.setMesa(rs.getInt(3));
                 ca.setQuantidade(rs.getFloat(4));
@@ -206,7 +182,7 @@ public class PedidoDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
-                  ca.setCodigo(rs.getInt(1));
+                ca.setCodigo(rs.getInt(1));
                 ca.setProduto(rs.getString(2));
                 ca.setMesa(rs.getInt(3));
                 ca.setQuantidade(rs.getFloat(4));
@@ -266,7 +242,8 @@ public class PedidoDAO {
         }
 
     }
-public void mudarStatusAtrazado(int pedido) {
+
+    public void mudarStatusAtrazado(int pedido) {
         String sql = "update pedido set pedStatus = 'Atrazado'  "
                 + "where pedCodigo = " + pedido + " ;";
 
@@ -283,8 +260,9 @@ public void mudarStatusAtrazado(int pedido) {
         }
 
     }
-public void mudarStatusRealizado(int pedido,String horas) {
-        String sql = "update pedido set pedStatus = 'Realizado', pedTimeF ='"+horas+"'  "
+
+    public void mudarStatusRealizado(int pedido, String horas) {
+        String sql = "update pedido set pedStatus = 'Realizado', pedTimeF ='" + horas + "'  "
                 + "where pedCodigo = " + pedido + ";";
 
         try {
@@ -300,6 +278,7 @@ public void mudarStatusRealizado(int pedido,String horas) {
         }
 
     }
+
     public void excluir(int codigo, int excluzao) {
         String sql = "update pedido set ped_excCodigo = " + excluzao + " where pedCodigo = " + codigo + " ;";
         try {

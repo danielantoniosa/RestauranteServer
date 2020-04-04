@@ -6,12 +6,21 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.GsonBuilder;
-import com.server.restauranteserver.beans.CargoBEAN;
-import com.server.restauranteserver.beans.FuncionarioBEAN;
-import com.server.restauranteserver.controle.ControleCargo;
-import com.server.restauranteserver.controle.ControleFuncionario;
+import com.google.gson.reflect.TypeToken;
+import com.google.zxing.WriterException;
+import com.server.restauranteserver.beans.DespesaBEAN;
+import com.server.restauranteserver.beans.ItemBEAN;
+import com.server.restauranteserver.beans.PedidoBEAN;
+import com.server.restauranteserver.controle.ControleAdmicao;
+import com.server.restauranteserver.controle.ControleItem;
 import com.server.restauranteserver.controle.ControleLogin;
+import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -23,14 +32,15 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "EditarFuncionario", urlPatterns = {"/restaurante_server/EditarFuncionario"}, initParams = {
-    @WebInitParam(name = "funcionario", value = ""),
+@WebServlet(name = "RealizarVenda", urlPatterns = {"/restaurante_server/RealizarVenda"}, initParams = {
+    @WebInitParam(name = "pedido", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class EditarFuncionario extends HttpServlet {
+public class RealizarVenda extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleFuncionario con_fun = new ControleFuncionario();
+    ControleVenda con = new ControleVenda();
+    ControleItem con_iten = new ControleItem();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -43,8 +53,16 @@ public class EditarFuncionario extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            FuncionarioBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("funcionario"), FuncionarioBEAN.class);
-            con_fun.atuaizar(c);
+            //ArrayList<PedidoBEAN> c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("pedido"), PedidoBEAN.class);
+            Type type = new TypeToken<ArrayList<PedidoBEAN>>() {
+            }.getType();
+            ArrayList<PedidoBEAN> i = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("despesa"), type);
+
+            try {
+                con.adicionar(i);
+            } catch (WriterException ex) {
+                Logger.getLogger(RealizarVenda.class.getName()).log(Level.SEVERE, null, ex);
+            }
             response.setHeader("sucesso", "Sucesso");
 
         } else {
@@ -61,5 +79,6 @@ public class EditarFuncionario extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }// </editor-fold>/ </editor-fold>
+
 }

@@ -18,21 +18,35 @@ import com.server.restauranteserver.util.GerarNumeros;
  */
 public class ControleFuncionario {
 
-    private FuncionarioDAO f = new FuncionarioDAO();
-
     public int funCargo(int cod) {
+        FuncionarioDAO f = new FuncionarioDAO();
         return f.funCargo(cod);
     }
 
+    public void atuaizar(FuncionarioBEAN fu) {
+        FuncionarioDAO f = new FuncionarioDAO();
+        f.editar(fu);
+    }
+
     public int cadastrar(FuncionarioBEAN fu) {
+        FuncionarioDAO f = new FuncionarioDAO();
         if (f.isExiste(fu.getEmail()) == false) {
             return f.adicionar(fu);
         } else {
             return 0;
         }
     }
+    public int cadastrarADM(FuncionarioBEAN fu) {
+        FuncionarioDAO f = new FuncionarioDAO();
+        if (f.isExiste(fu.getEmail()) == false) {
+            return f.adicionarAdm(fu);
+        } else {
+            return 0;
+        }
+    }
 
     public int gerarNumeroPonto() {
+        FuncionarioDAO f = new FuncionarioDAO();
         System.out.println("passou");
         boolean para = false;
         int valor = GerarNumeros.geraNumeroInterio(10);
@@ -48,10 +62,12 @@ public class ControleFuncionario {
     }
 
     public boolean numeroCartaoExistente(int valor) {
+        FuncionarioDAO f = new FuncionarioDAO();
         return f.numeroCartaoExistente(valor);
     }
 
     public ArrayList<FuncionarioBEAN> listarAll() {
+        FuncionarioDAO f = new FuncionarioDAO();
         SharedPreferences s = new SharedPreferences();
         int emp = s.listar();
         ArrayList<FuncionarioBEAN> retorno = f.listarALl(emp);
@@ -60,17 +76,22 @@ public class ControleFuncionario {
     }
 
     public int localizar(int parseInt) {
+        FuncionarioDAO f = new FuncionarioDAO();
         return f.localizar(parseInt).getCodigo();
     }
 
     public void excluir(int codExcluir) {
+        FuncionarioDAO f = new FuncionarioDAO();
         f.excluir(codExcluir);
     }
 
     public FuncionarioBEAN listarUm(String cod) {
+        FuncionarioDAO f = new FuncionarioDAO();
         return f.localizar(Integer.parseInt(cod));
     }
+
     public FuncionarioBEAN listarUm(int cod) {
+        FuncionarioDAO f = new FuncionarioDAO();
         return f.localizar(cod);
     }
 

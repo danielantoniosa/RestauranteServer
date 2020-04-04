@@ -49,7 +49,8 @@ public class ControleVenda {
         return ven.abrirMesa(v);
     }
 
-    public String adicionar(PedidoBEAN venda) throws WriterException, IOException {
+    public int adicionar(PedidoBEAN venda) throws WriterException, IOException {
+        int pedido = 0;
         int mesa = venda.getVenda();
         ControleCaixa cc = new ControleCaixa();
         int caixa = cc.getCaixa();
@@ -59,24 +60,30 @@ public class ControleVenda {
         int v = ven.getVenda(mesa, caixa);
         if (v != 0) {
             venda.setVenda(v);
-            p.adicionar(venda);
+            pedido = p.adicionar(venda);
         } else {
             int nvenda = abrirMesa(mesa + "", caixa);
             venda.setVenda(nvenda);
-            p.adicionar(venda);
+            pedido = p.adicionar(venda);
         }
-        return "sucesso!";
-    }
-
-    public ArrayList<ProdutosGravados> getProdutosNImpressos(int parseInt) {
-        PedidoDAO p = new PedidoDAO();
-        return p.OFFImpressoAll(parseInt);
+        return pedido;
     }
 
     public ArrayList<Mesa> getMesasAbertas() {
         VendaDAO ven = new VendaDAO();
         ControleCaixa cc = new ControleCaixa();
         return ven.listarMesasAbertas(cc.getCaixa());
+    }
+
+    public ArrayList<Mesa> getMesaAberta() {
+        VendaDAO ven = new VendaDAO();
+        ControleCaixa cc = new ControleCaixa();
+        int caixa = cc.getCaixa();
+        if (caixa > 0) {
+            return ven.listarMesaAberta(cc.getCaixa());
+        } else {
+            return null;
+        }
     }
 
     public float getValorMesa(String mesa) {
@@ -124,9 +131,34 @@ public class ControleVenda {
         v.setCheckIn(getHoraAtual());
         v.setMesa(Integer.parseInt(mesa));
         int venda = ven.abrirMesa(v);
-        byte[] qr = QRCode.getQRCodeImage(Util.geraStringQRCodeVenda(venda, Integer.parseInt(mesa)), 350, 350);
-        ven.inserirQRCode(qr,venda);
+        byte[] qr = QRCode.getQRCodeImage(mesa, 350, 350);
+        ven.inserirQRCode(qr, venda);
         return venda;
+    }
+
+    public int abrirMesa(String mesa) throws WriterException, IOException {
+        ControleCaixa cc = new ControleCaixa();
+        VendaDAO ven = new VendaDAO();
+        VendaBEAN v = new VendaBEAN();
+        int caixa = cc.getCaixa();
+        if (caixa > 0) {
+            v.setCaixa(cc.getCaixa());
+            v.setCheckIn(getHoraAtual());
+            v.setMesa(Integer.parseInt(mesa));
+            int venda = ven.getVenda(v.getMesa(), v.getCaixa());
+            if (venda == 0) {
+                int vend = ven.abrirMesa(v);
+                System.out.println("Mesa : " + mesa);
+                byte[] qr = QRCode.getQRCodeImage(v.getMesa() + "", 350, 350);
+                ven.inserirQRCode(qr, vend);
+                return vend;
+            } else {
+                return 0;
+            }
+        } else {
+            return -1;
+        }
+
     }
 
     private String getHoraAtual() {
@@ -199,6 +231,28 @@ public class ControleVenda {
         ControleCaixa cc = new ControleCaixa();
         VendaDAO ven = new VendaDAO();
         return ven.isVendasAbertas(cc.getCaixa());
+    }
+
+    public void adicionar(ArrayList<PedidoBEAN> venda) throws WriterException, IOException {
+        int mesa = venda.get(0).getVenda();
+        ControleCaixa cc = new ControleCaixa();
+        int caixa = cc.getCaixa();
+        System.out.println("caixa " + caixa);
+        PedidoDAO p = new PedidoDAO();
+        VendaDAO ven = new VendaDAO();
+        int v = ven.getVenda(mesa, caixa);
+        if (v != 0) {
+            for (PedidoBEAN pedido : venda) {
+                pedido.setVenda(v);
+                p.adicionar(pedido);
+            }
+        } else {
+            int nvenda = abrirMesa(mesa + "", caixa);
+            for (PedidoBEAN pedido : venda) {
+                pedido.setVenda(nvenda);
+                p.adicionar(pedido);
+            }
+        }
     }
 
 }

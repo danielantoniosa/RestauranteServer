@@ -39,6 +39,22 @@ public class AdmicaoDAO {
             throw new RuntimeException(e);
         }
     }
+    public boolean admitir(AdmicaoBEAN a) {
+        String sql = "INSERT INTO admicao (adm_empCodigo,adm_funCodigo,adm_carCodigo,admDataAdmicao) VALUES (?,?,?,?);";
+
+        try {
+            stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, a.getEmpresa());
+            stmt.setInt(2, a.getFuncionario());
+            stmt.setInt(3, 1);
+            stmt.setString(4, a.getAdmicao());
+            stmt.executeUpdate();
+            stmt.close();
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public boolean confirmarAdmicao(AdmicaoBEAN c) {
         String sql = "update admicao set admDataAdmicao = ?, admUniforme = ?, admNumCartao = ?,"

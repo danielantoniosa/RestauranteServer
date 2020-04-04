@@ -28,14 +28,11 @@ public class ControleLogin {
         return funcionario;
     }
 
-    public void logar(String email, String senha) {
+    public void loga(int cod) {
         SharedPreferences s = new SharedPreferences();
-        SharedPreferences s2 = new SharedPreferences();
-        int cod = autenticaEmpresa(email, senha);
-        if (cod > 0) {
-            s.excluir();
-            s2.inserir(cod);
-        }
+        s.excluir();
+        s.inserir(cod);
+
     }
 
     public int autenticaEmpresa(String email, String senha) {
@@ -63,7 +60,6 @@ public class ControleLogin {
     }
 
     public SharedPreferencesEmpresaBEAN listarSharedPreferencesEmpresa(int cod) {
-
         EmpresaDAO f = new EmpresaDAO();
         return f.localizar(cod);
     }

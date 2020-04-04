@@ -49,11 +49,11 @@ public class InserirPedidoMesa extends HttpServlet {
         if (cod > 0) {
             response.setHeader("auth", "1");
             PedidoBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("pedido"), PedidoBEAN.class);
-            try {
-                response.setHeader("sucesso", con.adicionar(c));
-            } catch (WriterException ex) {
-                Logger.getLogger(InserirPedidoMesa.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            //try {
+            // response.setHeader("sucesso", con.adicionar(c));
+            //} catch (WriterException ex) {
+            //Logger.getLogger(InserirPedidoMesa.class.getName()).log(Level.SEVERE, null, ex);
+            //}
 
         } else {
             response.setHeader("auth", "0");
