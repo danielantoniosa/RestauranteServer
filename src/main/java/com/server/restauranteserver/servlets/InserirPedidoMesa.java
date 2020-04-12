@@ -45,15 +45,12 @@ public class InserirPedidoMesa extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
             PedidoBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("pedido"), PedidoBEAN.class);
-            //try {
-            // response.setHeader("sucesso", con.adicionar(c));
-            //} catch (WriterException ex) {
-            //Logger.getLogger(InserirPedidoMesa.class.getName()).log(Level.SEVERE, null, ex);
-            //}
+
+            response.setHeader("sucesso", con.adicionar(c,cod) + "");
 
         } else {
             response.setHeader("auth", "0");

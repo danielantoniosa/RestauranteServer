@@ -23,8 +23,6 @@ public class PedidoDAO {
 
     private Connection connection;
 
-    private PreparedStatement stmt;
-
     public PedidoDAO() {
         this.connection = ConnectionFactory.getConnection();
     }
@@ -36,7 +34,7 @@ public class PedidoDAO {
                 + " VALUES (?, ?, ?, ?, ?, ?);";
 
         try {
-            stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, c.getTime());
             stmt.setFloat(2, c.getQuantidade());
             stmt.setString(3, c.getObservacao());
@@ -55,7 +53,7 @@ public class PedidoDAO {
         }
     }
 
-   /* public ArrayList<PedidoBEAN> listarAll() {
+    /* public ArrayList<PedidoBEAN> listarAll() {
         ArrayList<PedidoBEAN> c = new ArrayList<PedidoBEAN>();
 
         String sql = "select * from pedido where ped_excCodigo is null;";
@@ -80,7 +78,6 @@ public class PedidoDAO {
         }
         return c;
     }*/
-
     public ArrayList<ProdutosGravados> produtosMesa(int mesa) {
         ArrayList<ProdutosGravados> c = new ArrayList<ProdutosGravados>();
 
@@ -89,7 +86,7 @@ public class PedidoDAO {
                 + " where"
                 + " venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and venMesa=" + mesa + " and venStatus = 'aberta' and ped_excCodigo is null;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ProdutosGravados ca = new ProdutosGravados();
@@ -118,7 +115,7 @@ public class PedidoDAO {
                 + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
                 + "                and caiCodigo=" + caixa + " and empCodigo = " + empresa + " and  proTipo ='Cozinha' and pedStatus = 'Pendente' and venStatus = 'aberta' and ped_excCodigo is null;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
@@ -139,6 +136,37 @@ public class PedidoDAO {
         return c;
     }
 
+    public ArrayList<Pedido> listarPedidos(int empresa, int caixa) {
+        ArrayList<Pedido> c = new ArrayList<Pedido>();
+
+        String sql = "SELECT pedCodigo,proNome,venMesa,pedQTD, pedTime,proPreparo,pedObs,pedTimeF,pedStatus\n"
+                + "                FROM empresa join caixa join venda join pedido join produto\n"
+                + "                where\n"
+                + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
+                + "                and caiCodigo=" + caixa + " and empCodigo = " + empresa + " and  proTipo ='Cozinha' and venStatus = 'aberta' and ped_excCodigo is null;";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Pedido ca = new Pedido();
+                ca.setCodigo(rs.getInt(1));
+                ca.setProduto(rs.getString(2));
+                ca.setMesa(rs.getInt(3));
+                ca.setQuantidade(rs.getFloat(4));
+                ca.setHora_pedido(rs.getString(5));
+                ca.setTempo_preparo(rs.getString(6));
+                ca.setObservacao(rs.getString(7));
+                ca.setHora_final(rs.getString(8));
+                ca.setStatus(rs.getString(9));
+                c.add(ca);
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+        return c;
+    }
+
     public ArrayList<Pedido> listarPedidosAtrazados(int empresa, int caixa) {
         ArrayList<Pedido> c = new ArrayList<Pedido>();
 
@@ -148,7 +176,7 @@ public class PedidoDAO {
                 + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
                 + "                and caiCodigo=" + caixa + " and empCodigo = " + empresa + " and  proTipo ='Cozinha' and pedStatus = 'Atrazado' and venStatus = 'aberta' and ped_excCodigo is null;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
@@ -178,7 +206,7 @@ public class PedidoDAO {
                 + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
                 + "                and caiCodigo=" + caixa + " and empCodigo = " + empresa + " and  proTipo ='Cozinha' and pedStatus = 'Realizado' and venStatus = 'aberta' and ped_excCodigo is null;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
@@ -204,7 +232,7 @@ public class PedidoDAO {
 
         String sql = "select * from pedido where ped_proCodigo = " + produto + " and ped_venCondigo = " + venda + " and pedTime = '" + time + "' and ped_excCodigo is null;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ca.setCodigo(rs.getInt(1));
@@ -230,7 +258,7 @@ public class PedidoDAO {
                 + "where pedCodigo = " + pedido + " ;";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -248,7 +276,7 @@ public class PedidoDAO {
                 + "where pedCodigo = " + pedido + " ;";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -266,7 +294,7 @@ public class PedidoDAO {
                 + "where pedCodigo = " + pedido + ";";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -282,7 +310,7 @@ public class PedidoDAO {
     public void excluir(int codigo, int excluzao) {
         String sql = "update pedido set ped_excCodigo = " + excluzao + " where pedCodigo = " + codigo + " ;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.executeUpdate();
             stmt.close();
         } catch (SQLException e) {
@@ -294,7 +322,7 @@ public class PedidoDAO {
         String sql = "update pedido set ped_venCodigo = " + destino + "  where ped_venCodigo = " + origem + " ;";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -321,7 +349,7 @@ public class PedidoDAO {
         int mesa = 0;
         String sql = "select venMesa from venda where ven_caiCodigo = " + caixa + " and venStatus = 'aberta' and venMesa > 100 ;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 mesa = rs.getInt(1);
@@ -339,7 +367,7 @@ public class PedidoDAO {
         int mesa = 0;
         String sql = "select max(venMesa) from venda where ven_caiCodigo = " + caixa + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 mesa = rs.getInt(1);

@@ -20,8 +20,6 @@ public class CargoDAO {
 
     private Connection connection;
 
-    private PreparedStatement stmt;
-
     public CargoDAO() {
         this.connection = ConnectionFactory.getConnection();
     }
@@ -30,7 +28,7 @@ public class CargoDAO {
         String sql = "insert into cargo(carNome,carAtribuicao,carRequisitos) values (?,?,?)";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
             stmt.setString(1, c.getNome());
             stmt.setString(2, c.getAtribuicao());
@@ -48,7 +46,7 @@ public class CargoDAO {
 
         String sql = "select * from cargo;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 CargoBEAN ca = new CargoBEAN();
@@ -70,7 +68,7 @@ public class CargoDAO {
         String sql = "update cargo set carNome = ? , carAtribuicao = ? , carRequisitos = ? where carNome = '" + c.getNome() + "';";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
             stmt.setString(1, c.getNome());
             stmt.setString(2, c.getAtribuicao());
@@ -92,7 +90,7 @@ public class CargoDAO {
         CargoBEAN ca = new CargoBEAN();
         ArrayList<CargoBEAN> k = new ArrayList<CargoBEAN>();
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, i);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -113,7 +111,7 @@ public class CargoDAO {
     public void excluir(String cod) {
         String sql = "delete from cargo where carNome = ? ";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, cod);
             stmt.execute();
             stmt.close();
@@ -126,7 +124,7 @@ public class CargoDAO {
         CargoBEAN c = new CargoBEAN();
         String sql = "select carCodigo from cargo where carNome = ?;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, cargo);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -143,7 +141,7 @@ public class CargoDAO {
         CargoBEAN c = new CargoBEAN();
         String sql = "select * from cargo where carNome = ?;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, cargo);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -163,16 +161,16 @@ public class CargoDAO {
         CargoBEAN ca = new CargoBEAN();
         String sql = "select carNome from funcionario join cargo where carCodigo = fun_carCodigo and funCodigo = " + funcionario + " ;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                
+
                 ca.setCodigo(rs.getInt(1));
                 ca.setNome(rs.getString(2));
                 ca.setAtribuicao(rs.getString(3));
                 ca.setRequisito(rs.getString(4));
-               
+
             }
             stmt.close();
 

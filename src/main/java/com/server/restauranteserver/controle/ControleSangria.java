@@ -18,18 +18,18 @@ public class ControleSangria {
     private SangriaDAO s = new SangriaDAO();
     private ControleCaixa c = new ControleCaixa();
 
-    public String cadastrar(SangriaBEAN sangria) {
-        sangria.setCaixa(c.getCaixa());
+    public String cadastrar(SangriaBEAN sangria, int emp) {
+        sangria.setCaixa(c.getCaixa(emp));
         s.adicionar(sangria);
         return "Sucesso!";
     }
 
-    public ArrayList<SangriaBEAN> listarSangriasCaixa() {
-        return s.buscar(c.getCaixa());
+    public ArrayList<SangriaBEAN> listarSangriasCaixa(int emp) {
+        return s.buscar(c.getCaixa(emp));
     }
 
-    public float getTotalSangriasCaixa() {
-        return s.getTotalSangriasCaixa(c.getCaixa());
+    public float getTotalSangriasCaixa(int emp) {
+        return s.getTotalSangriasCaixa(c.getCaixa(emp));
     }
 
 }

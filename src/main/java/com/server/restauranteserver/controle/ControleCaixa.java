@@ -20,20 +20,18 @@ public class ControleCaixa {
     private final CaixaDAO c = new CaixaDAO();
     //
 
-    public int isCaixaAberto() {
-        int cc = SharedPreferencesControl.listarEmpresa();
-        CaixaBEAN caixa = c.listar(cc);
+    public int isCaixaAberto(int empresa) {
+        CaixaBEAN caixa = c.listar(empresa);
         return caixa.getCodigo();
     }
 
-    public int getCaixa() {
-        return isCaixaAberto();
+    public int getCaixa(int empresa) {
+        return isCaixaAberto(empresa);
     }
 
-    public String abrirCaixa(CaixaBEAN ca) {
-        int caixa = SharedPreferencesControl.listarEmpresa();
-        ca.setEmpresa(caixa);
-        if (isCaixaAberto() == 0) {
+    public String abrirCaixa(CaixaBEAN ca, int empCod) {
+        ca.setEmpresa(empCod);
+        if (isCaixaAberto(empCod) == 0) {
             c.abrirCaixa(ca);
             return "Abriu!!";
         } else {
@@ -42,25 +40,23 @@ public class ControleCaixa {
 
     }
 
-    public String fecharCaixa(String troco) {
+    public String fecharCaixa(String troco, int empresa) {
         CaixaBEAN ca = new CaixaBEAN();
-        ca.setCodigo(getCaixa());
+        ca.setCodigo(getCaixa(empresa));
         ca.setOut(Time.getTime());
         ca.setTrocoFin(Float.parseFloat(troco));
         c.fecharCaixa(ca);
         return "Sucesso";
     }
 
-    public CaixaBEAN listar() {
-        int caixa = SharedPreferencesControl.listarEmpresa();
-        return c.listar(caixa);
+    public CaixaBEAN listar(int empresa) {
+        return c.listar(empresa);
     }
 
-    public String getSaldoAtual() {
-        int emp = SharedPreferencesControl.listarEmpresa();
-        int caixa = getCaixa();
+    public String getSaldoAtual(int empresa) {
+        int caixa = getCaixa(empresa);
         if (caixa > 0) {
-            float saldo = c.getSaldoAtual(caixa, emp);
+            float saldo = c.getSaldoAtual(caixa, empresa);
             return saldo + "";
         } else {
             return "-1";
@@ -68,21 +64,19 @@ public class ControleCaixa {
 
     }
 
-    public String getTotalVendido() {
-        int caixa = SharedPreferencesControl.listarEmpresa();
-
-        float saldo = c.getTotalVendido(getCaixa(), caixa);
+    public String getTotalVendido(int empresa) {
+        float saldo = c.getTotalVendido(getCaixa(empresa), empresa);
         return saldo + "";
     }
 
-    public Caixa listarValoresCaixa() {
+    public Caixa listarValoresCaixa(int empresa) {
         ControleDespesa d = new ControleDespesa();
         ControleSangria s = new ControleSangria();
         Caixa c = new Caixa();
-        c.setDespesas(d.getTotalDespesasCaixa());
-        c.setSangria(s.getTotalSangriasCaixa());
-        c.setSaldo(Float.parseFloat(getSaldoAtual()));
-        c.setFaturamento(Float.parseFloat(getTotalVendido()));
+        c.setDespesas(d.getTotalDespesasCaixa(empresa));
+        c.setSangria(s.getTotalSangriasCaixa(empresa));
+        c.setSaldo(Float.parseFloat(getSaldoAtual(empresa)));
+        c.setFaturamento(Float.parseFloat(getTotalVendido(empresa)));
         return c;
     }
 }

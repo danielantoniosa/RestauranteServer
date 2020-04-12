@@ -19,8 +19,6 @@ public class AdmicaoDAO {
 
     private Connection connection;
 
-    private PreparedStatement stmt;
-
     public AdmicaoDAO() {
         this.connection = ConnectionFactory.getConnection();
     }
@@ -29,7 +27,7 @@ public class AdmicaoDAO {
         String sql = "INSERT INTO admicao (adm_empCodigo,adm_funCodigo) VALUES (?,?);";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, empresa);
             stmt.setInt(2, funcionario);
             stmt.executeUpdate();
@@ -39,11 +37,12 @@ public class AdmicaoDAO {
             throw new RuntimeException(e);
         }
     }
+
     public boolean admitir(AdmicaoBEAN a) {
         String sql = "INSERT INTO admicao (adm_empCodigo,adm_funCodigo,adm_carCodigo,admDataAdmicao) VALUES (?,?,?,?);";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, a.getEmpresa());
             stmt.setInt(2, a.getFuncionario());
             stmt.setInt(3, 1);
@@ -62,7 +61,7 @@ public class AdmicaoDAO {
                 + " and adm_empCodigo = " + c.getEmpresa() + ";";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, c.getAdmicao());
             stmt.setInt(2, c.getUniforme());
             stmt.setInt(3, c.getCartaoPonto());
@@ -82,7 +81,7 @@ public class AdmicaoDAO {
                 + " and adm_empCodigo = " + c.getEmpresa() + " and adm_carCodigo = " + c.getCargo() + ";";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, c.getSaida());
             stmt.execute();
             stmt.close();
@@ -96,7 +95,7 @@ public class AdmicaoDAO {
         AdmicaoBEAN ca = new AdmicaoBEAN();
         String sql = "select COALESCE(admDataAdmicao,''), COALESCE(admDataSaida,''), admUniforme, admNumCartao, admSalario,adm_empCodigo,adm_funCodigo,adm_carCodigo from admicao where adm_funCodigo = " + funcionario + " and adm_empCodigo = " + empresa + " ;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ca.setAdmicao(rs.getString(1));
@@ -118,11 +117,11 @@ public class AdmicaoDAO {
 
     public void excluir(AdmicaoBEAN ad) {
         System.out.println(ad.getFuncionario());
-        String sql = "delete from Admicao where adm_funCodigo = "+ad.getFuncionario()+" and adm_empCodigo = "+ad.getEmpresa()+"; ";
+        String sql = "delete from Admicao where adm_funCodigo = " + ad.getFuncionario() + " and adm_empCodigo = " + ad.getEmpresa() + "; ";
         try {
-            stmt = connection.prepareStatement(sql);
-          //  stmt.setInt(1, ad.getFuncionario());
-          //  stmt.setInt(2, ad.getEmpresa());
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            //  stmt.setInt(1, ad.getFuncionario());
+            //  stmt.setInt(2, ad.getEmpresa());
             stmt.execute();
             stmt.close();
         } catch (SQLException e) {

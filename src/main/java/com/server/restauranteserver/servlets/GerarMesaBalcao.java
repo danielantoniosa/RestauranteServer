@@ -36,10 +36,10 @@ public class GerarMesaBalcao extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            response.setHeader("sucesso", con.gerarMesaBalcao() + "");
+            response.setHeader("sucesso", con.gerarMesaBalcao(cod) + "");
 
         } else {
             response.setHeader("auth", "0");

@@ -20,7 +20,6 @@ public class PagamentoDAO {
 
     private Connection connection;
 
-    private PreparedStatement stmt;
 
     public PagamentoDAO() {
         this.connection = ConnectionFactory.getConnection();
@@ -31,7 +30,7 @@ public class PagamentoDAO {
                 + " VALUES (?,?);";
 
         try {
-            stmt = connection.prepareStatement(sql);
+              PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, c.getNome());
             stmt.setFloat(2, c.getAcrescimo());
 
@@ -48,7 +47,7 @@ public class PagamentoDAO {
 
         String sql = "select * from pagamento;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement   stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 PagamentoBEAN ca = new PagamentoBEAN();
@@ -70,7 +69,7 @@ public class PagamentoDAO {
 
         String sql = "select * from pagamento where pagCodigo = " + pedido + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement   stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ca.setCodigo(rs.getInt(1));
@@ -90,7 +89,7 @@ public class PagamentoDAO {
 
         String sql = "select * from pagamento where pagNome = '" + pedido + "';";
         try {
-            stmt = connection.prepareStatement(sql);
+             PreparedStatement  stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ca.setCodigo(rs.getInt(1));
@@ -111,7 +110,7 @@ public class PagamentoDAO {
                 + " where pagCodigo = " + c.getCodigo() + ";";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement   stmt = connection.prepareStatement(sql);
 
             stmt.setString(1, c.getNome());
             stmt.setFloat(2, c.getAcrescimo());
@@ -133,7 +132,7 @@ public class PagamentoDAO {
     public void excluir(int cod) {
         String sql = "delete from pagamento where pagCodigo = ? ";
         try {
-            stmt = connection.prepareStatement(sql);
+             PreparedStatement  stmt = connection.prepareStatement(sql);
             stmt.setInt(1, cod);
             stmt.execute();
             stmt.close();

@@ -43,7 +43,7 @@ public class ListarMesasAbertas extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0 || codE > 0) {
             response.setHeader("auth", "1");
-            ArrayList<Mesa> u = con.getMesasAbertas();
+            ArrayList<Mesa> u = con.getMesasAbertas(codE);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));

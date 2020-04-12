@@ -23,7 +23,7 @@ public class EmpresaDAO {
 
     private Connection connection;
 
-    private PreparedStatement stmt;
+
 
     public EmpresaDAO() {
         this.connection = ConnectionFactory.getConnection();
@@ -37,7 +37,7 @@ public class EmpresaDAO {
                 + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         try {
-            stmt = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement   stmt = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
 
             stmt.setString(1, c.getRazaoSocial());
             stmt.setString(2, c.getFantazia());
@@ -75,7 +75,7 @@ public class EmpresaDAO {
 
         String sql = "select * from empresa where empEmail = " + email + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+           PreparedStatement    stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 e.setCodigo(rs.getInt(1));
@@ -114,7 +114,7 @@ public class EmpresaDAO {
         String sql = "select empCodigo,empEmail, empSenha,empLogo,empNomeFantazia from empresa where empCodigo = " + cod + ";";
 
         try {
-            stmt = connection.prepareStatement(sql);
+           PreparedStatement    stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 s.setEmpCodigo(rs.getInt(1));
@@ -128,6 +128,7 @@ public class EmpresaDAO {
         } catch (SQLException e) {
             throw new RuntimeException();
         }
+        
 
     }
 
@@ -136,7 +137,7 @@ public class EmpresaDAO {
         String sql = "select empCodigo from empresa where empEmail = '" + email + "' and empSenha = '" + senha + "';";
         System.out.println(sql);
         try {
-            stmt = connection.prepareStatement(sql);
+           PreparedStatement    stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 cod = rs.getInt(1);

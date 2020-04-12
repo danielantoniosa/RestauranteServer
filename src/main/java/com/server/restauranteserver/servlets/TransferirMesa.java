@@ -44,11 +44,11 @@ public class TransferirMesa extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
             try {
-                response.setHeader("sucesso", con.transferirMesa(request.getParameter("mesaOrigem"), request.getParameter("mesaDestino")));
+                response.setHeader("sucesso", con.transferirMesa(request.getParameter("mesaOrigem"), request.getParameter("mesaDestino"),cod));
             } catch (WriterException ex) {
                 Logger.getLogger(TransferirMesa.class.getName()).log(Level.SEVERE, null, ex);
             }

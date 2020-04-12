@@ -23,8 +23,6 @@ public class VendaDAO {
 
     private Connection connection;
 
-    private PreparedStatement stmt;
-
     public VendaDAO() {
         this.connection = ConnectionFactory.getConnection();;
     }
@@ -34,7 +32,7 @@ public class VendaDAO {
         String sql = "insert into venda(venCheckIn,venMesa,ven_caiCodigo, venStatus) values (?,?,?,?)";
         System.out.println(" check in " + c.getCheckIn() + " mesa " + c.getMesa() + " caixa " + c.getCaixa());
         try {
-            stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, c.getCheckIn());
             stmt.setInt(2, c.getMesa());
             stmt.setInt(3, c.getCaixa());
@@ -59,7 +57,7 @@ public class VendaDAO {
         String sql = "update venda set venQRcode = '" + qr + "'  where venCodigo = " + cod + ";";
         System.out.println(sql);
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -75,7 +73,7 @@ public class VendaDAO {
         int cod = 0;
         String sql = "select venCodigo from venda where venCheckIn = '" + hora + "' and ven_caiCodigo =" + caixa + " ;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 cod = rs.getInt(1);
@@ -93,7 +91,7 @@ public class VendaDAO {
         VendaBEAN v = new VendaBEAN();
         String sql = "select * from venda where venCodigo = " + venda + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 v.setCodigo(rs.getInt(1));
@@ -130,7 +128,7 @@ public class VendaDAO {
                 + "                group by venMesa;";
         System.out.println(sql);
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Mesa ca = new Mesa();
@@ -162,7 +160,7 @@ public class VendaDAO {
                 + " and caiStatus = 'aberto'and venStatus = 'aberta'  \n"
                 + "group by venMesa;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Mesa ca = new Mesa();
@@ -183,7 +181,7 @@ public class VendaDAO {
         String sql = "update venda set venCheckOut = '" + c.getCheckOut() + "' , venValor = " + c.getValor() + " , venPagamento = '" + c.getPagamento() + "' "
                 + ", venStatus = 'fechada', venQRcode = '" + c.getQRcode() + "', venCusto = " + c.getCusto() + "  where venCodigo = " + c.getCodigo() + " and ven_caiCodigo = " + c.getCaixa() + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -199,7 +197,7 @@ public class VendaDAO {
         int cod = 0;
         String sql = "select venCodigo from venda where venPagamento= '" + pagamento + "' and ven_caiCodigo = " + caixa + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 cod = rs.getInt(1);
@@ -221,7 +219,7 @@ public class VendaDAO {
         int cod = 0;
         String sql = "select venCodigo from venda where venMesa = " + mesa + " and venStatus = 'aberta' and ven_caiCodigo = " + caixa + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 cod = rs.getInt(1);
@@ -238,7 +236,7 @@ public class VendaDAO {
     public void excluir(int venda) {
         String sql = "delete from venda where venCodigo = " + venda + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.execute();
             stmt.close();
         } catch (SQLException e) {
@@ -256,7 +254,7 @@ public class VendaDAO {
                 + "    and ped_proCodigo = proCodigo and caiStatus = 'aberto'and venStatus = 'aberta' and ped_excCodigo is null"
                 + " and venCodigo =" + venda + " group by venMesa;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 total = rs.getInt(1);
@@ -273,7 +271,7 @@ public class VendaDAO {
         ArrayList<VendaBEAN> vendas = new ArrayList<VendaBEAN>();
         String sql = "select * from venda where venStatus = 'fechada' and ven_caiCodigo = " + caixa + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 VendaBEAN v = new VendaBEAN();
@@ -303,7 +301,7 @@ public class VendaDAO {
         String sql = "select COALESCE(sum(venValor),0)  "
                 + "from venda where venStatus = 'fechada' and ven_caiCodigo = " + caixa + " group by ven_caiCodigo;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 total = rs.getFloat(1);
@@ -323,7 +321,7 @@ public class VendaDAO {
                 + "produto join pedido join venda where venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and venStatus = 'fechada' and ped_excCodigo is null and\n"
                 + "ven_caiCodigo = " + caixa + " group by proCodigo;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ProdutosGravados ca = new ProdutosGravados();
@@ -346,7 +344,7 @@ public class VendaDAO {
         int total = 0;
         String sql = "SELECT count(venCodigo) FROM venda where ven_caiCodigo = " + caixa + " and venStatus = 'aberta';";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 total = rs.getInt(1);

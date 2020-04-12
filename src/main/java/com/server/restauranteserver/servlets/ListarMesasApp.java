@@ -43,7 +43,7 @@ public class ListarMesasApp extends HttpServlet {
         int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0 || codE > 0) {
             response.setHeader("auth", "1");
-            ArrayList<Mesa> u = con.getMesaAberta();
+            ArrayList<Mesa> u = con.getMesaAberta(codE);
             if (u != null) {
                 //sucesso
                 response.setHeader("sucesso", "1");

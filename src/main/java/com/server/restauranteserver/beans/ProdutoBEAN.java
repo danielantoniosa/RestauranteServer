@@ -5,6 +5,7 @@
  */
 package com.server.restauranteserver.beans;
 
+import com.google.gson.annotations.SerializedName;
 import java.sql.Time;
 
 /**

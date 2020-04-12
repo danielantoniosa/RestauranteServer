@@ -6,7 +6,8 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
-import com.server.restauranteserver.beans.CaixaBEAN;
+import com.server.restauranteserver.beans.Caixa;
+import com.server.restauranteserver.controle.ControleBackup;
 import com.server.restauranteserver.controle.ControleCaixa;
 import com.server.restauranteserver.controle.ControleLogin;
 import java.io.IOException;
@@ -21,13 +22,13 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "ListarCaixa", urlPatterns = {"/restaurante_server/ListarCaixa"}, initParams = {
+@WebServlet(name = "FazBackup", urlPatterns = {"/restaurante_server/FazBackup"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class ListarCaixa extends HttpServlet {
+public class backup extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleCaixa con_caixa = new ControleCaixa();
+    ControleBackup b = new ControleBackup();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -40,14 +41,13 @@ public class ListarCaixa extends HttpServlet {
         int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            CaixaBEAN u = con_caixa.listar(cod);
+            //Caixa u = con.listarValoresCaixa();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-            CaixaBEAN u = null;
+            Caixa u = null;
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));

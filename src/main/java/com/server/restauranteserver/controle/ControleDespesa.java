@@ -35,28 +35,28 @@ public class ControleDespesa {
         return "Excluzão realizada com SUCESSO!!";
     }
 
-    public String adicionarDespesaDia(ArrayList<DespesaBEAN> dadosIncluir) {
+    public String adicionarDespesaDia(ArrayList<DespesaBEAN> dadosIncluir, int empresa) {
         for (DespesaBEAN d : dadosIncluir) {
-            this.d.adicionarDespesaDia(d, c.getCaixa());
+            this.d.adicionarDespesaDia(d, c.getCaixa(empresa));
         }
         return "Cadastro Realizado com SUCESSO!!";
 
     }
 
-    public String retirarDespesaDia(ArrayList<DespesaBEAN> dadosIncluir) {
+    public String retirarDespesaDia(ArrayList<DespesaBEAN> dadosIncluir, int empresa) {
         for (DespesaBEAN d : dadosIncluir) {
-            this.d.retirarDespesa(c.getCaixa(), d.getCodigo());
+            this.d.retirarDespesa(c.getCaixa(empresa), d.getCodigo());
         }
         return "SUCESSO!!";
 
     }
 
-    public ArrayList<DespesaBEAN> listarDespesaDia() {
-        return d.listarDespesaCaixa(c.getCaixa());
+    public ArrayList<DespesaBEAN> listarDespesaDia(int empresa) {
+        return d.listarDespesaCaixa(c.getCaixa(empresa));
     }
 
-    public Float getTotalDespesasCaixa() {
-        return d.getTotalDespesasCaixa(c.getCaixa());
+    public Float getTotalDespesasCaixa(int empresa) {
+        return d.getTotalDespesasCaixa(c.getCaixa(empresa));
     }
 
 }

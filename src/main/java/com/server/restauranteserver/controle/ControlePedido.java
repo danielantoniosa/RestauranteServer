@@ -67,21 +67,29 @@ public class ControlePedido {
     public ArrayList<Pedido> listarPedidos(int emp) {
         ControleCaixa cai = new ControleCaixa();
         PedidoDAO ped = new PedidoDAO();
-        int caixa = cai.getCaixa();
+        int caixa = cai.getCaixa(emp);
         ArrayList<Pedido> pedidos = ped.listarPedidosAbertos(emp, caixa);
+        return pedidos;
+    }
+
+    public ArrayList<Pedido> listarPedidosCaixa(int emp) {
+        ControleCaixa cai = new ControleCaixa();
+        PedidoDAO ped = new PedidoDAO();
+        int caixa = cai.getCaixa(emp);
+        ArrayList<Pedido> pedidos = ped.listarPedidos(emp, caixa);
         return pedidos;
     }
 
     public ArrayList<Pedido> alterarPedido(String p, int emp) {
         PedidoDAO ped = new PedidoDAO();
-        ped.mudarStatusRealizado(Integer.parseInt(p),Horas.getTime());
+        ped.mudarStatusRealizado(Integer.parseInt(p), Horas.getTime());
         return listarPedidos(emp);
     }
 
     public ArrayList<Pedido> listarPedidosRealizados(int emp) {
         ControleCaixa cai = new ControleCaixa();
         PedidoDAO ped = new PedidoDAO();
-        int caixa = cai.getCaixa();
+        int caixa = cai.getCaixa(emp);
         ArrayList<Pedido> pedidos = ped.listarPedidosRealizados(emp, caixa);
         return pedidos;
     }
@@ -89,7 +97,7 @@ public class ControlePedido {
     public ArrayList<Pedido> listarPedidosAtrazados(int emp) {
         ControleCaixa cai = new ControleCaixa();
         PedidoDAO ped = new PedidoDAO();
-        int caixa = cai.getCaixa();
+        int caixa = cai.getCaixa(emp);
         ArrayList<Pedido> pedidos = ped.listarPedidosAtrazados(emp, caixa);
         return pedidos;
     }

@@ -19,8 +19,6 @@ public class SharedPreferences {
 
     private Connection connection;
 
-    private PreparedStatement stmt;
-
     public SharedPreferences() {
         this.connection = ConnectionFactory.getConnection();
     }
@@ -28,7 +26,7 @@ public class SharedPreferences {
     public void inserir(int cod) {
         String sql = "insert into shared_preferences (empCodigo)values (?);";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, cod);
             stmt.execute();
             stmt.close();
@@ -39,7 +37,6 @@ public class SharedPreferences {
     }
 
     public int listar() {
-        Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt;
         int cod = 0;
         String sql = "select * from shared_preferences ;";
@@ -59,7 +56,7 @@ public class SharedPreferences {
     public void excluir() {
         String sql = "delete from shared_preferences where empCodigo > 0;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.execute();
             stmt.close();
         } catch (SQLException e) {

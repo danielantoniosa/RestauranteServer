@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "ListarPedidos", urlPatterns = {"/restaurante_server/ListarPedidos"}, initParams = {
+@WebServlet(name = "ListarPedidosCaixa", urlPatterns = {"/restaurante_server/ListarPedidosCaixa"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
 public class ListarPedidos extends HttpServlet {
@@ -44,7 +44,7 @@ public class ListarPedidos extends HttpServlet {
         int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            ArrayList<Pedido> u = con.listarPedidos(cod);
+            ArrayList<Pedido> u = con.listarPedidosCaixa(cod);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));

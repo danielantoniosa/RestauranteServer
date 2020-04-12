@@ -40,11 +40,11 @@ public class InserirSangria extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
             SangriaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("sangria"), SangriaBEAN.class);
-            response.setHeader("sucesso", con.cadastrar(c));
+            response.setHeader("sucesso", con.cadastrar(c,cod));
 
         } else {
             response.setHeader("auth", "0");

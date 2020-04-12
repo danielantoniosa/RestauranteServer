@@ -5,16 +5,10 @@
  */
 package com.server.restauranteserver.controle;
 
-import com.server.restauranteserver.persistencia.SharedPreferences;
-
 /**
  *
  * @author Daniel
  */
-public class SharedPreferencesControl {
-   /* public static int listarEmpresa() {
-        SharedPreferences s = new SharedPreferences();
-        return s.listar();
-    }*/
-
+public class ControleBackup {
+    
 }

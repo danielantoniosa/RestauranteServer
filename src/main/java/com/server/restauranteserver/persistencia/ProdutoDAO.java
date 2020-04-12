@@ -21,12 +21,9 @@ public class ProdutoDAO {
 
     private Connection connection;
 
-    private PreparedStatement stmt;
-
     public ProdutoDAO() {
         this.connection = ConnectionFactory.getConnection();
     }
-
 
     public ArrayList<Produtos> buscar(String produto) {
 
@@ -34,7 +31,7 @@ public class ProdutoDAO {
         String sql = "SELECT proCodigo,proNome, proPreco FROM produto WHERE proCodigo LIKE '" + produto + "%' or proNome LIKE '" + produto + "%';";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Produtos pp = new Produtos();
@@ -60,7 +57,7 @@ public class ProdutoDAO {
                 + " VALUES (?, ?, ?, ?, ?, ?, ?,?,?);";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
             stmt.setString(1, c.getNome());
             stmt.setFloat(2, c.getPreco());
@@ -79,12 +76,12 @@ public class ProdutoDAO {
         }
     }
 
-   public ArrayList<ProdutoBEAN> listarALl() {
+    public ArrayList<ProdutoBEAN> listarALl() {
         ArrayList<ProdutoBEAN> c = new ArrayList<ProdutoBEAN>();
 
         String sql = "select * from produto;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ProdutoBEAN ca = new ProdutoBEAN();
@@ -113,7 +110,7 @@ public class ProdutoDAO {
 
         String sql = "select * from produto where proCodigo = " + produto + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ca.setCodigo(rs.getInt(1));
@@ -140,9 +137,9 @@ public class ProdutoDAO {
                 + ", proPreparo = ? , proTipo = ?, proFoto = ? where proCodigo = " + c.getCodigo() + ";";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
-           stmt.setString(1, c.getNome());
+            stmt.setString(1, c.getNome());
             stmt.setFloat(2, c.getPreco());
             stmt.setFloat(3, c.getCusto());
             stmt.setFloat(4, c.getQuantidade());
@@ -163,16 +160,17 @@ public class ProdutoDAO {
         }
 
     }
-public ArrayList<Produtos> listarProdutos() {
+
+    public ArrayList<Produtos> listarProdutos() {
         ArrayList<Produtos> c = new ArrayList<Produtos>();
 
         String sql = "select * from produto;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Produtos ca = new Produtos();
-                 ca.setCodigo(rs.getInt(1));
+                ca.setCodigo(rs.getInt(1));
                 ca.setNome(rs.getString(2));
                 ca.setPreco(rs.getFloat(3));
                 ca.setDescricao(rs.getString(9));
@@ -186,10 +184,11 @@ public ArrayList<Produtos> listarProdutos() {
         }
         return c;
     }
+
     public void excluir(int cod) {
         String sql = "delete from produto where proCodigo = ? ";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, cod);
             stmt.execute();
             stmt.close();
@@ -197,7 +196,5 @@ public ArrayList<Produtos> listarProdutos() {
             throw new RuntimeException(e);
         }
     }
-
-    
 
 }

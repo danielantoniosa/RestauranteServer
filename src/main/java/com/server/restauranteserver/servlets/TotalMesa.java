@@ -37,10 +37,10 @@ public class TotalMesa extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
         if (cod > 0) {
             response.setHeader("auth", "1");
-            float reto = f.getValorMesa(request.getParameter("mesa"));
+            float reto = f.getValorMesa(request.getParameter("mesa"),cod);
             response.setHeader("sucesso", reto + "");
 
         } else {

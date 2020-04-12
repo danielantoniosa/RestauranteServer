@@ -22,9 +22,9 @@ public class ControleExcluzao {
         return e.inserir(pro);
     }
 
-    public ArrayList<ExcluzaoBEAN> listarExclusaoVenda(String mesa) {
+    public ArrayList<ExcluzaoBEAN> listarExclusaoVenda(String mesa, int emp) {
         ControleVenda v = new ControleVenda();
-        int venda = v.getVenda(Integer.parseInt(mesa));
+        int venda = v.getVenda(Integer.parseInt(mesa),emp);
         return e.listarExclusaoVenda(venda);
     }
 
@@ -32,8 +32,8 @@ public class ControleExcluzao {
         return e.listarUm(cod);
     }
 
-    public ArrayList<ExcluzaoBEAN> listarExclusaoCaixa() {
-        return e.listarExclusaoCaixa(caixa.getCaixa());
+    public ArrayList<ExcluzaoBEAN> listarExclusaoCaixa(int empresa) {
+        return e.listarExclusaoCaixa(caixa.getCaixa(empresa));
     }
 
 }

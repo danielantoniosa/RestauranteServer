@@ -20,8 +20,6 @@ public class SangriaDAO {
 
     private Connection connection;
 
-    private PreparedStatement stmt;
-
     public SangriaDAO() {
         this.connection = ConnectionFactory.getConnection();
     }
@@ -32,7 +30,7 @@ public class SangriaDAO {
         String sql = "SELECT * FROM sangria WHERE san_caiCodigo = " + caixa + ";";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 SangriaBEAN pp = new SangriaBEAN();
@@ -56,7 +54,7 @@ public class SangriaDAO {
         String sql = "INSERT INTO sangria (sanValor, sanTime, san_caiCodigo)"
                 + " VALUES (?, ?, ?);";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setFloat(1, c.getValor());
             stmt.setString(2, c.getTime());
             stmt.setInt(3, c.getCaixa());
@@ -73,7 +71,7 @@ public class SangriaDAO {
         String sql = "SELECT COALESCE(sum(sanValor),0) FROM sangria WHERE san_caiCodigo = " + caixa + ";";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
 

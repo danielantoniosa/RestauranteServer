@@ -19,8 +19,6 @@ public class VendaAtualDAO {
 
     private Connection connection;
 
-    private PreparedStatement stmt;
-
     public VendaAtualDAO() {
         this.connection = ConnectionFactory.getConnection();;
     }
@@ -29,7 +27,7 @@ public class VendaAtualDAO {
         String sql = "insert into venda_atual(caixa,venda,mesa) values (?,?,?)";
 
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
             stmt.setInt(1, c.getCaixa());
             stmt.setInt(2, c.getVenda());
@@ -48,7 +46,7 @@ public class VendaAtualDAO {
         VendaAtualBEAN ca = new VendaAtualBEAN();
         String sql = "select * from venda_atual;";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
 
@@ -67,7 +65,7 @@ public class VendaAtualDAO {
     public void atualiza(VendaAtualBEAN c) {
         String sql = "update venda_atual set caixa = ? , venda = ? , mesa = ?  where caixa = " + c.getCaixa() + ";";
         try {
-            stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
             stmt.setInt(1, c.getCaixa());
             stmt.setInt(2, c.getVenda());
