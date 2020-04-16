@@ -50,13 +50,16 @@ public class RealizarVenda extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        int cod = l.autenticaEmpresa(n, s);
         if (cod > 0) {
             response.setHeader("auth", "1");
             //ArrayList<PedidoBEAN> c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("pedido"), PedidoBEAN.class);
             Type type = new TypeToken<ArrayList<PedidoBEAN>>() {
             }.getType();
-            ArrayList<PedidoBEAN> i = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("pedido"), type);
+            String str = new String(request.getParameter("pedido").getBytes("iso-8859-1"), "UTF-8");
+            ArrayList<PedidoBEAN> i = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, type);
             System.out.println("pedido size  : " + i.size());
             try {
                 con.adicionar(i, cod);

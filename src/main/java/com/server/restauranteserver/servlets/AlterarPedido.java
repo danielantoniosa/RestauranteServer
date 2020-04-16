@@ -42,8 +42,9 @@ public class AlterarPedido extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
-        System.out.println("Passou pelo alterar pedido");
+        String usuario = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String senha = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        int cod = l.autenticaEmpresa(usuario, senha);
         if (cod > 0) {
             response.setHeader("auth", "1");
             ArrayList<Pedido> u = con.alterarPedido(request.getParameter("pedido"),cod);

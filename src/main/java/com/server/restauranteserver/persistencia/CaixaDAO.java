@@ -27,7 +27,7 @@ public class CaixaDAO {
 
     public boolean abrirCaixa(CaixaBEAN c) {
         String sql = "insert into caixa (caiData,caiIn,caiTrocoIn,caiStatus,cai_funCodigo,cai_empCodigo) values (?,?,?,?,?,?)";
-        System.out.println("dados fun " + c.getFuncioanrio());
+        System.out.println("dados fun " + c.getFuncionario());
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
 
@@ -35,8 +35,8 @@ public class CaixaDAO {
             stmt.setString(2, c.getIn());
             stmt.setFloat(3, c.getTrocoIn());
             stmt.setString(4, "aberto");
-            stmt.setInt(5, c.getFuncioanrio());
-            stmt.setInt(5, c.getEmpresa());
+            stmt.setInt(5, c.getFuncionario());
+            stmt.setInt(6, c.getEmpresa());
             stmt.execute();
             stmt.close();
 

@@ -11,10 +11,19 @@ package com.server.restauranteserver.beans;
  */
 public class Caixa {
 
+    private int caixa;
     private float faturamento;
     private float saldo;
     private float despesas;
     private float sangria;
+
+    public int getCaixa() {
+        return caixa;
+    }
+
+    public void setCaixa(int caixa) {
+        this.caixa = caixa;
+    }
 
     public float getFaturamento() {
         return faturamento;

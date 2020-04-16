@@ -40,10 +40,14 @@ public class CadastrarDespesas extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        String usuario = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String senha = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        
+        int cod = l.autenticaUsuario(usuario, senha);
         if (cod > 0) {
             response.setHeader("auth", "1");
-            DespesaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("despesa"), DespesaBEAN.class);
+            String str = new String (request.getParameter("despesa").getBytes ("iso-8859-1"), "UTF-8");
+            DespesaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, DespesaBEAN.class);
 
             response.setHeader("sucesso", con_des.adicionar(c));
 

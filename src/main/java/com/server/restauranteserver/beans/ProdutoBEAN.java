@@ -13,16 +13,26 @@ import java.sql.Time;
  * @author Daniel
  */
 public class ProdutoBEAN {
-private int codigo;
+    private int codigo;
 private String nome;
 private float preco;
 private float custo;
+private float quantidade;
 private String Armonizacao;
 private byte[] foto;
 private String preparo;
 private String descricao;
 private String tipo;
-private float quantidade;
+private int empresa;
+
+    public int getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(int empresa) {
+        this.empresa = empresa;
+    }
+
 
 
     public int getCodigo() {

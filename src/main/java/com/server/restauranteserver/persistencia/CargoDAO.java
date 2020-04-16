@@ -25,7 +25,7 @@ public class CargoDAO {
     }
 
     public boolean adicionar(CargoBEAN c) {
-        String sql = "insert into cargo(carNome,carAtribuicao,carRequisitos) values (?,?,?)";
+        String sql = "insert into cargo(carNome,carAtribuicao,carRequisitos,carPermicao) values (?,?,?,?)";
 
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -33,6 +33,7 @@ public class CargoDAO {
             stmt.setString(1, c.getNome());
             stmt.setString(2, c.getAtribuicao());
             stmt.setString(3, c.getRequisito());
+            stmt.setString(4, c.getPermicao());
             stmt.execute();
             stmt.close();
             return true;
@@ -54,6 +55,7 @@ public class CargoDAO {
                 ca.setNome(rs.getString(2));
                 ca.setAtribuicao(rs.getString(3));
                 ca.setRequisito(rs.getString(4));
+                ca.setPermicao(rs.getString(5));
                 c.add(ca);
             }
             stmt.close();
@@ -98,6 +100,7 @@ public class CargoDAO {
                 ca.setNome(rs.getString(2));
                 ca.setAtribuicao(rs.getString(3));
                 ca.setRequisito(rs.getString(4));
+                ca.setPermicao(rs.getString(5));
                 k.add(ca);
             }
             stmt.close();
@@ -149,6 +152,7 @@ public class CargoDAO {
                 c.setNome(rs.getString(2));
                 c.setAtribuicao(rs.getString(3));
                 c.setRequisito(rs.getString(4));
+                c.setPermicao(rs.getString(5));
             }
             stmt.close();
             return c;
@@ -170,6 +174,7 @@ public class CargoDAO {
                 ca.setNome(rs.getString(2));
                 ca.setAtribuicao(rs.getString(3));
                 ca.setRequisito(rs.getString(4));
+                ca.setPermicao(rs.getString(5));
 
             }
             stmt.close();

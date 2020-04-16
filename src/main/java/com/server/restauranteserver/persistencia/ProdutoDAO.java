@@ -25,11 +25,11 @@ public class ProdutoDAO {
         this.connection = ConnectionFactory.getConnection();
     }
 
-    public ArrayList<Produtos> buscar(String produto) {
+    public ArrayList<Produtos> buscar(String produto, int emp) {
 
         ArrayList<Produtos> p = new ArrayList<>();
-        String sql = "SELECT proCodigo,proNome, proPreco FROM produto WHERE proCodigo LIKE '" + produto + "%' or proNome LIKE '" + produto + "%';";
-
+        String sql = "SELECT proCodigo,proNome, proPreco FROM produto WHERE pro_empCodigo = " + emp + " and (proCodigo LIKE '" + produto + "%' or proNome LIKE '" + produto + "%');";
+        System.out.println(sql);
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -51,14 +51,13 @@ public class ProdutoDAO {
 
     }
 
-    public boolean adicionar(ProdutoBEAN c) {
+    public boolean adicionar(ProdutoBEAN c, int emp) {
         String sql = "INSERT INTO produto (proNome, proPreco, proCusto,proQuantidade, proDescricao, proArmonizacao,"
-                + "proPreparo,proTipo,proFoto)"
-                + " VALUES (?, ?, ?, ?, ?, ?, ?,?,?);";
+                + "proPreparo,proTipo,proFoto,pro_empCodigo)"
+                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
-
             stmt.setString(1, c.getNome());
             stmt.setFloat(2, c.getPreco());
             stmt.setFloat(3, c.getCusto());
@@ -68,6 +67,7 @@ public class ProdutoDAO {
             stmt.setString(7, c.getPreparo());
             stmt.setString(8, c.getTipo());
             stmt.setBytes(9, c.getFoto());
+            stmt.setInt(10, emp);
             stmt.execute();
             stmt.close();
             return true;
@@ -76,10 +76,10 @@ public class ProdutoDAO {
         }
     }
 
-    public ArrayList<ProdutoBEAN> listarALl() {
+    public ArrayList<ProdutoBEAN> listarALl(int emp) {
         ArrayList<ProdutoBEAN> c = new ArrayList<ProdutoBEAN>();
 
-        String sql = "select * from produto;";
+        String sql = "select * from produto where pro_empCodigo  = " + emp + ";";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -95,6 +95,7 @@ public class ProdutoDAO {
                 ca.setPreparo(rs.getString(8));
                 ca.setDescricao(rs.getString(9));
                 ca.setTipo(rs.getString(10));
+                ca.setEmpresa(rs.getInt(14));
                 c.add(ca);
             }
             stmt.close();
@@ -109,6 +110,34 @@ public class ProdutoDAO {
         ProdutoBEAN ca = new ProdutoBEAN();
 
         String sql = "select * from produto where proCodigo = " + produto + ";";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                ca.setCodigo(rs.getInt(1));
+                ca.setNome(rs.getString(2));
+                ca.setPreco(rs.getFloat(3));
+                ca.setCusto(rs.getFloat(4));
+                ca.setQuantidade(rs.getFloat(5));
+                ca.setArmonizacao(rs.getString(6));
+                ca.setFoto(rs.getBytes(7));
+                ca.setPreparo(rs.getString(8));
+                ca.setDescricao(rs.getString(9));
+                ca.setTipo(rs.getString(10));
+            }
+            stmt.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+        return ca;
+    }
+
+    public ProdutoBEAN localizar(String produto, int emp) {
+        ProdutoBEAN ca = new ProdutoBEAN();
+        ca.setCodigo(0);
+
+        String sql = "select * from produto where proNome = " + produto + " and emp_proCodigo = " + emp + ";";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -161,10 +190,10 @@ public class ProdutoDAO {
 
     }
 
-    public ArrayList<Produtos> listarProdutos() {
+    public ArrayList<Produtos> listarProdutos(int emp) {
         ArrayList<Produtos> c = new ArrayList<Produtos>();
 
-        String sql = "select * from produto;";
+        String sql = "select * from produto where pro_empCodigo = " + emp + ";";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();

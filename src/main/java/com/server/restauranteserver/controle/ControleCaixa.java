@@ -25,6 +25,11 @@ public class ControleCaixa {
         return caixa.getCodigo();
     }
 
+    public CaixaBEAN getCaixaAberto(int empresa) {
+        CaixaBEAN caixa = c.listar(empresa);
+        return caixa;
+    }
+
     public int getCaixa(int empresa) {
         return isCaixaAberto(empresa);
     }
@@ -72,7 +77,9 @@ public class ControleCaixa {
     public Caixa listarValoresCaixa(int empresa) {
         ControleDespesa d = new ControleDespesa();
         ControleSangria s = new ControleSangria();
+        int caixa = getCaixa(empresa);
         Caixa c = new Caixa();
+        c.setCaixa(caixa);
         c.setDespesas(d.getTotalDespesasCaixa(empresa));
         c.setSangria(s.getTotalSangriasCaixa(empresa));
         c.setSaldo(Float.parseFloat(getSaldoAtual(empresa)));

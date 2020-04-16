@@ -5,16 +5,13 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.Gson;
-import com.google.zxing.WriterException;
-import com.server.restauranteserver.beans.Mesa;
-
+import com.google.gson.GsonBuilder;
+import com.server.restauranteserver.beans.DespesaBEAN;
+import com.server.restauranteserver.controle.ControleDespesa;
 import com.server.restauranteserver.controle.ControleLogin;
-import com.server.restauranteserver.controle.ControleVenda;
+import com.server.restauranteserver.controle.ControleProduto;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -26,15 +23,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "TranferirPedido", urlPatterns = {"/restaurante_server/TranferirPedido"}, initParams = {
-    @WebInitParam(name = "mesaDestino", value = ""),
-    @WebInitParam(name = "pedido", value = ""),
+@WebServlet(name = "ExcluirProduto", urlPatterns = {"/restaurante_server/ExcluirProduto"}, initParams = {
+    @WebInitParam(name = "produto", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class TransferirPedido extends HttpServlet {
+public class ExcluirProduto extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleVenda con = new ControleVenda();
+    ControleProduto con_des = new ControleProduto();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,16 +40,12 @@ public class TransferirPedido extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String u = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(n, s);
-        if (cod > 0) {
+        int cod = l.autenticaUsuario(u,s);
+        if (cod > 0) {            
             response.setHeader("auth", "1");
-            try {
-                response.setHeader("sucesso", con.transferirPedido(request.getParameter("mesaDestino"), request.getParameter("pedido"), cod));
-            } catch (WriterException ex) {
-                Logger.getLogger(TransferirPedido.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            response.setHeader("sucesso", con_des.excluir(request.getParameter("produto")));
 
         } else {
             response.setHeader("auth", "0");

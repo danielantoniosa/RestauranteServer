@@ -6,15 +6,13 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
-import com.google.zxing.WriterException;
-import com.server.restauranteserver.beans.Mesa;
-
+import com.server.restauranteserver.beans.ExcluzaoBEAN;
+import com.server.restauranteserver.beans.VendaBEAN;
+import com.server.restauranteserver.controle.ControleExcluzao;
 import com.server.restauranteserver.controle.ControleLogin;
 import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -26,15 +24,13 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "TranferirPedido", urlPatterns = {"/restaurante_server/TranferirPedido"}, initParams = {
-    @WebInitParam(name = "mesaDestino", value = ""),
-    @WebInitParam(name = "pedido", value = ""),
+@WebServlet(name = "ListarVendaFinalizadaCaixa", urlPatterns = {"/restaurante_server/ListarVendaFinalizadaCaixa"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class TransferirPedido extends HttpServlet {
+public class ListarVendasFinalizadasCaixa extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleVenda con = new ControleVenda();
+    ControleVenda pro = new ControleVenda();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -46,18 +42,20 @@ public class TransferirPedido extends HttpServlet {
             throws ServletException, IOException {
         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(n, s);
+        int cod = l.autenticaEmpresa(n,s);
         if (cod > 0) {
             response.setHeader("auth", "1");
-            try {
-                response.setHeader("sucesso", con.transferirPedido(request.getParameter("mesaDestino"), request.getParameter("pedido"), cod));
-            } catch (WriterException ex) {
-                Logger.getLogger(TransferirPedido.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ArrayList<VendaBEAN> u = pro.listarVendasFechadas(cod);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-
+            ArrayList<VendaBEAN> u = null;
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
         }
     }
 

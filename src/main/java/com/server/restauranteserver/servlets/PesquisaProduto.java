@@ -22,9 +22,9 @@ import javax.swing.DefaultComboBoxModel;
  * @author Daniel
  */
 @WebServlet(name = "PesquisaProduto", urlPatterns = {"/restaurante_server/PesquisaProduto"}, initParams = {
-    @WebInitParam(name ="produto", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
-    @WebInitParam(name = "senha", value = "")})
+    @WebInitParam(name = "senha", value = ""),
+    @WebInitParam(name = "produto", value = "")})
 public class PesquisaProduto extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
@@ -38,10 +38,12 @@ public class PesquisaProduto extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        int cod = l.autenticaEmpresa(n, s);
         if (cod > 0) {
             response.setHeader("auth", "1");
-            DefaultComboBoxModel u = pro.buscar(request.getParameter("produto"));
+            DefaultComboBoxModel u = pro.buscar(request.getParameter("produto"), cod);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));

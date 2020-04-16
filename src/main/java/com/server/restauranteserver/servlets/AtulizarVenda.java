@@ -42,10 +42,13 @@ public class AtulizarVenda extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+       String usuario = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String senha = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        int cod = l.autenticaEmpresa(usuario, senha);
         if (cod > 0) {
             response.setHeader("auth", "1");
-           VendaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("venda"), VendaBEAN.class);
+            String str = new String(request.getParameter("venda").getBytes("iso-8859-1"), "UTF-8");
+           VendaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, VendaBEAN.class);
             response.setHeader("sucesso", pro.atualizaVenda(c,cod));
 
         } else {

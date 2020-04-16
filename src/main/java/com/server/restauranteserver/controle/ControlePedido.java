@@ -22,9 +22,9 @@ public class ControlePedido {
 
     private ProdutoDAO p = new ProdutoDAO();
 
-    public DefaultComboBoxModel buscar(String produto) {
+    public DefaultComboBoxModel buscar(String produto,int emp) {
         DefaultComboBoxModel modelo = new DefaultComboBoxModel();
-        ArrayList<Produtos> pe = p.buscar(produto);
+        ArrayList<Produtos> pe = p.buscar(produto, emp);
         for (Produtos p : pe) {
             modelo.addElement(p.getCodigo() + " : " + p.getNome() + " : R$ " + p.getPreco());
 
@@ -33,12 +33,12 @@ public class ControlePedido {
         return modelo;
     }
 
-    public ArrayList<ProdutoBEAN> listarAll() {
-        return p.listarALl();
+    public ArrayList<ProdutoBEAN> listarAll(int emp) {
+        return p.listarALl(emp);
     }
 
-    public String cadastrar(ProdutoBEAN f) {
-        p.adicionar(f);
+    public String cadastrar(ProdutoBEAN f, int emp) {
+        p.adicionar(f, emp);
         return "Cadastro realizado com sucesso!!";
     }
 
@@ -56,8 +56,8 @@ public class ControlePedido {
         return p.localizar(i);
     }
 
-    public ArrayList<Produtos> listarPedidos(ArrayList<Produtos> pro) {
-        ArrayList<Produtos> produtos = p.listarProdutos();
+    public ArrayList<Produtos> listarPedidos(ArrayList<Produtos> pro, int emp) {
+        ArrayList<Produtos> produtos = p.listarProdutos(emp);
         for (Produtos produto : produtos) {
             pro.add(produto);
         }
@@ -102,8 +102,8 @@ public class ControlePedido {
         return pedidos;
     }
 
-    public Produtos buscarUm(String combo) {
-        ArrayList<Produtos> todos = p.listarProdutos();
+    public Produtos buscarUm(String combo, int emp) {
+        ArrayList<Produtos> todos = p.listarProdutos(emp);
         for (Produtos p : todos) {
             String pro = p.getCodigo() + " : " + p.getNome() + " : R$ " + p.getPreco();
             if (combo.equals(pro)) {

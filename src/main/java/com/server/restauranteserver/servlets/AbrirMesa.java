@@ -43,12 +43,14 @@ public class AbrirMesa extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        String usuario = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String senha = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        int cod = l.autenticaEmpresa(usuario, senha);
         if (cod > 0) {
             response.setHeader("auth", "1");
             int i = 0;
-                i = con.abrirMesaM(request.getParameter("mesa"),cod);
-           
+            i = con.abrirMesaM(request.getParameter("mesa"), cod);
+
             if (i > 0) {
                 //mesa aberta 
                 response.setHeader("sucesso", i + "");

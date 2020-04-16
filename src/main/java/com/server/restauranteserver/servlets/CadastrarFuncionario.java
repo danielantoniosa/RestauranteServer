@@ -43,10 +43,13 @@ public class CadastrarFuncionario extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int log = l.autenticaEmpresa(request.getParameter("empresa"), request.getParameter("senha"));
+        String usuario = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String senha = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        int log = l.autenticaEmpresa(usuario,senha);
         if (log > 0) {
             response.setHeader("auth", "1");
-            FuncionarioBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("funcionario"), FuncionarioBEAN.class);
+            String str = new String(request.getParameter("funcionario").getBytes("iso-8859-1"), "UTF-8");
+            FuncionarioBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, FuncionarioBEAN.class);
             int cod = con_fun.cadastrar(c);
             if (cod > 0) {
                 response.setHeader("sucesso", con_adm.preCadastro(cod, log));

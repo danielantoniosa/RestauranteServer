@@ -230,6 +230,11 @@ public class ControleVenda {
         VendaDAO ven = new VendaDAO();
         return ven.listarVendasAbertas(cc.getCaixa(emp));
     }
+    public ArrayList<VendaBEAN> listarVendasFechadas(int emp) {
+        ControleCaixa cc = new ControleCaixa();
+        VendaDAO ven = new VendaDAO();
+        return ven.listarVendasFechadas(cc.getCaixa(emp));
+    }
 
     public float getTotalVendido(int emp) {
         ControleCaixa cc = new ControleCaixa();

@@ -39,7 +39,10 @@ public class ListarProduto extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+       
+        int cod = l.autenticaUsuario(n,s);
         if (cod > 0) {
             response.setHeader("auth", "1");
             ProdutoBEAN u = pro.localizar(request.getParameter("produto"));

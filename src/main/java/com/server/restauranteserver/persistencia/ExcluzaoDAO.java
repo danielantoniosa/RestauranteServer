@@ -22,7 +22,6 @@ public class ExcluzaoDAO {
 
     private Connection connection;
 
-
     public ExcluzaoDAO() {
         this.connection = ConnectionFactory.getConnection();
     }
@@ -32,7 +31,7 @@ public class ExcluzaoDAO {
         String sql = "INSERT INTO exclusao (excMotivo , excTime, exc_funCodigo)"
                 + " VALUES (?, ?, ?);";
         try {
-          PreparedStatement     stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, c.getMotivo());
             stmt.setString(2, c.getTime());
             stmt.setInt(3, c.getFuncionario());
@@ -59,7 +58,7 @@ public class ExcluzaoDAO {
                 + "			group by venCodigo \n"
                 + "				order by venMesa;";
         try {
-           PreparedStatement    stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ExcluzaoBEAN e = new ExcluzaoBEAN();
@@ -83,10 +82,10 @@ public class ExcluzaoDAO {
         String sql = "select * from exclusao where "
                 + " excCodigo = " + cod + ";";
         try {
-            PreparedStatement   stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-               e.setCodigo(rs.getInt(1));
+                e.setCodigo(rs.getInt(1));
                 e.setMotivo(rs.getString(2));
                 e.setTime(rs.getString(3));
                 e.setFuncionario(rs.getInt(4));
@@ -102,13 +101,12 @@ public class ExcluzaoDAO {
     public ArrayList<ExcluzaoBEAN> listarExclusaoCaixa(int caixa) {
         ArrayList<ExcluzaoBEAN> c = new ArrayList<>();
 
-        String sql = "select * \n"
-                + "	from exclusao join funcionario join venda\n"
-                + "		where  exc_funCodigo = funCodigo and venCodigo = adv_venCodigo and ven_caiCodigo =" + caixa + " \n"
-                + "			group by venCodigo \n"
-                + "				order by venMesa;";
+        String sql = "select excCodigo,excMotivo,excTime,exc_funCodigo,funNome "
+                + "   from  venda join pedido join exclusao join funcionario \n"
+                + "   where ped_venCodigo= venCodigo and excCodigo = ped_excCodigo and exc_funCodigo = funCodigo and ven_caiCodigo = " + caixa + "\n"
+                + "   order by excTime;";
         try {
-            PreparedStatement   stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ExcluzaoBEAN e = new ExcluzaoBEAN();
@@ -116,6 +114,7 @@ public class ExcluzaoDAO {
                 e.setMotivo(rs.getString(2));
                 e.setTime(rs.getString(3));
                 e.setFuncionario(rs.getInt(4));
+                e.setFuncionarioN(rs.getString(5));
                 c.add(e);
             }
             stmt.close();

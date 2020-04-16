@@ -38,7 +38,9 @@ public class ExcluirCargo extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaUsuario(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        String u = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        int cod = l.autenticaUsuario(u,s);
         if (cod > 0) {
             response.setHeader("auth", "1");
 

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
     @WebInitParam(name = "senha", value = ""),
     @WebInitParam(name = "empresa", value = "")})
 public class CadastrarEmpresa extends HttpServlet {
+
     ControleEmpresa con = new ControleEmpresa();
 
     @Override
@@ -39,8 +40,8 @@ public class CadastrarEmpresa extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        EmpresaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("empresa"), EmpresaBEAN.class);
+        String str = new String(request.getParameter("empresa").getBytes("iso-8859-1"), "UTF-8");
+        EmpresaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, EmpresaBEAN.class);
 
         response.setHeader("sucesso", con.adicionarEmpresa(c));
 

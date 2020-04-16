@@ -20,13 +20,17 @@ public class ControleProduto {
     private ProdutoDAO p = new ProdutoDAO();
     private ControlePedido pc = new ControlePedido();
 
-    public DefaultComboBoxModel buscar(String produto) {
+    public DefaultComboBoxModel buscar(String produto, int emp) {
         DefaultComboBoxModel modelo = new DefaultComboBoxModel();
 
-        ArrayList<Produtos> pp = p.buscar(produto);
-        for (Produtos p : pp) {
-            modelo.addElement(p.getCodigo() + " : " + p.getNome() + " : R$ " + p.getPreco());
+        ArrayList<Produtos> pp = p.buscar(produto, emp);
+        if (pp.size() > 0) {
+            for (Produtos p : pp) {
+                modelo.addElement(p.getCodigo() + " : " + p.getNome() + " : R$ " + p.getPreco());
 
+            }
+        } else {
+            System.out.println("Retorno vasio");
         }
         return modelo;
     }
@@ -35,14 +39,19 @@ public class ControleProduto {
         return p.localizar(Integer.parseInt(produto));
     }
 
-    public ArrayList<ProdutoBEAN> listarAll() {
-        return p.listarALl();
+    public ArrayList<ProdutoBEAN> listarAll(int emp) {
+        return p.listarALl(emp);
     }
 
-    public String cadastrar(ProdutoBEAN f) {
-        p.adicionar(f);
+    public String cadastrar(ProdutoBEAN f, int emp) {
+        ProdutoBEAN pro = p.localizar(f.getNome(), emp);
+        if (pro.getCodigo() > 0) {
+            p.adicionar(f, emp);
 
-        return "Cadastro Realizado com sucesso!!";
+            return "Cadastro Realizado com sucesso!!";
+        } else {
+            return "Produto com o mesmo nome já CADASTRADO!!";
+        }
     }
 
     public String editar(ProdutoBEAN f) {
@@ -50,14 +59,14 @@ public class ControleProduto {
         return "Produto editado com sucesso!!";
     }
 
-    public String excluir(int cod) {
-        p.excluir(cod);
+    public String excluir(String cod) {
+        p.excluir(Integer.parseInt(cod));
 
         return "Produto Excluido com sucesso!!";
     }
 
-    public Produtos buscarUm(String combo) {
-        ArrayList<Produtos> produtos = p.listarProdutos();
+    public Produtos buscarUm(String combo, int emp) {
+        ArrayList<Produtos> produtos = p.listarProdutos(emp);
         //  ArrayList<Produtos> todos = pc.listarPedidos(produtos);
         for (Produtos p : produtos) {
             String pro = p.getCodigo() + " : " + p.getNome() + " : R$ " + p.getPreco();

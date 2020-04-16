@@ -43,13 +43,16 @@ public class RetirarDespesasDia extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int cod = l.autenticaEmpresa(request.getParameter("nomeUsuario"), request.getParameter("senha"));
+        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        int cod = l.autenticaEmpresa(n, s);
         if (cod > 0) {
             response.setHeader("auth", "1");
             Type type = new TypeToken<ArrayList<DespesaBEAN>>() {
             }.getType();
-            ArrayList<DespesaBEAN> c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("despesa"), type);
-            response.setHeader("sucesso", con_des.retirarDespesaDia(c,cod));
+            String str = new String(request.getParameter("despesa").getBytes("iso-8859-1"), "UTF-8");
+            ArrayList<DespesaBEAN> c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, type);
+            response.setHeader("sucesso", con_des.retirarDespesaDia(c, cod));
 
         } else {
             response.setHeader("auth", "0");

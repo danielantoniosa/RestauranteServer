@@ -19,7 +19,7 @@ public class CaixaBEAN {
     private float trocoIn;
     private float trocoFin;
     private String status;
-    private int funcioanrio;
+    private int funcionario;
     private int empresa;
 
     public int getEmpresa() {
@@ -29,15 +29,15 @@ public class CaixaBEAN {
     public void setEmpresa(int empresa) {
         this.empresa = empresa;
     }
+
+    public int getFuncionario() {
+        return funcionario;
+    }
+
+    public void setFuncionario(int funcionario) {
+        this.funcionario = funcionario;
+    }
     
-
-    public int getFuncioanrio() {
-        return funcioanrio;
-    }
-
-    public void setFuncioanrio(int funcioanrio) {
-        this.funcioanrio = funcioanrio;
-    }
     
 
     public String getStatus() {

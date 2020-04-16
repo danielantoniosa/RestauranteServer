@@ -6,15 +6,14 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
-import com.google.zxing.WriterException;
-import com.server.restauranteserver.beans.Mesa;
-
+import com.google.gson.GsonBuilder;
+import com.server.restauranteserver.beans.CaixaBEAN;
+import com.server.restauranteserver.beans.SangriaBEAN;
+import com.server.restauranteserver.controle.ControleCaixa;
 import com.server.restauranteserver.controle.ControleLogin;
-import com.server.restauranteserver.controle.ControleVenda;
+import com.server.restauranteserver.controle.ControleSangria;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -26,15 +25,13 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "TranferirPedido", urlPatterns = {"/restaurante_server/TranferirPedido"}, initParams = {
-    @WebInitParam(name = "mesaDestino", value = ""),
-    @WebInitParam(name = "pedido", value = ""),
+@WebServlet(name = "ListarSangria", urlPatterns = {"/restaurante_server/ListarSangria"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class TransferirPedido extends HttpServlet {
+public class ListarSangria extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleVenda con = new ControleVenda();
+    ControleSangria con = new ControleSangria();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -45,19 +42,21 @@ public class TransferirPedido extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
-        String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(n, s);
+        String ss = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        int cod = l.autenticaEmpresa(n,ss);
         if (cod > 0) {
             response.setHeader("auth", "1");
-            try {
-                response.setHeader("sucesso", con.transferirPedido(request.getParameter("mesaDestino"), request.getParameter("pedido"), cod));
-            } catch (WriterException ex) {
-                Logger.getLogger(TransferirPedido.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ArrayList<SangriaBEAN> s = con.listarSangriasCaixa(cod);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(s));
 
         } else {
             response.setHeader("auth", "0");
-
+            ArrayList<SangriaBEAN> s  = null;
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(s));
         }
     }
 
