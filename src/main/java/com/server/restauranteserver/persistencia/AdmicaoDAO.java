@@ -40,7 +40,7 @@ public class AdmicaoDAO {
 
     public boolean admitir(AdmicaoBEAN a) {
         String sql = "INSERT INTO admicao (adm_empCodigo,adm_funCodigo,adm_carCodigo,admDataAdmicao) VALUES (?,?,?,?);";
-
+        System.out.println(sql);
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, a.getEmpresa());

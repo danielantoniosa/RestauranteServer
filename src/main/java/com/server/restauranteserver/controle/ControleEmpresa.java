@@ -32,14 +32,27 @@ public class ControleEmpresa {
         ControleFuncionario f = new ControleFuncionario();
         int codFun = f.cadastrarADM(fun);
         int codEmp = emp.adcionar(e);
-        admitir(codFun, codEmp);
-
-        return "";
+        if (codFun > 0) {
+            admitir(codFun, codEmp);
+            return "Sucesso";
+        } else {
+            return "Algo de errado";
+        }
     }
 
     private void admitir(int codFun, int codEmp) {
         ControleAdmicao con = new ControleAdmicao();
-        con.admitir(codFun,codEmp);
+        con.admitir(codFun, codEmp);
+    }
+
+    public void atuaizar(EmpresaBEAN c) {
+        EmpresaDAO emp = new EmpresaDAO();
+        emp.editar(c);
+    }
+
+    public EmpresaBEAN listarUm(int cod) {
+        EmpresaDAO emp = new EmpresaDAO();
+        return emp.listar(cod);
     }
 
 }

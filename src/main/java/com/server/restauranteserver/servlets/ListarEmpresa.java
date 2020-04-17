@@ -6,10 +6,15 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
-import com.server.restauranteserver.beans.ProdutoBEAN;
+import com.server.restauranteserver.beans.CargoBEAN;
+import com.server.restauranteserver.beans.EmpresaBEAN;
+import com.server.restauranteserver.beans.FuncionarioBEAN;
+import com.server.restauranteserver.controle.ControleCargo;
+import com.server.restauranteserver.controle.ControleEmpresa;
+import com.server.restauranteserver.controle.ControleFuncionario;
 import com.server.restauranteserver.controle.ControleLogin;
-import com.server.restauranteserver.controle.ControleProduto;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -17,19 +22,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
  *
  * @author Daniel
  */
-@WebServlet(name = "ListarProduto", urlPatterns = {"/restaurante_server/ListarProduto"}, initParams = {
-    @WebInitParam(name ="produto", value = ""),
+@WebServlet(name = "ListarEmpresa", urlPatterns = {"/restaurante_server/ListarEmpresa"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class ListarProduto extends HttpServlet {
+public class ListarEmpresa extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleProduto pro = new ControleProduto();
+    ControleEmpresa f = new ControleEmpresa();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -39,20 +42,19 @@ public class ListarProduto extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-       String combo = new String(request.getParameter("produto").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaUsuario(n,s);
+        int cod = l.autenticaEmpresa(n,s);
         if (cod > 0) {
             response.setHeader("auth", "1");
-            ProdutoBEAN u = pro.localizar(combo);
+            EmpresaBEAN u = f.listarUm(cod);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-            ProdutoBEAN u = null;
+            EmpresaBEAN u = null;
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));

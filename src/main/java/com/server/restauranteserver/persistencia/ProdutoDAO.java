@@ -136,8 +136,8 @@ public class ProdutoDAO {
     public ProdutoBEAN localizar(String produto, int emp) {
         ProdutoBEAN ca = new ProdutoBEAN();
         ca.setCodigo(0);
-
-        String sql = "select * from produto where proNome = " + produto + " and emp_proCodigo = " + emp + ";";
+        String sql = "select * from produto where proNome = '" + produto + "' and pro_empCodigo = " + emp + ";";
+        System.out.println(sql);
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();

@@ -45,7 +45,7 @@ public class ControleProduto {
 
     public String cadastrar(ProdutoBEAN f, int emp) {
         ProdutoBEAN pro = p.localizar(f.getNome(), emp);
-        if (pro.getCodigo() > 0) {
+        if (pro.getCodigo() == 0) {
             p.adicionar(f, emp);
 
             return "Cadastro Realizado com sucesso!!";
@@ -70,7 +70,10 @@ public class ControleProduto {
         //  ArrayList<Produtos> todos = pc.listarPedidos(produtos);
         for (Produtos p : produtos) {
             String pro = p.getCodigo() + " : " + p.getNome() + " : R$ " + p.getPreco();
+            System.out.println(combo);
+            System.out.println(pro);
             if (combo.equals(pro)) {
+                System.out.println(combo);
                 return p;
             }
         }

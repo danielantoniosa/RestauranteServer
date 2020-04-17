@@ -11,7 +11,7 @@ package com.server.restauranteserver.beans;
  */
 public class EmpresaBEAN {
 
-    private int codigo;
+   private int codigo;
     private String razaoSocial;
     private String fantazia;
     private String inscEstad;

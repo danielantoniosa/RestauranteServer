@@ -5,10 +5,14 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.Gson;
-import com.server.restauranteserver.beans.ProdutoBEAN;
+import com.google.gson.GsonBuilder;
+import com.server.restauranteserver.beans.CargoBEAN;
+import com.server.restauranteserver.beans.EmpresaBEAN;
+import com.server.restauranteserver.beans.FuncionarioBEAN;
+import com.server.restauranteserver.controle.ControleCargo;
+import com.server.restauranteserver.controle.ControleEmpresa;
+import com.server.restauranteserver.controle.ControleFuncionario;
 import com.server.restauranteserver.controle.ControleLogin;
-import com.server.restauranteserver.controle.ControleProduto;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
@@ -17,19 +21,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
  *
  * @author Daniel
  */
-@WebServlet(name = "ListarProduto", urlPatterns = {"/restaurante_server/ListarProduto"}, initParams = {
-    @WebInitParam(name ="produto", value = ""),
+@WebServlet(name = "EditarEmpresa", urlPatterns = {"/restaurante_server/EditarEmpresa"}, initParams = {
+    @WebInitParam(name = "empresa", value = ""),
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class ListarProduto extends HttpServlet {
+public class EditarEmpresa extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleProduto pro = new ControleProduto();
+    ControleEmpresa con_fun = new ControleEmpresa();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -39,23 +42,20 @@ public class ListarProduto extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String u = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-       String combo = new String(request.getParameter("produto").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaUsuario(n,s);
+        int cod = l.autenticaEmpresa(u, s);
         if (cod > 0) {
             response.setHeader("auth", "1");
-            ProdutoBEAN u = pro.localizar(combo);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
+            String str = new String(request.getParameter("empresa").getBytes("iso-8859-1"), "UTF-8");
+            EmpresaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, EmpresaBEAN.class);
+            c.setCodigo(cod);
+            con_fun.atuaizar(c);
+            response.setHeader("sucesso", "Sucesso");
 
         } else {
             response.setHeader("auth", "0");
-            ProdutoBEAN u = null;
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
+
         }
     }
 
