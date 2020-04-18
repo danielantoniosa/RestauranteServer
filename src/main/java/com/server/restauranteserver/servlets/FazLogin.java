@@ -25,7 +25,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "FazLogin", urlPatterns = {"/restaurante_server/FazLogin"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
-    @WebInitParam(name = "senha", value = "")})
+    @WebInitParam(name = "senha", value = ""),
+    @WebInitParam(name = "empresa", value = "")})
 public class FazLogin extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
@@ -41,10 +42,12 @@ public class FazLogin extends HttpServlet {
             throws ServletException, IOException {
         String usu = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaUsuario(usu,s);
+        String e = new String(request.getParameter("empresa").getBytes("iso-8859-1"), "UTF-8");
+        int empresa = Integer.parseInt(e);
+        int cod = l.autenticaUsuario(usu, s, empresa);
         if (cod > 0) {
             response.setHeader("auth", "1");
-            SharedPreferencesBEAN u = l.listarSharedPreferences(cod);
+            SharedPreferencesBEAN u = l.listarSharedPreferences(cod, empresa);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));

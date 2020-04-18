@@ -12,7 +12,6 @@ import com.server.restauranteserver.persistencia.EmpresaDAO;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import com.server.restauranteserver.persistencia.FuncionarioDAO;
-import com.server.restauranteserver.persistencia.SharedPreferences;
 
 /**
  *
@@ -20,19 +19,16 @@ import com.server.restauranteserver.persistencia.SharedPreferences;
  */
 public class ControleLogin {
 
-    public int autenticaUsuario(String email, String senha) {
-        SharedPreferences s = new SharedPreferences();
-        int emp = s.listar();
+    public int autenticaUsuario(String email, String senha, int emp) {
         FuncionarioDAO f = new FuncionarioDAO();
         int funcionario = f.Login(email, senha, emp);
         return funcionario;
     }
 
-    public void loga(int cod) {
-        SharedPreferences s = new SharedPreferences();
-        s.excluir();
-        s.inserir(cod);
-
+    public int autenticaUsuario(String email, String senha) {
+        FuncionarioDAO f = new FuncionarioDAO();
+        int funcionario = f.Login(email, senha);
+        return funcionario;
     }
 
     public int autenticaEmpresa(String email, String senha) {
@@ -52,9 +48,7 @@ public class ControleLogin {
 
     }
 
-    public SharedPreferencesBEAN listarSharedPreferences(int cod) {
-        SharedPreferences s = new SharedPreferences();
-        int emp = s.listar();
+    public SharedPreferencesBEAN listarSharedPreferences(int cod, int emp) {
         FuncionarioDAO f = new FuncionarioDAO();
         return f.listarSharedPreferences(cod, emp);
     }

@@ -40,12 +40,12 @@ public class ListarFuncionarios extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaUsuario(n,s);
+        int cod = l.autenticaEmpresa(n, s);
         if (cod > 0) {
             response.setHeader("auth", "1");
-            ArrayList<FuncionarioBEAN> u = f.listarAll();
+            ArrayList<FuncionarioBEAN> u = f.listarAll(cod);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));

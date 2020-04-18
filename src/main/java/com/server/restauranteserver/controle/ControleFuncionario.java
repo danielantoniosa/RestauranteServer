@@ -9,7 +9,6 @@ import com.server.restauranteserver.beans.CargoBEAN;
 import com.server.restauranteserver.beans.FuncionarioBEAN;
 import java.util.ArrayList;
 import com.server.restauranteserver.persistencia.FuncionarioDAO;
-import com.server.restauranteserver.persistencia.SharedPreferences;
 import com.server.restauranteserver.util.GerarNumeros;
 
 /**
@@ -66,10 +65,8 @@ public class ControleFuncionario {
         return f.numeroCartaoExistente(valor);
     }
 
-    public ArrayList<FuncionarioBEAN> listarAll() {
+    public ArrayList<FuncionarioBEAN> listarAll(int emp) {
         FuncionarioDAO f = new FuncionarioDAO();
-        SharedPreferences s = new SharedPreferences();
-        int emp = s.listar();
         ArrayList<FuncionarioBEAN> retorno = f.listarALl(emp);
         return retorno;
 

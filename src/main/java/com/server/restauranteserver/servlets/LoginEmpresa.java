@@ -38,10 +38,9 @@ public class LoginEmpresa extends HttpServlet {
             throws ServletException, IOException {
         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(n,s);
+        int cod = l.autenticaEmpresa(n, s);
         if (cod > 0) {
             SharedPreferencesEmpresaBEAN u = l.listarSharedPreferencesEmpresa(cod);
-            l.loga(cod);
             response.setHeader("auth", "1");
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

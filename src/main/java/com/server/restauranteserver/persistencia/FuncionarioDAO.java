@@ -22,8 +22,6 @@ public class FuncionarioDAO {
 
     private Connection connection;
 
-
-
     public FuncionarioDAO() {
         this.connection = ConnectionFactory.getConnection();
     }
@@ -36,7 +34,7 @@ public class FuncionarioDAO {
                 + " VALUES (?, ?, ?, ?, ?, ?,md5(?), ?, ?, ?, ?, ?,?,?);";
 
         try {
-          PreparedStatement     stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, c.getDataNacimento() + "");
             stmt.setString(2, c.getTelefone());
             stmt.setString(3, c.getNome());
@@ -62,6 +60,7 @@ public class FuncionarioDAO {
             throw new RuntimeException(e);
         }
     }
+
     public int adicionarAdm(FuncionarioBEAN c) {
         int i = 0;
         String sql = "INSERT INTO funcionario ("
@@ -70,7 +69,7 @@ public class FuncionarioDAO {
                 + " VALUES (?,md5(?), ?, ?, ?, ?, ?,?,?);";
 
         try {
-           PreparedStatement    stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, c.getEmail());
             stmt.setString(2, c.getSenha());
             stmt.setString(3, c.getLogradouro());
@@ -91,6 +90,7 @@ public class FuncionarioDAO {
             throw new RuntimeException(e);
         }
     }
+
     public ArrayList<FuncionarioBEAN> listarALl(int emp) {
         ArrayList<FuncionarioBEAN> c = new ArrayList<>();
 
@@ -98,7 +98,7 @@ public class FuncionarioDAO {
                 + " ,funLogradouro,funNumero ,funBairro ,funComplemento ,funCidade ,funCEP,adm_CarCodigo, COALESCE(admDataSaida,'') as saida from funcionario join admicao"
                 + " where adm_funCodigo = funCodigo and adm_empCodigo = " + emp + ";";
         try {
-           PreparedStatement    stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 FuncionarioBEAN ca = new FuncionarioBEAN();
@@ -145,7 +145,7 @@ public class FuncionarioDAO {
 
         String sql = "select * from funcionario;";
         try {
-           PreparedStatement    stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 FuncionarioBEAN ca = new FuncionarioBEAN();
@@ -179,7 +179,7 @@ public class FuncionarioDAO {
         int cont = 0;
         String sql = "select count(funCodigo) from funcionario where fun_carCodigo = ?;";
         try {
-              PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, cargo);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -196,7 +196,7 @@ public class FuncionarioDAO {
         int cont = 0;
         String sql = "select count(funCodigo) from funcionario where funNunCartao = ?;";
         try {
-             PreparedStatement  stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, codigo);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -222,7 +222,7 @@ public class FuncionarioDAO {
         System.out.println("Data :" + c.getDataNacimento());
 
         try {
-              PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, c.getDataNacimento() + "");
             stmt.setString(2, c.getTelefone());
             stmt.setString(3, c.getNome());
@@ -255,7 +255,7 @@ public class FuncionarioDAO {
         FuncionarioBEAN ca = new FuncionarioBEAN();
 
         try {
-            PreparedStatement   stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -289,7 +289,7 @@ public class FuncionarioDAO {
         FuncionarioBEAN ca = new FuncionarioBEAN();
 
         try {
-             PreparedStatement  stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, codigo);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -324,7 +324,7 @@ public class FuncionarioDAO {
         boolean retorno = false;
 
         try {
-            PreparedStatement   stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -346,7 +346,26 @@ public class FuncionarioDAO {
         System.out.println(sql);
         int codigo = 0;
         try {
-            PreparedStatement   stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                codigo = rs.getInt(1);
+            }
+            stmt.close();
+            return codigo;
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+
+    }
+
+    public int Login(String email, String senha) {
+        String sql = "select funCodigo from funcionario where funEmail = '" + email
+                + "' and funSenha = '" + senha + "' ;";
+        System.out.println(sql);
+        int codigo = 0;
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 codigo = rs.getInt(1);
@@ -362,7 +381,7 @@ public class FuncionarioDAO {
     public void excluir(int cod) {
         String sql = "delete from funcionario where funCodigo = ? ";
         try {
-             PreparedStatement  stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, cod);
             stmt.execute();
             stmt.close();
@@ -377,7 +396,7 @@ public class FuncionarioDAO {
         String sql = "SELECT funEmail FROM funcionario ;";//WHERE funEmail LIKE '" + funcionario + "%';";
 
         try {
-             PreparedStatement  stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
 
@@ -400,7 +419,7 @@ public class FuncionarioDAO {
         SharedPreferencesBEAN ca = new SharedPreferencesBEAN();
 
         try {
-            PreparedStatement   stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, emp);
             stmt.setInt(2, cod);
             ResultSet rs = stmt.executeQuery();
