@@ -55,7 +55,6 @@ public class RealizarVenda extends HttpServlet {
         int cod = l.autenticaEmpresa(n, s);
         if (cod > 0) {
             response.setHeader("auth", "1");
-            //ArrayList<PedidoBEAN> c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("pedido"), PedidoBEAN.class);
             Type type = new TypeToken<ArrayList<PedidoBEAN>>() {
             }.getType();
             String str = new String(request.getParameter("pedido").getBytes("iso-8859-1"), "UTF-8");

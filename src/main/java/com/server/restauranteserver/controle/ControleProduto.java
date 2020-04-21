@@ -78,6 +78,22 @@ public class ControleProduto {
             }
         }
         return null;
+    }
+
+    public float quantidadeEstoque(int produto, int emp, float quantidade) {
+        float qtd = p.quantidadeEstoque(produto);
+        return qtd;
+    }
+
+    public void diminuiEstoque(int produto, float diminuicao, float atual) {
+
+        p.alteraQuantidade(produto, (atual - diminuicao));
+    }
+
+    public void aumentaEstoque(int produto, float quantidade) {
+        float qtd = p.quantidadeEstoque(produto);
+        qtd += quantidade;
+        p.alteraQuantidade(produto, qtd);
 
     }
 

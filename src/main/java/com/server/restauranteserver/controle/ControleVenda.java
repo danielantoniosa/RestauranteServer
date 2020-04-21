@@ -12,6 +12,7 @@ import com.server.restauranteserver.beans.PedidoBEAN;
 import com.server.restauranteserver.beans.ProdutosGravados;
 import com.server.restauranteserver.beans.VendaBEAN;
 import com.server.restauranteserver.persistencia.PedidoDAO;
+import com.server.restauranteserver.persistencia.ProdutoDAO;
 import com.server.restauranteserver.persistencia.VendaDAO;
 import com.server.restauranteserver.util.QRCode;
 import com.server.restauranteserver.util.Time;
@@ -53,6 +54,37 @@ public class ControleVenda {
 
     public int adicionar(PedidoBEAN venda, int emp) {
         int pedido = 0;
+        //verificar se contem produto em estoque para produtos diferentes do tipo de cozinha
+        ControleProduto cp = new ControleProduto();
+        float qtd = cp.quantidadeEstoque(venda.getProduto(), emp, venda.getQuantidade());
+        if (qtd == -1) {
+            int mesa = venda.getVenda();
+            ControleCaixa cc = new ControleCaixa();
+            int caixa = cc.getCaixa(emp);
+            System.out.println("caixa " + caixa);
+            PedidoDAO p = new PedidoDAO();
+            VendaDAO ven = new VendaDAO();
+            int v = ven.getVenda(mesa, caixa);
+            if (v != 0) {
+                venda.setVenda(v);
+                pedido = p.adicionar(venda);
+            } else {
+                int nvenda = abrirMesa(mesa + "", caixa);
+                venda.setVenda(nvenda);
+                pedido = p.adicionar(venda);
+            }
+            return pedido;
+        } else if (qtd <= venda.getQuantidade()) {
+            cp.diminuiEstoque(venda.getProduto(), venda.getQuantidade(), qtd);
+            return adiciona(venda, emp);
+
+        } else {
+            return -1;
+        }
+    }
+
+    private int adiciona(PedidoBEAN venda, int emp) {
+        int pedido = 0;
         int mesa = venda.getVenda();
         ControleCaixa cc = new ControleCaixa();
         int caixa = cc.getCaixa(emp);
@@ -88,9 +120,9 @@ public class ControleVenda {
         }
     }
 
-    public float getValorMesa(String mesa,int emp) {
+    public float getValorMesa(String mesa, int emp) {
         VendaDAO ven = new VendaDAO();
-        int venda = getVenda(Integer.parseInt(mesa),emp);
+        int venda = getVenda(Integer.parseInt(mesa), emp);
         return ven.getValorMesa(venda);
     }
 
@@ -146,7 +178,7 @@ public class ControleVenda {
         return venda;
     }
 
-    public int abrirMesaM(String mesa, int empresa){
+    public int abrirMesaM(String mesa, int empresa) {
         ControleCaixa cc = new ControleCaixa();
         VendaDAO ven = new VendaDAO();
         VendaBEAN v = new VendaBEAN();
@@ -230,6 +262,7 @@ public class ControleVenda {
         VendaDAO ven = new VendaDAO();
         return ven.listarVendasAbertas(cc.getCaixa(emp));
     }
+
     public ArrayList<VendaBEAN> listarVendasFechadas(int emp) {
         ControleCaixa cc = new ControleCaixa();
         VendaDAO ven = new VendaDAO();
@@ -268,7 +301,7 @@ public class ControleVenda {
                 p.adicionar(pedido);
             }
         } else {
-            int nvenda = abrirMesaM(mesa + "",emp);
+            int nvenda = abrirMesaM(mesa + "", emp);
             for (PedidoBEAN pedido : venda) {
                 pedido.setVenda(nvenda);
                 p.adicionar(pedido);

@@ -31,7 +31,7 @@ public class FuncionarioDAO {
         String sql = "INSERT INTO funcionario (funDataNascimento, funTelefone,"
                 + " funNome,funEmail, funCPF, funRG, funSenha,funLogradouro,"
                 + "funNumero, funBairro, funComplemento, funCidade, funUF, funCEP)"
-                + " VALUES (?, ?, ?, ?, ?, ?,md5(?), ?, ?, ?, ?, ?,?,?);";
+                + " VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?,?,?);";
 
         try {
             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);

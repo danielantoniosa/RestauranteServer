@@ -167,7 +167,6 @@ public class ProdutoDAO {
 
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
-
             stmt.setString(1, c.getNome());
             stmt.setFloat(2, c.getPreco());
             stmt.setFloat(3, c.getCusto());
@@ -177,6 +176,25 @@ public class ProdutoDAO {
             stmt.setString(7, c.getPreparo());
             stmt.setString(8, c.getTipo());
             stmt.setBytes(9, c.getFoto());
+
+            int l = stmt.executeUpdate();
+            stmt.close();
+            if (l > 0) {
+                System.out.println("Foram alterados " + l + " linhas");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void alteraQuantidade(int pro, float qtd) {
+        String sql = "update produto set proQuantidade = ? where proCodigo = " + pro + ";";
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setFloat(1, qtd);
 
             int l = stmt.executeUpdate();
             stmt.close();
@@ -224,6 +242,24 @@ public class ProdutoDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public float quantidadeEstoque(int produto) {
+        String sql = "select proQuantidade from produto where proTipo != 'Cozinha' and proCodigo = " + produto + ";";
+        float quantidade = -1;
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                quantidade = rs.getFloat(1);
+
+            }
+            stmt.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+        return quantidade;
     }
 
 }
