@@ -10,20 +10,21 @@ package com.server.restauranteserver.beans;
  * @author Daniel
  */
 public class DespesaBEAN {
+
     private int codigo;
     private String nome;
     private String descricao;
     private float preco;
-    private boolean despesaCaixa;
+    private int caixa;
 
-    public boolean isDespesaCaixa() {
-        return despesaCaixa;
+    public int getCaixa() {
+        return caixa;
     }
 
-    public void setDespesaCaixa(boolean despesaCaixa) {
-        this.despesaCaixa = despesaCaixa;
+    public void setCaixa(int caixa) {
+        this.caixa = caixa;
     }
-    
+
 
     public float getPreco() {
         return preco;
@@ -32,7 +33,6 @@ public class DespesaBEAN {
     public void setPreco(float preco) {
         this.preco = preco;
     }
-    
 
     public int getCodigo() {
         return codigo;
@@ -58,6 +58,4 @@ public class DespesaBEAN {
         this.descricao = descricao;
     }
 
-    
-    
 }

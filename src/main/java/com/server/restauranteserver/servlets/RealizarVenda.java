@@ -54,6 +54,7 @@ public class RealizarVenda extends HttpServlet {
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
         int cod = l.autenticaEmpresa(n, s);
         if (cod > 0) {
+            String ret= "erro";
             response.setHeader("auth", "1");
             Type type = new TypeToken<ArrayList<PedidoBEAN>>() {
             }.getType();
@@ -61,11 +62,11 @@ public class RealizarVenda extends HttpServlet {
             ArrayList<PedidoBEAN> i = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, type);
             System.out.println("pedido size  : " + i.size());
             try {
-                con.adicionar(i, cod);
+              ret =   con.adicionar(i, cod);
             } catch (WriterException ex) {
                 Logger.getLogger(RealizarVenda.class.getName()).log(Level.SEVERE, null, ex);
             }
-            response.setHeader("sucesso", "Sucesso");
+            response.setHeader("sucesso", ret);
 
         } else {
             response.setHeader("auth", "0");

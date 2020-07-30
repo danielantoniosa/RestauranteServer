@@ -10,16 +10,45 @@ package com.server.restauranteserver.beans;
  * @author Daniel
  */
 public class VendaBEAN {
+
     private int codigo;
     private byte[] QRcode;
     private String checkIn;
     private String checkOut;
     private float valor;
     private float custo;
+    private float desconto;
     private String pagamento;
     private int caixa;
     private int mesa;
     private String status;
+    private int entrega;
+    private int cliente;
+
+    public int getEntrega() {
+        return entrega;
+    }
+
+    public void setEntrega(int entrega) {
+        this.entrega = entrega;
+    }
+
+    public int getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(int cliente) {
+        this.cliente = cliente;
+    }
+    
+
+    public float getDesconto() {
+        return desconto;
+    }
+
+    public void setDesconto(float desconto) {
+        this.desconto = desconto;
+    }
 
     public String getStatus() {
         return status;
@@ -27,7 +56,7 @@ public class VendaBEAN {
 
     public void setStatus(String status) {
         this.status = status;
-    }  
+    }
 
     public int getMesa() {
         return mesa;
@@ -52,7 +81,6 @@ public class VendaBEAN {
     public void setQRcode(byte[] QRcode) {
         this.QRcode = QRcode;
     }
-
 
     public String getCheckIn() {
         return checkIn;
@@ -94,8 +122,6 @@ public class VendaBEAN {
         this.pagamento = pagamento;
     }
 
-    
-
     public int getCaixa() {
         return caixa;
     }
@@ -104,9 +130,4 @@ public class VendaBEAN {
         this.caixa = caixa;
     }
 
-   
-
-    
-    
-    
 }

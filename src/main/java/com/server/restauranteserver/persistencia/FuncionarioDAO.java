@@ -57,7 +57,8 @@ public class FuncionarioDAO {
             stmt.close();
             return i;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+            return i;
         }
     }
 
@@ -66,7 +67,7 @@ public class FuncionarioDAO {
         String sql = "INSERT INTO funcionario ("
                 + "funEmail,funSenha,funLogradouro,"
                 + "funNumero, funBairro, funComplemento, funCidade, funUF, funCEP)"
-                + " VALUES (?,md5(?), ?, ?, ?, ?, ?,?,?);";
+                + " VALUES (?,?, ?, ?, ?, ?, ?,?,?);";
 
         try {
             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -85,10 +86,11 @@ public class FuncionarioDAO {
                 i = rs.getInt(1);
             }
             stmt.close();
-            return i;
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
+        return i;
     }
 
     public ArrayList<FuncionarioBEAN> listarALl(int emp) {
@@ -133,11 +135,11 @@ public class FuncionarioDAO {
                 c.add(ca);
             }
             stmt.close();
-            return c;
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
 
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return c;
     }
 
     public ArrayList<FuncionarioBEAN> listarALl() {
@@ -168,11 +170,11 @@ public class FuncionarioDAO {
                 c.add(ca);
             }
             stmt.close();
-            return c;
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
 
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return c;
     }
 
     public int funCargo(int cargo) {
@@ -186,10 +188,11 @@ public class FuncionarioDAO {
                 cont = rs.getInt(1);
             }
             stmt.close();
-            return cont;
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
+        return cont;
     }
 
     public Boolean numeroCartaoExistente(int codigo) {
@@ -209,7 +212,8 @@ public class FuncionarioDAO {
                 return true;
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+            return null;
         }
     }
 
@@ -245,7 +249,7 @@ public class FuncionarioDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -277,11 +281,11 @@ public class FuncionarioDAO {
                 ca.setCep(rs.getString(16));
             }
             stmt.close();
-            return ca;
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
 
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return ca;
     }
 
     public FuncionarioBEAN localizar(int codigo) {
@@ -312,11 +316,11 @@ public class FuncionarioDAO {
 
             }
             stmt.close();
-            return ca;
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
 
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return ca;
     }
 
     public Boolean isExiste(String email) {
@@ -332,12 +336,11 @@ public class FuncionarioDAO {
 
             }
             stmt.close();
-            return retorno;
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
-
+        return retorno;
     }
 
     public int Login(String email, String senha, int emp) {
@@ -352,11 +355,11 @@ public class FuncionarioDAO {
                 codigo = rs.getInt(1);
             }
             stmt.close();
-            return codigo;
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
 
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return codigo;
     }
 
     public int Login(String email, String senha) {
@@ -371,11 +374,11 @@ public class FuncionarioDAO {
                 codigo = rs.getInt(1);
             }
             stmt.close();
-            return codigo;
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
 
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return codigo;
     }
 
     public void excluir(int cod) {
@@ -386,7 +389,7 @@ public class FuncionarioDAO {
             stmt.execute();
             stmt.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -406,7 +409,7 @@ public class FuncionarioDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
 
         return p;
@@ -431,10 +434,11 @@ public class FuncionarioDAO {
                 ca.setFunSenha(rs.getString(5));
             }
             stmt.close();
-            return ca;
+
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
+        return ca;
     }
 
 }

@@ -6,9 +6,12 @@
 package com.server.restauranteserver.servlets;
 
 import com.google.gson.Gson;
-import com.server.restauranteserver.beans.DespesaBEAN;
-import com.server.restauranteserver.controle.ControleDespesa;
+import com.server.restauranteserver.beans.Mesa;
+import com.server.restauranteserver.beans.Venda;
+import com.server.restauranteserver.beans.VendaBEAN;
+
 import com.server.restauranteserver.controle.ControleLogin;
+import com.server.restauranteserver.controle.ControleVenda;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -22,13 +25,13 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Daniel
  */
-@WebServlet(name = "ListarDespesasDia", urlPatterns = {"/restaurante_server/ListarDespesasDia"}, initParams = {
+@WebServlet(name = "ListarVendas", urlPatterns = {"/restaurante_server/ListarVendas"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
-public class ListarDespesasDia extends HttpServlet {
+public class ListarVendas extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleDespesa con_des = new ControleDespesa();
+    ControleVenda con = new ControleVenda();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -40,17 +43,17 @@ public class ListarDespesasDia extends HttpServlet {
             throws ServletException, IOException {
          String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(n,s);
-        if (cod > 0) {
+        int codE = l.autenticaEmpresa(n,s);
+        if (codE > 0 ) {
             response.setHeader("auth", "1");
-            ArrayList<DespesaBEAN> u = con_des.listarDespesaDia(cod);
+            ArrayList<Venda> u = con.getVendas(codE);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-            ArrayList<DespesaBEAN> u = null;
+            ArrayList<Venda> u = null;
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));

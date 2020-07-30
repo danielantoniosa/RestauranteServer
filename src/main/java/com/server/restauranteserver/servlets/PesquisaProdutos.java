@@ -5,15 +5,11 @@
  */
 package com.server.restauranteserver.servlets;
 
-import com.google.gson.GsonBuilder;
-import com.server.restauranteserver.beans.DespesaBEAN;
-import com.server.restauranteserver.beans.ExcluzaoBEAN;
-import com.server.restauranteserver.controle.ControleDespesa;
-import com.server.restauranteserver.controle.ControleExcluzao;
+import com.google.gson.Gson;
+import com.server.restauranteserver.beans.Produtos;
 import com.server.restauranteserver.controle.ControleLogin;
+import com.server.restauranteserver.controle.ControleProduto;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
@@ -21,19 +17,20 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.DefaultComboBoxModel;
 
 /**
  *
  * @author Daniel
  */
-@WebServlet(name = "RetirarDespesaDia", urlPatterns = {"/restaurante_server/RetirarDespesaDia"}, initParams = {
-    @WebInitParam(name = "despesa", value = ""),
+@WebServlet(name = "PesquisaProdutos", urlPatterns = {"/restaurante_server/PesquisaProdutos"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
-    @WebInitParam(name = "senha", value = "")})
-public class RetirarDespesasDia extends HttpServlet {
+    @WebInitParam(name = "senha", value = ""),
+    @WebInitParam(name = "produto", value = "")})
+public class PesquisaProdutos extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
-    ControleDespesa con_des = new ControleDespesa();
+    ControleProduto pro = new ControleProduto();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -45,18 +42,21 @@ public class RetirarDespesasDia extends HttpServlet {
             throws ServletException, IOException {
         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
+        String seach = new String(request.getParameter("produto").getBytes("iso-8859-1"), "UTF-8");
         int cod = l.autenticaEmpresa(n, s);
         if (cod > 0) {
             response.setHeader("auth", "1");
-            Type type = new TypeToken<ArrayList<DespesaBEAN>>() {
-            }.getType();
-            String str = new String(request.getParameter("despesa").getBytes("iso-8859-1"), "UTF-8");
-            ArrayList<DespesaBEAN> c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, type);
-            response.setHeader("sucesso", con_des.retirarDespesaDia(c, cod));
+            ArrayList<Produtos> u = pro.buscarP(seach, cod);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-
+            ArrayList<Produtos> u = null;
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(new Gson().toJson(u));
         }
     }
 

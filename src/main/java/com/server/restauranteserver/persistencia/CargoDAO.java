@@ -61,7 +61,7 @@ public class CargoDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println("Erro:" + e.getCause());
         }
         return c;
     }

@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +29,7 @@ public class ProdutoDAO {
     public ArrayList<Produtos> buscar(String produto, int emp) {
 
         ArrayList<Produtos> p = new ArrayList<>();
-        String sql = "SELECT proCodigo,proNome, proPreco FROM produto WHERE pro_empCodigo = " + emp + " and (proCodigo LIKE '" + produto + "%' or proNome LIKE '" + produto + "%');";
+        String sql = "SELECT proCodigo,proNome, proPreco,proQuantidade,proDescricao FROM produto WHERE pro_empCodigo = " + emp + " and (proCodigo LIKE '" + produto + "%' or proNome LIKE '" + produto + "%');";
         System.out.println(sql);
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -38,13 +39,14 @@ public class ProdutoDAO {
                 pp.setCodigo(rs.getInt(1));
                 pp.setNome(rs.getString(2));
                 pp.setPreco(rs.getFloat(3));
+                pp.setQuantidade(rs.getFloat(4));
+                pp.setDescricao(rs.getString(5));
                 p.add(pp);
-                // modelo.addElement(rs.getInt(1) + " : " + rs.getString(2) + String.format("%80s"," R$ " + rs.getFloat(3)+""));
             }
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
 
         return p;
@@ -72,7 +74,8 @@ public class ProdutoDAO {
             stmt.close();
             return true;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
@@ -101,7 +104,7 @@ public class ProdutoDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }
@@ -128,7 +131,7 @@ public class ProdutoDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return ca;
     }
@@ -156,7 +159,7 @@ public class ProdutoDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return ca;
     }
@@ -184,18 +187,16 @@ public class ProdutoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
     }
 
     public void alteraQuantidade(int pro, float qtd) {
-        String sql = "update produto set proQuantidade = ? where proCodigo = " + pro + ";";
-
+        String sql = "update produto set proQuantidade = " + qtd + " where proCodigo = " + pro + ";";
+        System.out.println(sql);
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setFloat(1, qtd);
-
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -203,7 +204,7 @@ public class ProdutoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -227,7 +228,7 @@ public class ProdutoDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }
@@ -240,26 +241,39 @@ public class ProdutoDAO {
             stmt.execute();
             stmt.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }
 
     public float quantidadeEstoque(int produto) {
         String sql = "select proQuantidade from produto where proTipo != 'Cozinha' and proCodigo = " + produto + ";";
+        System.out.println(sql);
         float quantidade = -1;
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 quantidade = rs.getFloat(1);
-
             }
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return quantidade;
+    }
+
+    public ResultSet consulta(String strSql) {
+        try {
+            //criando o objeto Statement para que seja possivel enviar as consultas
+            Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            //objeto do ResulSet para receber o resultado da consulta
+            ResultSet rs = stmt.executeQuery(strSql);
+            return rs;
+        } catch (SQLException erro) {
+            System.err.println(erro.getMessage());
+            return null;
+        }
     }
 
 }

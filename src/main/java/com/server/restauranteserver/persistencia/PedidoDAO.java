@@ -40,7 +40,7 @@ public class PedidoDAO {
             stmt.setString(3, c.getObservacao());
             stmt.setInt(4, c.getVenda());
             stmt.setInt(5, c.getProduto());
-            stmt.setString(6, "Pendente");
+            stmt.setString(6, c.getStatus());
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
@@ -49,7 +49,8 @@ public class PedidoDAO {
             stmt.close();
             return i;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+            return i;
         }
     }
 
@@ -74,17 +75,17 @@ public class PedidoDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }*/
-    public ArrayList<ProdutosGravados> produtosMesa(int mesa) {
+    public ArrayList<ProdutosGravados> produtosMesa(int mesa, int caixa) {
         ArrayList<ProdutosGravados> c = new ArrayList<ProdutosGravados>();
 
-        String sql = "SELECT pedCodigo,ped_proCodigo, proNome,pedQTD, pedTime,venMesa, (proPreco * pedQTD) "
-                + "FROM produto join pedido join venda"
-                + " where"
-                + " venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and venMesa=" + mesa + " and venStatus = 'aberta' and ped_excCodigo is null;";
+        String sql = "SELECT pedCodigo,ped_proCodigo, proNome,pedQTD, pedTime,venMesa, (proPreco * pedQTD), venCodigo \n" +
+"                FROM empresa join caixa join venda join pedido join produto\n" +
+"                 where empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and\n" +
+"                venCodigo = ped_venCodigo and ped_proCodigo = proCodigo and venMesa = "+mesa+" and venStatus = 'aberta' and ped_excCodigo is null and caiCodigo = "+caixa+";";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -97,11 +98,12 @@ public class PedidoDAO {
                 ca.setTime(rs.getString(5));
                 ca.setMesa(rs.getInt(6));
                 ca.setValor(rs.getFloat(7));
+                ca.setCodVenda(rs.getInt(8));
                 c.add(ca);
             }
             stmt.close();
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }
@@ -115,7 +117,7 @@ public class PedidoDAO {
                 + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
                 + "                and caiCodigo=" + caixa + " and empCodigo = " + empresa + " and  proTipo ='Cozinha' and pedStatus = 'Pendente' and venStatus = 'aberta' and ped_excCodigo is null;";
         try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
@@ -131,7 +133,7 @@ public class PedidoDAO {
             }
             stmt.close();
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }
@@ -143,9 +145,9 @@ public class PedidoDAO {
                 + "                FROM empresa join caixa join venda join pedido join produto\n"
                 + "                where\n"
                 + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
-                + "                and caiCodigo=" + caixa + " and empCodigo = " + empresa + " and  proTipo ='Cozinha' and venStatus = 'aberta' and ped_excCodigo is null;";
+                + "                and caiCodigo=" + caixa + " and empCodigo = " + empresa + " and venStatus = 'aberta' and ped_excCodigo is null;";
         try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
@@ -162,7 +164,7 @@ public class PedidoDAO {
             }
             stmt.close();
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }
@@ -176,7 +178,7 @@ public class PedidoDAO {
                 + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
                 + "                and caiCodigo=" + caixa + " and empCodigo = " + empresa + " and  proTipo ='Cozinha' and pedStatus = 'Atrazado' and venStatus = 'aberta' and ped_excCodigo is null;";
         try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
@@ -192,7 +194,7 @@ public class PedidoDAO {
             }
             stmt.close();
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }
@@ -206,7 +208,7 @@ public class PedidoDAO {
                 + "                empCodigo = cai_empCodigo and caiCodigo = ven_caiCodigo and venCodigo = ped_venCodigo and ped_proCodigo = proCodigo\n"
                 + "                and caiCodigo=" + caixa + " and empCodigo = " + empresa + " and  proTipo ='Cozinha' and pedStatus = 'Realizado' and venStatus = 'aberta' and ped_excCodigo is null;";
         try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Pedido ca = new Pedido();
@@ -222,7 +224,7 @@ public class PedidoDAO {
             }
             stmt.close();
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }
@@ -232,7 +234,7 @@ public class PedidoDAO {
 
         String sql = "select * from pedido where ped_proCodigo = " + produto + " and ped_venCondigo = " + venda + " and pedTime = '" + time + "' and ped_excCodigo is null;";
         try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt =(PreparedStatement)connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ca.setCodigo(rs.getInt(1));
@@ -248,7 +250,7 @@ public class PedidoDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return ca;
     }
@@ -266,7 +268,7 @@ public class PedidoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -276,7 +278,7 @@ public class PedidoDAO {
                 + "where pedCodigo = " + pedido + " ;";
 
         try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -284,7 +286,7 @@ public class PedidoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -294,7 +296,7 @@ public class PedidoDAO {
                 + "where pedCodigo = " + pedido + ";";
 
         try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -302,7 +304,7 @@ public class PedidoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -314,7 +316,7 @@ public class PedidoDAO {
             stmt.executeUpdate();
             stmt.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -322,7 +324,7 @@ public class PedidoDAO {
         String sql = "update pedido set ped_venCodigo = " + destino + "  where ped_venCodigo = " + origem + " ;";
 
         try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
@@ -330,7 +332,7 @@ public class PedidoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -342,7 +344,7 @@ public class PedidoDAO {
             stmt.execute();
             stmt.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }*/
     public int getMesaBalcaoAberta(int caixa) {
@@ -358,7 +360,7 @@ public class PedidoDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return mesa;
     }
@@ -376,7 +378,7 @@ public class PedidoDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return mesa;
     }

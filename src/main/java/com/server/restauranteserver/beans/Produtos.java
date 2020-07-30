@@ -10,11 +10,21 @@ package com.server.restauranteserver.beans;
  * @author Daniel
  */
 public class Produtos {
+
     private int codigo;
     private String nome;
     private float preco;
     private String descricao;
     private String tipo;
+    private float quantidade;
+
+    public float getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(float quantidade) {
+        this.quantidade = quantidade;
+    }
 
     public String getDescricao() {
         return descricao;
@@ -31,7 +41,6 @@ public class Produtos {
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
-    
 
     public int getCodigo() {
         return codigo;
@@ -56,6 +65,5 @@ public class Produtos {
     public void setPreco(float preco) {
         this.preco = preco;
     }
-    
-    
+
 }

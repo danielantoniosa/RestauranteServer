@@ -47,6 +47,7 @@ public class AbrirCaixa extends HttpServlet {
             response.setHeader("auth", "1");
             CaixaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(request.getParameter("caixa"), CaixaBEAN.class);
             response.setHeader("sucesso", con_caixa.abrirCaixa(c, cod));
+            
 
         } else {
             response.setHeader("auth", "0");

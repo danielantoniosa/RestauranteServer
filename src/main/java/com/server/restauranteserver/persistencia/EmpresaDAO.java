@@ -22,7 +22,7 @@ import java.sql.Statement;
 public class EmpresaDAO {
 
     private Connection connection;
-     PreparedStatement stmt;
+    PreparedStatement stmt;
 
     public EmpresaDAO() {
         this.connection = ConnectionFactory.getConnection();
@@ -66,7 +66,7 @@ public class EmpresaDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
         return i;
 
@@ -110,7 +110,7 @@ public class EmpresaDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -149,7 +149,7 @@ public class EmpresaDAO {
             stmt.close();
 
         } catch (SQLException c) {
-            throw new RuntimeException();
+            System.out.println(c.getMessage());
         }
         return e;
     }
@@ -181,9 +181,9 @@ public class EmpresaDAO {
                 e.setCidade(rs.getString(15));
                 e.setUf(rs.getString(16));
                 e.setCep(rs.getString(17));
-               if (rs.getBytes(18) != null) {
+                if (rs.getBytes(18) != null) {
                     e.setLogo(rs.getBytes(18));
-               }
+                }
                 e.setDataFundacao(rs.getString(19));
                 e.setNomeResp(rs.getString(20));
                 e.setTipo(rs.getString(21));
@@ -215,7 +215,8 @@ public class EmpresaDAO {
             stmt.close();
             return s;
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
+            return s;
         }
 
     }
@@ -224,17 +225,24 @@ public class EmpresaDAO {
         int cod = 0;
         String sql = "select empCodigo from empresa where empEmail = '" + email + "' and empSenha = '" + senha + "';";
         System.out.println(sql);
+        ResultSet rs = null;
         try {
-            stmt = connection.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+            try {
+                 stmt = (PreparedStatement) connection.prepareStatement(sql);
+                rs = stmt.executeQuery();
+            } catch (Exception e) {
+                System.out.println("erro login :" + e.getMessage());
+            }
+
             while (rs.next()) {
                 cod = rs.getInt(1);
 
             }
-            stmt.close();
+            this.stmt.close();
             return cod;
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
+            return cod;
         }
 
     }

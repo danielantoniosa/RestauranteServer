@@ -35,6 +35,11 @@ public class ControleProduto {
         return modelo;
     }
 
+    public ArrayList<Produtos> buscarP(String produto, int emp) {
+        ArrayList<Produtos> pp = p.buscar(produto, emp);
+        return pp;
+    }
+
     public ProdutoBEAN localizar(String produto) {
         return p.localizar(Integer.parseInt(produto));
     }
@@ -91,8 +96,11 @@ public class ControleProduto {
     }
 
     public void aumentaEstoque(int produto, float quantidade) {
+        System.out.println(" quantidade : " + quantidade);
         float qtd = p.quantidadeEstoque(produto);
+        System.out.println(" qtd : " + qtd);
         qtd += quantidade;
+        System.out.println(" qtd : " + qtd);
         p.alteraQuantidade(produto, qtd);
 
     }

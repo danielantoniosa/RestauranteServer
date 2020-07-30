@@ -7,7 +7,9 @@ package com.server.restauranteserver.persistencia;
 
 import com.server.restauranteserver.beans.Mesa;
 import com.server.restauranteserver.beans.ProdutosGravados;
+import com.server.restauranteserver.beans.Venda;
 import com.server.restauranteserver.beans.VendaBEAN;
+import com.server.restauranteserver.util.Time;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,7 +48,7 @@ public class VendaDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
         return lastId;
@@ -64,7 +66,7 @@ public class VendaDAO {
                 System.out.println("Foram alterados " + l + " linhas");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -82,7 +84,7 @@ public class VendaDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return cod;
     }
@@ -103,13 +105,14 @@ public class VendaDAO {
                 v.setMesa(rs.getInt(7));
                 v.setStatus(rs.getString(8));
                 v.setPagamento(rs.getString(9));
-                v.setCaixa(rs.getInt(10));
+                v.setDesconto(rs.getFloat(10));
+                v.setCaixa(rs.getInt(11));
 
             }
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return v;
     }
@@ -141,7 +144,7 @@ public class VendaDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }
@@ -172,23 +175,24 @@ public class VendaDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }
 
     public void atualizaVenda(VendaBEAN c) {
         String sql = "update venda set venCheckOut = '" + c.getCheckOut() + "' , venValor = " + c.getValor() + " , venPagamento = '" + c.getPagamento() + "' "
-                + ", venStatus = 'fechada', venQRcode = '" + c.getQRcode() + "', venCusto = " + c.getCusto() + "  where venCodigo = " + c.getCodigo() + " and ven_caiCodigo = " + c.getCaixa() + ";";
+                + ", venStatus = 'fechada', venQRcode = '" + c.getQRcode() + "', venCusto = " + c.getCusto() + ", venDesconto = " + c.getDesconto() + "  where venCodigo = " + c.getCodigo() + " and ven_caiCodigo = " + c.getCaixa() + ";";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
+
             int l = stmt.executeUpdate();
             stmt.close();
             if (l > 0) {
                 System.out.println("Foram alterados " + l + " linhas");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -206,7 +210,7 @@ public class VendaDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         if (cod == 0) {
             return false;
@@ -227,7 +231,7 @@ public class VendaDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         //retorna 0 se não tiver nenhuma venda naquela mesa
         return cod;
@@ -240,13 +244,13 @@ public class VendaDAO {
             stmt.execute();
             stmt.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }
 
     public float getValorMesa(int venda) {
         float total = 0;
-        String sql = "select sum(pedQTD*proPreco) \n"
+        String sql = "select round(sum(pedQTD*proPreco),2) \n"
                 + "from\n"
                 + " caixa join venda join pedido join produto \n"
                 + "	where\n"
@@ -257,12 +261,12 @@ public class VendaDAO {
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                total = rs.getInt(1);
+                total = rs.getFloat(1);
             }
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return total;
     }
@@ -284,17 +288,19 @@ public class VendaDAO {
                 v.setMesa(rs.getInt(7));
                 v.setStatus(rs.getString(8));
                 v.setPagamento(rs.getString(9));
-                v.setCaixa(rs.getInt(10));
+                v.setDesconto(rs.getFloat(10));
+                v.setCaixa(rs.getInt(11));
                 vendas.add(v);
 
             }
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return vendas;
     }
+
     public ArrayList<VendaBEAN> listarVendasFechadas(int caixa) {
         ArrayList<VendaBEAN> vendas = new ArrayList<VendaBEAN>();
         String sql = "select * from venda where venStatus = 'fechada' and ven_caiCodigo = " + caixa + ";";
@@ -313,14 +319,15 @@ public class VendaDAO {
                 v.setMesa(rs.getInt(7));
                 v.setStatus(rs.getString(8));
                 v.setPagamento(rs.getString(9));
-                v.setCaixa(rs.getInt(10));
+                v.setDesconto(rs.getFloat(10));
+                v.setCaixa(rs.getInt(11));
                 vendas.add(v);
 
             }
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return vendas;
     }
@@ -338,7 +345,7 @@ public class VendaDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return total;
     }
@@ -364,7 +371,7 @@ public class VendaDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return c;
     }
@@ -381,9 +388,216 @@ public class VendaDAO {
             stmt.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
         return total + "";
     }
 
+    public boolean adicionarClienteVenda(int venda, int cliente) {
+        String sql = "update venda set ven_cliCodigo = " + cliente + "  where venCodigo = " + venda + " ;";
+        System.out.println(sql);
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            int l = stmt.executeUpdate();
+            stmt.close();
+            if (l > 0) {
+                System.out.println("Foram alterados " + l + " linhas");
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    public ArrayList<Venda> listarVendasPorStatus(int empresa, String status) {
+        ArrayList<Venda> c = new ArrayList<>();
+
+        String sql = "select (venCodigo)as venda, venCheckIn,COALESCE((select  sum(pedQTD*proPreco) from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venda = venCodigo ),0) as valor,\n"
+                + "                                   venCusto,\n"
+                + "                                  venStatus,venPagamento,venDesconto,\n"
+                + "                                   (select cliNome from venda join cliente where ven_cliCodigo = cliCodigo and venCodigo = venda) as cliente,\n"
+                + "           			(COALESCE((select  sum(pedQTD*proPreco) from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venda = venCodigo ) ,0))as valorFim, caiData	"
+                + "                             from\n"
+                + "                              caixa join venda \n"
+                + "                                        where \n"
+                + "                                 caiCodigo = ven_caiCodigo  and cai_empCodigo = " + empresa + " and venStatus = '" + status + "';";
+        System.out.println(sql);
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                 Venda ca = new Venda();
+                ca.setCodigo(rs.getInt(1));
+                ca.setHora(rs.getString(2));
+                ca.setValor(rs.getFloat(3));
+                ca.setCusto(rs.getFloat(4));
+                ca.setStatus(rs.getString(5));
+                ca.setPagamento(rs.getString(6));
+                ca.setDesconto(rs.getFloat(7));
+                ca.setCliente(rs.getString(8));
+                ca.setValorFinal(rs.getInt(9));
+                ca.setData(Time.formataDataBR(rs.getString(10)));
+                c.add(ca);
+            }
+            stmt.close();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return c;
+    }
+
+    public ArrayList<Venda> listarVendasPorConsulta(int empresa, String cliente) {
+        ArrayList<Venda> c = new ArrayList<>();
+
+        String sql = "select (venCodigo)as venda, venCheckIn,COALESCE((select  sum(pedQTD*proPreco) from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venda = venCodigo ),0) as valor,\n"
+                + "                                   venCusto,\n"
+                + "                                  venStatus,venPagamento,venDesconto,\n"
+                + "                                   (select cliNome from venda join cliente where ven_cliCodigo = cliCodigo and venCodigo = venda) as cliente,\n"
+                + "           			(COALESCE((select  sum(pedQTD*proPreco) from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venda = venCodigo ) ,0))as valorFim, caiData	"
+                + "                             from\n"
+                + "                              caixa join venda join cliente\n"
+                + "                                        where \n"
+                + "                                 caiCodigo = ven_caiCodigo and cliCodigo = ven_cliCodigo  and cai_empCodigo = " + empresa + "  and cliNome like '" + cliente + "%' ;";
+        System.out.println(sql);
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Venda ca = new Venda();
+                ca.setCodigo(rs.getInt(1));
+                ca.setHora(rs.getString(2));
+                ca.setValor(rs.getFloat(3));
+                ca.setCusto(rs.getFloat(4));
+                ca.setStatus(rs.getString(5));
+                ca.setPagamento(rs.getString(6));
+                ca.setDesconto(rs.getFloat(7));
+                ca.setCliente(rs.getString(8));
+                ca.setValorFinal(rs.getInt(9));
+                ca.setData(Time.formataDataBR(rs.getString(10)));
+                c.add(ca);
+            }
+            stmt.close();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return c;
+    }
+
+    public ArrayList<Venda> listarVendasPorInData(int empresa, String dataIn, String dataFin) {
+        ArrayList<Venda> c = new ArrayList<>();
+
+        String sql = "select (venCodigo)as venda, venCheckIn,COALESCE((select  sum(pedQTD*proPreco) from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venda = venCodigo ),0) as valor,\n"
+                + "                                   venCusto,\n"
+                + "                                  venStatus,venPagamento,venDesconto,\n"
+                + "                                   (select cliNome from venda join cliente where ven_cliCodigo = cliCodigo and venCodigo = venda) as cliente,\n"
+                + "           			(COALESCE((select  sum(pedQTD*proPreco) from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venda = venCodigo ) ,0))as valorFim, caiData	"
+                + "                             from\n"
+                + "                              caixa join venda \n"
+                + "                                        where \n"
+                + "                                 caiCodigo = ven_caiCodigo  and cai_empCodigo = " + empresa + "  and caiData between '" + dataIn + "' and '" + dataFin + "'  ;";
+        System.out.println(sql);
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                  Venda ca = new Venda();
+                ca.setCodigo(rs.getInt(1));
+                ca.setHora(rs.getString(2));
+                ca.setValor(rs.getFloat(3));
+                ca.setCusto(rs.getFloat(4));
+                ca.setStatus(rs.getString(5));
+                ca.setPagamento(rs.getString(6));
+                ca.setDesconto(rs.getFloat(7));
+                ca.setCliente(rs.getString(8));
+                ca.setValorFinal(rs.getInt(9));
+                ca.setData(Time.formataDataBR(rs.getString(10)));
+                c.add(ca);
+            }
+            stmt.close();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return c;
+    }
+
+    public Venda buscarVenda(int venda) {
+        Venda v = new Venda();
+        String sql2 = "select (venCodigo)as venda, venCheckIn,COALESCE((select  sum(pedQTD*proPreco) from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venda = venCodigo ),0) as valor,\n"
+                + "                                   venCusto,\n"
+                + "                                  venStatus,venPagamento,venDesconto,\n"
+                + "                                   (select cliNome from venda join cliente where ven_cliCodigo = cliCodigo and venCodigo = venda) as cliente,\n"
+                + "           			(COALESCE((select  sum(pedQTD*proPreco) from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venda = venCodigo ) ,0))as valorFim	from\n"
+                + "                              caixa join venda \n"
+                + "                                        where \n"
+                + "                                 caiCodigo = ven_caiCodigo  and venCodigo = " + venda + ";";
+        String sql = "select venCodigo as venda ,venTime, venValor, venCusto, venStatus, venPagamento,\n"
+                + "venDesconto,venFrete,venValorFin, \n"
+                + "(select cliNome from cliente join venda where cliCodigo = ven_cliCodigo and venCodigo = venda)\n"
+                + " from venda  Where venCodigo = " + venda + ";";
+        System.out.println(sql2);
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql2);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                v.setCodigo(rs.getInt(1));
+                v.setHora(rs.getString(2));
+                v.setValor(rs.getFloat(3));
+                v.setCusto(rs.getFloat(4));
+                v.setStatus(rs.getString(5));
+                v.setPagamento(rs.getString(6));
+                v.setDesconto(rs.getFloat(7));
+                v.setCliente(rs.getString(8));
+                v.setValorFinal(rs.getInt(9));
+
+            }
+            stmt.close();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return v;
+    }
+
+    public ArrayList<Venda> listarVendas(int empresa) {
+        ArrayList<Venda> c = new ArrayList<>();
+
+        String sql = "select (venCodigo)as venda, venCheckIn,COALESCE((select  sum(pedQTD*proPreco) from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venda = venCodigo ),0) as valor,\n"
+                + "                                   venCusto,\n"
+                + "                                  venStatus,venPagamento,venDesconto,\n"
+                + "                                   (select cliNome from venda join cliente where ven_cliCodigo = cliCodigo and venCodigo = venda) as cliente,\n"
+                + "           			(COALESCE((select  sum(pedQTD*proPreco) from venda join pedido join produto where  ped_venCodigo = venCodigo and ped_proCodigo = proCodigo and venda = venCodigo ) ,0))as valorFim, caiData	"
+                + "                             from\n"
+                + "                              caixa join venda \n"
+                + "                                        where \n"
+                + "                                 caiCodigo = ven_caiCodigo  and cai_empCodigo = " + empresa + " ;";
+        System.out.println(sql);
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Venda ca = new Venda();
+                ca.setCodigo(rs.getInt(1));
+                ca.setHora(rs.getString(2));
+                ca.setValor(rs.getFloat(3));
+                ca.setCusto(rs.getFloat(4));
+                ca.setStatus(rs.getString(5));
+                ca.setPagamento(rs.getString(6));
+                ca.setDesconto(rs.getFloat(7));
+                ca.setCliente(rs.getString(8));
+                ca.setValorFinal(rs.getInt(9));
+                ca.setData(Time.formataDataBR(rs.getString(10)));
+                c.add(ca);
+            }
+            stmt.close();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return c;
+    }
 }
