@@ -20,25 +20,23 @@ import javax.swing.DefaultComboBoxModel;
  */
 public class ControlePedido {
 
-    private ProdutoDAO p = new ProdutoDAO();
+    //  private ProdutoDAO p = new ProdutoDAO();
 
-    public DefaultComboBoxModel buscar(String produto,int emp) {
+    /* public DefaultComboBoxModel buscar(String produto, String u, String s) {
         DefaultComboBoxModel modelo = new DefaultComboBoxModel();
-        ArrayList<Produtos> pe = p.buscar(produto, emp);
+        ArrayList<Produtos> pe = p.buscar(produto, u,s);
         for (Produtos p : pe) {
             modelo.addElement(p.getCodigo() + " : " + p.getNome() + " : R$ " + p.getPreco());
-
         }
-
         return modelo;
     }
 
-    public ArrayList<ProdutoBEAN> listarAll(int emp) {
-        return p.listarALl(emp);
+    public ArrayList<ProdutoBEAN> listarAll(String u, String s) {
+        return p.listarALl(u,s);
     }
 
-    public String cadastrar(ProdutoBEAN f, int emp) {
-        p.adicionar(f, emp);
+    public String cadastrar(ProdutoBEAN f, String u, String s) {
+        p.adicionar(f, u,s);
         return "Cadastro realizado com sucesso!!";
     }
 
@@ -54,56 +52,47 @@ public class ControlePedido {
 
     public ProdutoBEAN localizar(int i) {
         return p.localizar(i);
-    }
+    }*/
 
-    public ArrayList<Produtos> listarPedidos(ArrayList<Produtos> pro, int emp) {
-        ArrayList<Produtos> produtos = p.listarProdutos(emp);
+ /*public ArrayList<Produtos> listarPedidos(ArrayList<Produtos> pro, String u, String s) {
+        ArrayList<Produtos> produtos = p.listarProdutos(u,s);
         for (Produtos produto : produtos) {
             pro.add(produto);
         }
         return pro;
-    }
-
-    public ArrayList<Pedido> listarPedidos(int emp) {
-        ControleCaixa cai = new ControleCaixa();
+    }*/
+    public ArrayList<Pedido> listarPedidos(String u, String s) {
         PedidoDAO ped = new PedidoDAO();
-        int caixa = cai.getCaixa(emp);
-        ArrayList<Pedido> pedidos = ped.listarPedidosAbertos(emp, caixa);
+        ArrayList<Pedido> pedidos = ped.listarPedidosAbertos(u, s);
         return pedidos;
     }
 
-    public ArrayList<Pedido> listarPedidosCaixa(int emp) {
-        ControleCaixa cai = new ControleCaixa();
+    public ArrayList<Pedido> listarPedidosCaixa(String u, String s) {
         PedidoDAO ped = new PedidoDAO();
-        int caixa = cai.getCaixa(emp);
-        ArrayList<Pedido> pedidos = ped.listarPedidos(emp, caixa);
+        ArrayList<Pedido> pedidos = ped.listarPedidos(u, s);
         return pedidos;
     }
 
-    public ArrayList<Pedido> alterarPedido(String p, int emp) {
+    public ArrayList<Pedido> alterarPedido(String p, String u, String s) {
         PedidoDAO ped = new PedidoDAO();
         ped.mudarStatusRealizado(Integer.parseInt(p), Horas.getTime());
-        return listarPedidos(emp);
+        return listarPedidos(u, s);
     }
 
-    public ArrayList<Pedido> listarPedidosRealizados(int emp) {
-        ControleCaixa cai = new ControleCaixa();
+    public ArrayList<Pedido> listarPedidosRealizados(String u, String s) {
         PedidoDAO ped = new PedidoDAO();
-        int caixa = cai.getCaixa(emp);
-        ArrayList<Pedido> pedidos = ped.listarPedidosRealizados(emp, caixa);
+        ArrayList<Pedido> pedidos = ped.listarPedidosRealizados(u, s);
         return pedidos;
     }
 
-    public ArrayList<Pedido> listarPedidosAtrazados(int emp) {
-        ControleCaixa cai = new ControleCaixa();
+    public ArrayList<Pedido> listarPedidosAtrazados(String u, String s) {
         PedidoDAO ped = new PedidoDAO();
-        int caixa = cai.getCaixa(emp);
-        ArrayList<Pedido> pedidos = ped.listarPedidosAtrazados(emp, caixa);
+        ArrayList<Pedido> pedidos = ped.listarPedidosAtrazados(u, s);
         return pedidos;
     }
 
-    public Produtos buscarUm(String combo, int emp) {
-        ArrayList<Produtos> todos = p.listarProdutos(emp);
+    /* public Produtos buscarUm(String combo, String u, String s) {
+        ArrayList<Produtos> todos = p.listarProdutos(u, s);
         for (Produtos p : todos) {
             String pro = p.getCodigo() + " : " + p.getNome() + " : R$ " + p.getPreco();
             if (combo.equals(pro)) {
@@ -112,6 +101,5 @@ public class ControlePedido {
         }
         return null;
 
-    }
-
+    }*/
 }

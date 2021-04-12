@@ -16,20 +16,19 @@ import java.util.ArrayList;
 public class ControleSangria {
 
     private SangriaDAO s = new SangriaDAO();
-    private ControleCaixa c = new ControleCaixa();
 
-    public String cadastrar(SangriaBEAN sangria, int emp) {
-        sangria.setCaixa(c.getCaixa(emp));
-        s.adicionar(sangria);
+    public String cadastrar(SangriaBEAN sangria, String u, String se) {
+
+        s.adicionar(sangria, u, se);
         return "Sucesso!";
     }
 
-    public ArrayList<SangriaBEAN> listarSangriasCaixa(int emp) {
-        return s.buscar(c.getCaixa(emp));
+    public ArrayList<SangriaBEAN> listarSangriasCaixa(String u, String se) {
+        return s.buscar(u, se);
     }
 
-    public float getTotalSangriasCaixa(int emp) {
-        return s.getTotalSangriasCaixa(c.getCaixa(emp));
+    public float getTotalSangriasCaixa(String u, String se) {
+        return s.getTotalSangriasCaixa(u, se);
     }
 
 }

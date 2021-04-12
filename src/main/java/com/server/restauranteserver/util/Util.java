@@ -5,6 +5,8 @@
  */
 package com.server.restauranteserver.util;
 
+import java.text.DecimalFormat;
+
 /**
  *
  * @author Daniel
@@ -18,5 +20,7 @@ public class Util {
     public static String geraStringQRCodeVenda(int venda, int mesa) {
         return venda + ";" + mesa;
     }
+
+   
 
 }

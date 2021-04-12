@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "ListarVendasStatus", urlPatterns = {"/restaurante_server/ListarVendasStatus"}, initParams = {
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = ""),
-@WebInitParam(name = "status", value = "")})
+    @WebInitParam(name = "status", value = "")})
 public class ListarVendasStatus extends HttpServlet {
 
     ControleLogin l = new ControleLogin();
@@ -42,23 +42,19 @@ public class ListarVendasStatus extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
         String status = new String(request.getParameter("status").getBytes("iso-8859-1"), "UTF-8");
-        int codE = l.autenticaEmpresa(n,s);
-        if (codE > 0 ) {
+
+        ArrayList<Venda> u = con.getVendasPorStatus(n, s, status);
+        if (u.size() > 0) {
             response.setHeader("auth", "1");
-            ArrayList<Venda> u = con.getVendasPorStatus(codE ,status);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));
 
         } else {
             response.setHeader("auth", "0");
-            ArrayList<Venda> u = null;
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
         }
     }
 

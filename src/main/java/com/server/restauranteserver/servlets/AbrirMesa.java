@@ -45,36 +45,30 @@ public class AbrirMesa extends HttpServlet {
             throws ServletException, IOException {
         String usuario = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String senha = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(usuario, senha);
-        if (cod > 0) {
-            response.setHeader("auth", "1");
-            int i = 0;
-            i = con.abrirMesaM(request.getParameter("mesa"), cod);
 
-            if (i > 0) {
-                //mesa aberta 
-                response.setHeader("sucesso", i + "");
-            } else if (i == 0) {
-                //mesa já aberta
-                response.setHeader("sucesso", "0");
-            } else if (i == -1) {
-                //caixa fechado
-                response.setHeader("sucesso", "-1");
-            }
-
-        } else {
-            response.setHeader("auth", "0");
-
+        int i = 0;
+        i = con.abrirMesa(Integer.parseInt(request.getParameter("mesa")), usuario, senha);
+        response.setHeader("auth", "1");
+        if (i > 0) {
+            //mesa aberta 
+            response.setHeader("sucesso", i + "");
+        } else if (i == 0) {
+            //mesa já aberta
+            response.setHeader("sucesso", "0");
+        } else if (i == -1) {
+            //caixa fechado
+            response.setHeader("sucesso", "-1");
         }
+
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
+/**
+ * Returns a short description of the servlet.
+ *
+ * @return a String containing servlet description
+ */
+@Override
+        public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 }

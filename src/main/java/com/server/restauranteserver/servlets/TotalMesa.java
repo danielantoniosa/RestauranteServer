@@ -39,16 +39,11 @@ public class TotalMesa extends HttpServlet {
             throws ServletException, IOException {
         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(n, s);
-        if (cod > 0) {
+
             response.setHeader("auth", "1");
-            float reto = f.getValorMesa(request.getParameter("mesa"), cod);
+            float reto = f.getValorMesa(request.getParameter("mesa"), n,s);
             response.setHeader("sucesso", reto + "");
 
-        } else {
-            response.setHeader("auth", "0");
-
-        }
     }
 
     /**

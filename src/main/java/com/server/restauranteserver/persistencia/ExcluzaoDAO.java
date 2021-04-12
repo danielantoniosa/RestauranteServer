@@ -49,12 +49,14 @@ public class ExcluzaoDAO {
         return lastId;
     }
 
-    public ArrayList<ExcluzaoBEAN> listarExclusaoVenda(int venda) {
+    public ArrayList<ExcluzaoBEAN> listarExclusaoMesa(int mesa) {
         ArrayList<ExcluzaoBEAN> c = new ArrayList<>();
 
         String sql = "select excCodigo,excMotivo , excTime, funNome\n"
-                + "	from funcionario join exclusao join pedido join venda\n"
-                + "		where funCodigo = exc_funCodigo and ped_excCodigo = excCodigo and venCodigo = ped_venCodigo and venCodigo ='" + venda + "' \n"
+                + "	from empresa join admicao join funcionario join exclusao join pedido join venda\n"
+                + "	where empCodigo = adm_empCodigo and funCodigo = adm_funCdoigo and "
+                + "     funCodigo = exc_funCodigo and ped_excCodigo = excCodigo and venCodigo = ped_venCodigo and"
+                + "     venMesa ='" + mesa + "' and caiStatus = 'aberto' and venStatus = 'aberta'\n"
                 + "			group by venCodigo \n"
                 + "				order by venMesa;";
         try {
@@ -98,13 +100,13 @@ public class ExcluzaoDAO {
         return e;
     }
 
-    public ArrayList<ExcluzaoBEAN> listarExclusaoCaixa(int caixa) {
+    public ArrayList<ExcluzaoBEAN> listarExclusaoCaixa(String u, String s) {
         ArrayList<ExcluzaoBEAN> c = new ArrayList<>();
 
         String sql = "select excCodigo,excMotivo,excTime,exc_funCodigo,funNome "
-                + "   from  venda join pedido join exclusao join funcionario \n"
-                + "   where ped_venCodigo= venCodigo and excCodigo = ped_excCodigo and exc_funCodigo = funCodigo and ven_caiCodigo = " + caixa + "\n"
-                + "   order by excTime;";
+                + "   from  empresa join caixa join venda join pedido join exclusao join funcionario \n"
+                + "   where empCodigo = cai_empCodigo and ped_venCodigo= venCodigo and excCodigo = ped_excCodigo and exc_funCodigo = funCodigo and ven_caiCodigo = caiCodigo and\n"
+                + "   empEmail = '" + u + "' and empSenha = '" + s + "' order by excTime;";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();

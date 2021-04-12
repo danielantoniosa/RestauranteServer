@@ -31,265 +31,225 @@ import javax.servlet.ServletContext;
  */
 public class ControleVenda {
 
-    public VendaBEAN listarVenda(int mesa, int emp) {
+    public VendaBEAN listarVenda(int mesa, String u, String s) {
         VendaDAO ven = new VendaDAO();
-        ControleCaixa cc = new ControleCaixa();
-        int venda = ven.getVenda(mesa, cc.getCaixa(emp));
-        return ven.listarVenda(venda);
+        //
+        return ven.listarVenda(mesa, u, s);
     }
 
-    public String atualizaVenda(VendaBEAN v, int emp) {
+    public String atualizaVenda(VendaBEAN v, String u, String s) {
         VendaDAO ven = new VendaDAO();
-        VendaBEAN venda = listarVenda(v.getMesa(), emp);
+        VendaBEAN venda = listarVenda(v.getMesa(), u, s);
         venda.setCheckOut(v.getCheckOut());
         venda.setPagamento(v.getPagamento());
         venda.setValor(v.getValor());
         venda.setDesconto(v.getDesconto());
-        ven.atualizaVenda(venda);
+        //
+        ven.atualizaVenda(venda, u, s);
         return "sucesso";
     }
 
-    public File atualizaVendaNota(VendaBEAN v, int emp, ServletContext contexto) {
+    public File atualizaVendaNota(VendaBEAN v, String u, String s, ServletContext contexto) {
         ControleRelatorio r = new ControleRelatorio();
         VendaDAO ven = new VendaDAO();
-        float des = v.getDesconto();
-        VendaBEAN venda = listarVenda(v.getMesa(), emp);
-        venda.setCheckOut(v.getCheckOut());
-        venda.setPagamento(v.getPagamento());
-        venda.setValor(v.getValor());
-        int cod = venda.getCodigo();
-        venda.setDesconto(des);
-        ven.atualizaVenda(venda);
-        System.out.println(cod);
-        return r.geraRelatorioVenda(contexto, emp, cod);
+        //
+        int emp = ven.atualizaVenda(v, u, s);
+        System.out.println(emp);
+        //
+        return r.geraRelatorioVenda(contexto, v.getCodigo(), emp);
     }
 
-    public int abrirMesa(VendaBEAN v, int emp) {
+    public int abrirMesa(VendaBEAN v, String u, String s) {
         VendaDAO ven = new VendaDAO();
-        ControleCaixa cc = new ControleCaixa();
-        v.setCaixa(cc.getCaixa(emp));
-        return ven.abrirMesa(v);
+        //
+        return ven.abrirMesa(v, u, s);
     }
 
-    public int adicionar(PedidoBEAN venda, int emp) {
+    public int abrirMesa(int mesa, String u, String s) {
+        VendaDAO ven = new VendaDAO();
+        VendaBEAN v = new VendaBEAN();
+        v.setCheckIn(Time.getTime());
+        v.setMesa(mesa);
+        v.setStatus("aberta");
+        //
+        return ven.abrirMesa(v, u, s);
+    }
+
+    public int adicionar(PedidoBEAN venda, String u, String s) {
         int pedido = 0;
+        int mesa = venda.getVenda();
         //verificar se contem produto em estoque para produtos diferentes do tipo de cozinha
         ControleProduto cp = new ControleProduto();
-        float qtd = cp.quantidadeEstoque(venda.getProduto(), emp, venda.getQuantidade());
+        //1
+        float qtd = cp.quantidadeEstoque(venda.getProduto(), venda.getQuantidade());
         //retorn -1 referece produto do tipo Cozinha
         System.out.println("quantidade :" + qtd);
+        //1
+        VendaDAO ven = new VendaDAO();
+        int codVen = ven.getVenda(mesa, u, s);
+        if (codVen == 0) {
+            codVen = abrirMesa(mesa + "", u, s);
+        }
+        venda.setVenda(codVen);
+        //retorn -1 referece produto do tipo Cozinha
         if (qtd == -1) {
-            System.out.println("Cozinha");
-            int mesa = venda.getVenda();
-            ControleCaixa cc = new ControleCaixa();
-            int caixa = cc.getCaixa(emp);
-            System.out.println("caixa " + caixa);
-            PedidoDAO p = new PedidoDAO();
-            VendaDAO ven = new VendaDAO();
-            int v = ven.getVenda(mesa, caixa);
-            if (v != 0) {
-                venda.setVenda(v);
-                venda.setStatus("Pendente");
-                pedido = p.adicionar(venda);
-            } else {
-                int nvenda = abrirMesa(mesa + "", caixa);
-                venda.setVenda(nvenda);
-                venda.setStatus("Pendente");
-                pedido = p.adicionar(venda);
-            }
-            return pedido;
+            venda.setStatus("Pendente");
+            adiciona(venda, u, s);
         } else if (qtd >= venda.getQuantidade()) {
             System.out.println("Balcao");
+            //4
             cp.diminuiEstoque(venda.getProduto(), venda.getQuantidade(), qtd);
             venda.setStatus("Realizado");
-            return adiciona(venda, emp);
+            adiciona(venda, u, s);
         } else {
             return -1;
         }
+        return 1;
     }
 
-    public String adicionar(ArrayList<PedidoBEAN> venda, int emp) throws WriterException, IOException {
+    public String adicionar(ArrayList<PedidoBEAN> venda, String u, String s) throws WriterException, IOException {
+        ArrayList<PedidoBEAN> p = new ArrayList<>();
         String ret = "Sucesso";
         int mesa = venda.get(0).getVenda();
-        ControleCaixa cc = new ControleCaixa();
-        int caixa = cc.getCaixa(emp);
-        System.out.println("caixa " + caixa);
-        PedidoDAO p = new PedidoDAO();
         VendaDAO ven = new VendaDAO();
-        int v = ven.getVenda(mesa, caixa);
-        if (v != 0) {
-            for (PedidoBEAN pedido : venda) {
-                //verificar se contem produto em estoque para produtos diferentes do tipo de cozinha
-                ControleProduto cp = new ControleProduto();
-                float qtd = cp.quantidadeEstoque(pedido.getProduto(), emp, pedido.getQuantidade());
-                //retorn -1 referece produto do tipo Cozinha
-                if (qtd == -1) {
-                    pedido.setVenda(v);
-                    pedido.setStatus("Pendente");
-                    p.adicionar(pedido);
-                } else if (qtd >= pedido.getQuantidade()) {
-                    System.out.println("Balcao");
-                    cp.diminuiEstoque(pedido.getProduto(), pedido.getQuantidade(), qtd);
-                    pedido.setStatus("Realizado");
-                    adiciona(pedido, emp);
-
-                } else {
-                    ret += " , produto : " + pedido.getProduto() + ",";
-                }
-            }
+        int codVen = 0;
+        //1
+        codVen = ven.getVenda(mesa, u, s);
+        if (codVen == 0) {
         } else {
-            int nvenda = abrirMesaM(mesa + "", emp);
-            for (PedidoBEAN pedido : venda) {
-                //verificar se contem produto em estoque para produtos diferentes do tipo de cozinha
-                ControleProduto cp = new ControleProduto();
-                float qtd = cp.quantidadeEstoque(pedido.getProduto(), emp, pedido.getQuantidade());
-                //retorn -1 referece produto do tipo Cozinha
-                if (qtd == -1) {
-                    pedido.setVenda(nvenda);
-                    pedido.setStatus("Pendente");
-                    p.adicionar(pedido);
-                } else if (qtd >= pedido.getQuantidade()) {
-                    System.out.println("Balcao");
-                    cp.diminuiEstoque(pedido.getProduto(), pedido.getQuantidade(), qtd);
-                    pedido.setStatus("Realizado");
-                    adiciona(pedido, emp);
-
-                } else {
-                    ret += " , produto : " + pedido.getProduto() + ",";
-                }
+            //2
+            codVen = abrirMesa(mesa + "", u, s);
+        }
+        for (PedidoBEAN pedido : venda) {
+            //verificar se contem produto em estoque para produtos diferentes do tipo de cozinha
+            ControleProduto cp = new ControleProduto();
+            //3
+            float qtd = cp.quantidadeEstoque(pedido.getProduto(), pedido.getQuantidade());
+            //retorn -1 referece produto do tipo Cozinha
+            pedido.setVenda(codVen);
+            if (qtd == -1) {
+                pedido.setStatus("Pendente");
+                p.add(pedido);
+            } else if (qtd >= pedido.getQuantidade()) {
+                System.out.println("Balcao");
+                //4
+                cp.diminuiEstoque(pedido.getProduto(), pedido.getQuantidade(), qtd);
+                pedido.setStatus("Realizado");
+                p.add(pedido);
+            } else {
+                ret += " , produto : " + pedido.getProduto() + ",";
             }
         }
-        if (ret.equals("Sucesso")) {
-            return ret;
-        } else {
-            ret += ", esta(ão) com estoque insuficiente(s)!";
-            return ret;
-        }
+        adiciona(p, u, s);
+        return ret;
     }
 
-    public ArrayList<Mesa> getMesasAbertas(int emp) {
+    public ArrayList<Mesa> getMesasAbertas(String u, String s) {
         VendaDAO ven = new VendaDAO();
-        ControleCaixa cc = new ControleCaixa();
-        return ven.listarMesasAbertas(cc.getCaixa(emp));
+        return ven.listarMesasAbertas(u, s);
     }
 
-    public ArrayList<Mesa> getMesaAberta(int emp) {
+    public ArrayList<Mesa> getMesaAberta(String u, String s) {
         VendaDAO ven = new VendaDAO();
-        ControleCaixa cc = new ControleCaixa();
-        int caixa = cc.getCaixa(emp);
-        if (caixa > 0) {
-            return ven.listarMesaAberta(cc.getCaixa(emp));
-        } else {
-            return null;
-        }
+        return ven.listarMesasAbertas(u, s);
     }
 
-    public float getValorMesa(String mesa, int emp) {
+    public float getValorMesa(String mesa, String u, String s) {
         VendaDAO ven = new VendaDAO();
-        int venda = getVenda(Integer.parseInt(mesa), emp);
-        return ven.getValorMesa(venda);
+        return ven.getValorMesa(Integer.parseInt(mesa), u, s);
     }
 
-    public ArrayList<ProdutosGravados> listarProdutosMesa(String text, int emp) {
+    public ArrayList<ProdutosGravados> listarProdutosMesa(String text, String u, String s) {
         //verificar se mesa esta aberta
-        VendaDAO ven = new VendaDAO();
         PedidoDAO p = new PedidoDAO();
-        ControleCaixa cc = new ControleCaixa();
-        int caixa = cc.getCaixa(emp);
         int mesa = Integer.parseInt(text);
-        if (ven.getVenda(mesa, caixa) != 0) {
-            return p.produtosMesa(mesa, caixa);
+        return p.produtosMesa(mesa, u, s);
+    }
+
+    public String transferirMesa(String origem, String destino, String u, String s) throws WriterException, IOException {
+        VendaDAO ven = new VendaDAO();
+        int aux = ven.transferirMesa(Integer.parseInt(origem), Integer.parseInt(destino), u, s);
+        if (aux > 0) {
+            return "sucesso!";
         } else {
-            return null;
+            return "Erro!";
         }
     }
 
-    public String transferirMesa(String origem, String destino, int emp) throws WriterException, IOException {
+    public int getVenda(int mesa, String u, String s) {
         VendaDAO ven = new VendaDAO();
-        PedidoDAO p = new PedidoDAO();
-        ControleCaixa ca = new ControleCaixa();
-        int caixa = ca.getCaixa(emp);
-        int des = getVenda(Integer.parseInt(destino), emp);
-        if (des == 0) {
-            des = abrirMesa(destino, caixa);
-        }
-        p.transferirMesa(getVenda(Integer.parseInt(origem), emp), des);
-        ven.excluir(getVenda(Integer.parseInt(origem), emp));
-        return "sucesso!";
+        return ven.getVenda(mesa, u, s);
     }
 
-    public int getVenda(int mesa, int emp) {
-        VendaDAO ven = new VendaDAO();
-        ControleCaixa cc = new ControleCaixa();
-        return ven.getVenda(mesa, cc.getCaixa(emp));
-    }
-
-    private int abrirMesa(String mesa, int caixa) {
+    private int abrirMesa(String mesa, String u, String s) {
         VendaDAO ven = new VendaDAO();
         VendaBEAN v = new VendaBEAN();
-        v.setCaixa(caixa);
         v.setCheckIn(getHoraAtual());
         v.setMesa(Integer.parseInt(mesa));
-        int venda = ven.abrirMesa(v);
+        int venda = ven.abrirMesa(v, u, s);
         byte[] qr = null;
         try {
             qr = QRCode.getQRCodeImage(mesa, 350, 350);
+
         } catch (WriterException ex) {
-            Logger.getLogger(ControleVenda.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControleVenda.class
+                    .getName()).log(Level.SEVERE, null, ex);
+
         } catch (IOException ex) {
-            Logger.getLogger(ControleVenda.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControleVenda.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
-        ven.inserirQRCode(qr, venda);
+        //ven.inserirQRCode(qr, venda);
         System.out.println("Abrir mesa");
         return venda;
     }
 
-    public int abrirMesaM(String mesa, int empresa) {
-        ControleCaixa cc = new ControleCaixa();
+    public int abrirMesaM(String mesa, String u, String s) {
         VendaDAO ven = new VendaDAO();
         VendaBEAN v = new VendaBEAN();
-        int caixa = cc.getCaixa(empresa);
-        if (caixa > 0) {
-            v.setCaixa(cc.getCaixa(empresa));
-            v.setCheckIn(getHoraAtual());
-            v.setMesa(Integer.parseInt(mesa));
-            int venda = ven.getVenda(v.getMesa(), v.getCaixa());
-            if (venda == 0) {
-                int vend = ven.abrirMesa(v);
-                System.out.println("Mesa : " + mesa);
-                byte[] qr = null;
-                try {
-                    qr = QRCode.getQRCodeImage(v.getMesa() + "", 350, 350);
-                } catch (WriterException ex) {
-                    Logger.getLogger(ControleVenda.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(ControleVenda.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                ven.inserirQRCode(qr, vend);
-                return vend;
-            } else {
-                return 0;
+        v.setCheckIn(getHoraAtual());
+        v.setMesa(Integer.parseInt(mesa));
+        //
+        int venda = ven.getVenda(Integer.parseInt(mesa), u, s);
+        if (venda == 0) {
+            //
+            int vend = ven.abrirMesa(v, u, s);
+            System.out.println("Mesa : " + mesa);
+            byte[] qr = null;
+            try {
+                qr = QRCode.getQRCodeImage(v.getMesa() + "", 350, 350);
+
+            } catch (WriterException ex) {
+                Logger.getLogger(ControleVenda.class
+                        .getName()).log(Level.SEVERE, null, ex);
+
+            } catch (IOException ex) {
+                Logger.getLogger(ControleVenda.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
+            //
+            // ven.inserirQRCode(qr, vend);
+            return vend;
         } else {
-            return -1;
+            return 0;
         }
+
     }
 
     private String getHoraAtual() {
         return Time.getTime();
     }
 
-    public String transferirPedido(String mesaDestino, String pedido, int emp) throws WriterException, IOException {
+    public String transferirPedido(String mesaDestino, String pedido, String u, String s) throws WriterException, IOException {
         PedidoDAO p = new PedidoDAO();
-        ControleCaixa ca = new ControleCaixa();
-        int caixa = ca.getCaixa(emp);
         int destino = Integer.parseInt(mesaDestino);
         int pedi = Integer.parseInt(pedido);
-        int des = getVenda(destino, emp);
-        if (des == 0) {
-            des = abrirMesa(mesaDestino, caixa);
+        int aux = getVenda(destino, u, s);
+        if (aux == 0) {
+            int des = abrirMesa(mesaDestino, u, s);
+            p.transferir(pedi, destino, u, s);
         }
-        p.transferir(pedi, getVenda(destino, emp));
+
         return "Sucesso";
     }
 
@@ -307,84 +267,80 @@ public class ControleVenda {
 
     }
 
-    public int gerarMesaBalcao(int emp) {
-        ControleCaixa cc = new ControleCaixa();
+    public int gerarMesaBalcao(String u, String s) {
         PedidoDAO p = new PedidoDAO();
-        int mesa = p.getMesaBalcaoAberta(cc.getCaixa(emp));
-        if (mesa > 0) {
-            return mesa;
+        int mesa = p.getMaxMesa(u, s);
+        if (mesa > 100) {
+            return ++mesa;
         } else {
-            mesa = p.getMaxMesa(cc.getCaixa(emp));
-            if (mesa > 100) {
-                return ++mesa;
+            return 101;
+        }
+    }
+
+    public ArrayList<VendaBEAN> listarVendasAbertas(String u, String s) {
+        VendaDAO ven = new VendaDAO();
+        return ven.listarVendasAbertas(u, s);
+    }
+
+    public ArrayList<VendaBEAN> listarVendasFechadas(String u, String s) {
+        VendaDAO ven = new VendaDAO();
+        return ven.listarVendasFechadas(u, s);
+    }
+
+    public ArrayList<Venda> getVendasPorData(String u, String s, String ini, String fin) {
+        VendaDAO ven = new VendaDAO();
+        return ven.listarVendasPorInData(u, s, ini, fin);
+    }
+
+    public ArrayList<Venda> getVendasPorStatus(String u, String s, String status) {
+        VendaDAO ven = new VendaDAO();
+        return ven.listarVendasPorStatus(u, s, status);
+    }
+
+    public ArrayList<Venda> getVendasPorConsulta(String u, String s, String texto) {
+        VendaDAO ven = new VendaDAO();
+        return ven.listarVendasPorConsulta(u, s, texto);
+    }
+
+    public float getTotalVendido(String u, String s) {
+        VendaDAO ven = new VendaDAO();
+        return ven.getTotalVendido(u, s);
+    }
+
+    public ArrayList<ProdutosGravados> listarProdutosVendidosCaixa(String u, String s) {
+        VendaDAO ven = new VendaDAO();
+        return ven.listarProdutosVendidosCaixa(u, s);
+    }
+
+    public String isMesasAbertas(String u, String s) {
+        VendaDAO ven = new VendaDAO();
+        return ven.isVendasAbertas(u, s);
+    }
+
+    private int adiciona(PedidoBEAN venda, String u, String s) {
+        int pedido = 0;
+        PedidoDAO p = new PedidoDAO();
+        pedido = p.adicionar(venda, u, s);
+        return pedido;
+    }
+
+    private int adiciona(ArrayList<PedidoBEAN> venda, String u, String s) {
+        String sql = "INSERT INTO pedido (pedTime,pedQTD,"
+                + " pedObs,ped_venCodigo,ped_proCodigo,pedStatus )VALUES ";
+        int pedido = 0;
+        int cont = 0;
+        PedidoDAO p = new PedidoDAO();
+        for (PedidoBEAN pe : venda) {
+            cont++;
+            sql += " ('" + pe.getTime() + "'," + pe.getQuantidade() + " , '" + pe.getObservacao()
+                    + "', " + pe.getVenda() + ", " + pe.getProduto() + ", " + pe.getStatus() + ")";
+            if (venda.size() == cont) {
+                sql += ";";
             } else {
-                return 101;
+                sql += ",";
             }
         }
-    }
-
-    public ArrayList<VendaBEAN> listarVendasAbertas(int emp) {
-        ControleCaixa cc = new ControleCaixa();
-        VendaDAO ven = new VendaDAO();
-        return ven.listarVendasAbertas(cc.getCaixa(emp));
-    }
-
-    public ArrayList<VendaBEAN> listarVendasFechadas(int emp) {
-        ControleCaixa cc = new ControleCaixa();
-        VendaDAO ven = new VendaDAO();
-        return ven.listarVendasFechadas(cc.getCaixa(emp));
-    }
-
-    public ArrayList<Venda> getVendasPorData(int emp, String ini, String fin) {
-        VendaDAO ven = new VendaDAO();
-        return ven.listarVendasPorInData(emp, ini, fin);
-    }
-
-    public ArrayList<Venda> getVendasPorStatus(int emp, String status) {
-        VendaDAO ven = new VendaDAO();
-        return ven.listarVendasPorStatus(emp, status);
-    }
-
-    public ArrayList<Venda> getVendasPorConsulta(int emp, String texto) {
-        VendaDAO ven = new VendaDAO();
-        return ven.listarVendasPorConsulta(emp, texto);
-    }
-
-    public float getTotalVendido(int emp) {
-        ControleCaixa cc = new ControleCaixa();
-        VendaDAO ven = new VendaDAO();
-        return ven.getTotalVendido(cc.getCaixa(emp));
-    }
-
-    public ArrayList<ProdutosGravados> listarProdutosVendidosCaixa(int emp) {
-        ControleCaixa cc = new ControleCaixa();
-        VendaDAO ven = new VendaDAO();
-        return ven.listarProdutosVendidosCaixa(cc.getCaixa(emp));
-    }
-
-    public String isMesasAbertas(int emp) {
-        ControleCaixa cc = new ControleCaixa();
-        VendaDAO ven = new VendaDAO();
-        return ven.isVendasAbertas(cc.getCaixa(emp));
-    }
-
-    private int adiciona(PedidoBEAN venda, int emp) {
-        int pedido = 0;
-        int mesa = venda.getVenda();
-        ControleCaixa cc = new ControleCaixa();
-        int caixa = cc.getCaixa(emp);
-        System.out.println("caixa " + caixa);
-        PedidoDAO p = new PedidoDAO();
-        VendaDAO ven = new VendaDAO();
-        int v = ven.getVenda(mesa, caixa);
-        if (v != 0) {
-            venda.setVenda(v);
-            pedido = p.adicionar(venda);
-        } else {
-            int nvenda = abrirMesa(mesa + "", caixa);
-            venda.setVenda(nvenda);
-            pedido = p.adicionar(venda);
-        }
+        pedido = p.adicionar(sql);
         return pedido;
     }
 
@@ -398,14 +354,13 @@ public class ControleVenda {
         }
     }
 
-    public Venda getVenda(int venda) {
+    public Venda getValoresVenda(int mesa, String u, String s) {
         VendaDAO ven = new VendaDAO();
-        return ven.buscarVenda(venda);
+        return ven.buscarVenda(mesa,u,s);
     }
 
-    public ArrayList<Venda> getVendas(int emp) {
+    public ArrayList<Venda> getVendas(String u, String s) {
         VendaDAO ven = new VendaDAO();
-        ControleCaixa cc = new ControleCaixa();
-        return ven.listarVendas(emp);
+        return ven.listarVendas(u, s);
     }
 }

@@ -16,16 +16,14 @@ import java.util.ArrayList;
  */
 public class ControleDespesa {
    final private DespesaDAO d = new DespesaDAO();
-    final private ControleCaixa c = new ControleCaixa();
 
-    public ArrayList<DespesaBEAN> listarALL(int emp) {        
-        ArrayList<DespesaBEAN> t = d.listarAll(c.getCaixa(emp));
+    public ArrayList<DespesaBEAN> listarALL(String u,String s) {        
+        ArrayList<DespesaBEAN> t = d.listarAll(u,s);
         return t;
     }
 
-    public String adicionar(DespesaBEAN despesa, int emp) {
-        despesa.setCaixa(c.getCaixa(emp));
-        d.adicionar(despesa);
+    public String adicionar(DespesaBEAN despesa, String u,String s) {
+        d.adicionar(despesa,u,s);
         return "Cadastro Realizado com SUCESSO!!";
     }
 
@@ -36,8 +34,8 @@ public class ControleDespesa {
         return "Excluzão realizada com SUCESSO!!";
     }
 
-    public Float getTotalDespesasCaixa(int empresa) {
-        return d.getTotalDespesasCaixa(c.getCaixa(empresa));
+    public Float getTotalDespesasCaixa(String u,String s) {
+        return d.getTotalDespesasCaixa(u,s);
     }
 
 }

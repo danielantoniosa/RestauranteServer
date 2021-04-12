@@ -48,57 +48,54 @@ public class AtulizarVendaNota extends HttpServlet {
             throws ServletException, IOException {
         String usuario = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String senha = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(usuario, senha);
-        if (cod > 0) {
-            ServletContext contexto = request.getServletContext();
+        ServletContext contexto = request.getServletContext();
+        String str = new String(request.getParameter("venda").getBytes("iso-8859-1"), "UTF-8");
+        VendaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, VendaBEAN.class);
+        File filePath = pro.atualizaVendaNota(c, usuario, senha, contexto);
+        if (filePath != null) {
             response.setHeader("auth", "1");
-            String str = new String(request.getParameter("venda").getBytes("iso-8859-1"), "UTF-8");
-            VendaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, VendaBEAN.class);
-            File filePath = pro.atualizaVendaNota(c, cod, contexto);
-            if (filePath != null) {
-                response.setHeader("nome", filePath.getName());
-                File downloadFile = filePath;
+            response.setHeader("nome", filePath.getName());
+            File downloadFile = filePath;
 
-                FileInputStream inStream = new FileInputStream(downloadFile);
+            FileInputStream inStream = new FileInputStream(downloadFile);
 
-                // obtém ServletContext
-                ServletContext context = getServletContext();
+            // obtém ServletContext
+            ServletContext context = getServletContext();
 
-                // obtém o tipo MIME do arquivo
-                String mimeType = context.getMimeType(filePath.getAbsolutePath());
-                if (mimeType == null) {
-                    // definido como tipo binário se o mapeamento MIME não for encontrado
-                    mimeType = "application/octet-stream";
-                }
-                System.out.println("MIME type: " + mimeType);
-
-                // modifica a resposta
-                response.setContentType(mimeType);
-                response.setContentLength((int) downloadFile.length());
-
-                // força o download
-                String headerKey = "Content-Disposition";
-                String headerValue = String.format("attachment; filename=\"%s\"", downloadFile.getName());
-                response.setHeader(headerKey, headerValue);
-
-                // obtém o fluxo de saída da resposta
-                OutputStream outStream = response.getOutputStream();
-
-                byte[] buffer = new byte[4096];
-                int bytesRead = -1;
-
-                while ((bytesRead = inStream.read(buffer)) != -1) {
-                    outStream.write(buffer, 0, bytesRead);
-                }
-                inStream.close();
-                outStream.close();
-            } else {
-                response.setHeader("nome", "0");
-                System.out.println("nulll");
+            // obtém o tipo MIME do arquivo
+            String mimeType = context.getMimeType(filePath.getAbsolutePath());
+            if (mimeType == null) {
+                // definido como tipo binário se o mapeamento MIME não for encontrado
+                mimeType = "application/octet-stream";
             }
+            System.out.println("MIME type: " + mimeType);
+
+            // modifica a resposta
+            response.setContentType(mimeType);
+            response.setContentLength((int) downloadFile.length());
+
+            // força o download
+            String headerKey = "Content-Disposition";
+            String headerValue = String.format("attachment; filename=\"%s\"", downloadFile.getName());
+            response.setHeader(headerKey, headerValue);
+
+            // obtém o fluxo de saída da resposta
+            OutputStream outStream = response.getOutputStream();
+
+            byte[] buffer = new byte[4096];
+            int bytesRead = -1;
+
+            while ((bytesRead = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
+            inStream.close();
+            outStream.close();
         } else {
             response.setHeader("auth", "0");
+            response.setHeader("nome", "0");
+            System.out.println("nulll");
         }
+
     }
 
     /**

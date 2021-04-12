@@ -27,8 +27,6 @@ import javax.servlet.http.HttpServletResponse;
     @WebInitParam(name = "nomeUsuario", value = ""),
     @WebInitParam(name = "senha", value = "")})
 public class ListarMesasAbertas extends HttpServlet {
-
-    ControleLogin l = new ControleLogin();
     ControleVenda con = new ControleVenda();
 
     @Override
@@ -39,23 +37,14 @@ public class ListarMesasAbertas extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int codE = l.autenticaEmpresa(n,s);
-        if ( codE > 0) {
-            response.setHeader("auth", "1");
-            ArrayList<Mesa> u = con.getMesasAbertas(codE);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
 
-        } else {
-            response.setHeader("auth", "0");
-            ArrayList<Mesa> u = null;
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
-        }
+        response.setHeader("auth", "1");
+        ArrayList<Mesa> u = con.getMesasAbertas(n, s);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().println(new Gson().toJson(u));
     }
 
     /**

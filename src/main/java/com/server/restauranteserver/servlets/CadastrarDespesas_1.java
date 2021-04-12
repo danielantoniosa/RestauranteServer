@@ -42,19 +42,11 @@ public class CadastrarDespesas_1 extends HttpServlet {
             throws ServletException, IOException {
         String usuario = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String senha = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        
-        int cod = l.autenticaEmpresa(usuario, senha);
-        if (cod > 0) {
-            response.setHeader("auth", "1");
-            String str = new String (request.getParameter("despesa").getBytes ("iso-8859-1"), "UTF-8");
-            DespesaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, DespesaBEAN.class);
+        response.setHeader("auth", "1");
+        String str = new String(request.getParameter("despesa").getBytes("iso-8859-1"), "UTF-8");
+        DespesaBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, DespesaBEAN.class);
+        response.setHeader("sucesso", con_des.adicionar(c, usuario, senha));
 
-            response.setHeader("sucesso", con_des.adicionar(c,cod));
-
-        } else {
-            response.setHeader("auth", "0");
-
-        }
     }
 
     /**

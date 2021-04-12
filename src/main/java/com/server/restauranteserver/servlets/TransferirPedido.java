@@ -46,18 +46,11 @@ public class TransferirPedido extends HttpServlet {
             throws ServletException, IOException {
         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(n, s);
-        if (cod > 0) {
-            response.setHeader("auth", "1");
-            try {
-                response.setHeader("sucesso", con.transferirPedido(request.getParameter("mesaDestino"), request.getParameter("pedido"), cod));
-            } catch (WriterException ex) {
-                Logger.getLogger(TransferirPedido.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        } else {
-            response.setHeader("auth", "0");
-
+        response.setHeader("auth", "1");
+        try {
+            response.setHeader("sucesso", con.transferirPedido(request.getParameter("mesaDestino"), request.getParameter("pedido"), n, s));
+        } catch (WriterException ex) {
+            Logger.getLogger(TransferirPedido.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

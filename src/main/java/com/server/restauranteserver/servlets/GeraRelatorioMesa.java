@@ -47,10 +47,9 @@ public class GeraRelatorioMesa extends HttpServlet {
         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
         int venda = Integer.parseInt(new String(request.getParameter("venda").getBytes("iso-8859-1"), "UTF-8"));
-
         int cod = l.autenticaEmpresa(n, s);
         if (cod > 0) {
-            venda = v.getVenda(venda, cod);
+            venda = v.getVenda(venda, n, s);
             ServletContext contexto = request.getServletContext();
             response.setHeader("auth", "1");
             File filePath = r.geraRelatorioMesa(contexto, cod, venda);

@@ -45,21 +45,18 @@ public class ListarVenda extends HttpServlet {
         String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
         int venda = Integer.parseInt(new String(request.getParameter("venda").getBytes("iso-8859-1"), "UTF-8"));
-        int codE = l.autenticaEmpresa(n, s);
-        if (codE > 0) {
-            response.setHeader("auth", "1");
-            Venda u = con.getVenda(venda);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
 
-        } else {
-            response.setHeader("auth", "0");
-            Venda u = null;
+        Venda u = con.getValoresVenda(venda, n, s);
+        if (u.getCodigo() > 0) {
+            response.setHeader("auth", "1");
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(new Gson().toJson(u));
+        } else {
+
+            response.setHeader("auth", "0");
         }
+
     }
 
     /**

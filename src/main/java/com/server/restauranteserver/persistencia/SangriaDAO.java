@@ -24,10 +24,11 @@ public class SangriaDAO {
         this.connection = ConnectionFactory.getConnection();
     }
 
-    public ArrayList<SangriaBEAN> buscar(int caixa) {
+    public ArrayList<SangriaBEAN> buscar(String u, String s) {
 
         ArrayList<SangriaBEAN> p = new ArrayList<>();
-        String sql = "SELECT * FROM sangria WHERE san_caiCodigo = " + caixa + ";";
+        String sql = "SELECT * FROM sangria join caixa join empresa WHERE"
+                + " empCodigo = cai_empCodigo and caiCodigo = san_caiCodigo and and empEmail = '" + u + "' and empSenha = '" + s + "';";
 
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -50,9 +51,9 @@ public class SangriaDAO {
 
     }
 
-    public boolean adicionar(SangriaBEAN c) {
+    public boolean adicionar(SangriaBEAN c, String u, String s) {
         String sql = "INSERT INTO sangria (sanValor, sanTime, san_caiCodigo)"
-                + " VALUES (?, ?, ?);";
+                + " VALUES (?, ?, (select caiCodigo from empresa join caixa where empCodigo = cai_empCodigo and and empEmail = '" + u + "' and empSenha = '" + s + "'));";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setFloat(1, c.getValor());
@@ -66,9 +67,10 @@ public class SangriaDAO {
         }
     }
 
-    public float getTotalSangriasCaixa(int caixa) {
+    public float getTotalSangriasCaixa(String u, String s) {
         float total = 0;
-        String sql = "SELECT COALESCE(sum(sanValor),0) FROM sangria WHERE san_caiCodigo = " + caixa + ";";
+        String sql = "SELECT COALESCE(sum(sanValor),0) FROM sangria join caixa join empresa"
+                + " WHERE empCodigo = cai_empCodigo and caiCodigo = san_caiCodigo and empEmail = '" + u + "' and empSenha = '" + s + "';";
 
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);

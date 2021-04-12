@@ -24,16 +24,14 @@ public class DespesaDAO {
         this.connection = ConnectionFactory.getConnection();
     }
 
-    public boolean adicionar(DespesaBEAN c) {
-        String sql = "insert into despesa(disNome,disDescricao,disPreco,dis_caiCodigo) values (?,?,?,?)";
-
+    public boolean adicionar(DespesaBEAN c, String u, String s) {
+        String sql = "insert into despesa(disNome,disDescricao,disPreco,dis_caiCodigo) values (?,?,?,"
+                + "(select caiCodigo from empresa join caixa where empCodigo = cai_empCodigo and caiStatus = 'aberto' and empEmail ='" + u + "' and empSenha = '" + s + "'))";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
-
             stmt.setString(1, c.getNome());
             stmt.setString(2, c.getDescricao());
             stmt.setFloat(3, c.getPreco());
-            stmt.setInt(4, c.getCaixa());
             stmt.execute();
             stmt.close();
             return true;
@@ -42,10 +40,11 @@ public class DespesaDAO {
         }
     }
 
-    public ArrayList<DespesaBEAN> listarAll(int caixa) {
+    public ArrayList<DespesaBEAN> listarAll(String u, String s) {
         ArrayList<DespesaBEAN> c = new ArrayList<DespesaBEAN>();
 
-        String sql = "select * from despesa where dis_caiCodigo = "+caixa+";";
+        String sql = "select * from despesa join caixa join empresa where empCodigo = cai_empCodigo and disCodigo = dis_caiCodigo"
+                + " and caiStatus = 'aberto' and empEmail = '" + u + "' and empSenha = '" + s + "';";
         System.out.println(sql);
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -102,13 +101,14 @@ public class DespesaDAO {
             throw new RuntimeException(e);
         }
     }
-    public Float getTotalDespesasCaixa(int caixa) {
-        String sql = "select COALESCE(sum(disPreco),0) from despesa where dis_caiCodigo = ? ;";
+
+    public Float getTotalDespesasCaixa(String u, String s) {
+        String sql = "select COALESCE(sum(disPreco),0) from despesa join caixa join empresa where empCodigo = cai_empCodigo and disCodigo = dis_caiCodigo"
+                + " and caiStatus = 'aberto' and empEmail = '" + u + "' and empSenha = '" + s + "';";
         float total = 0;
         System.out.println(sql);
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setInt(1, caixa);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 total = rs.getFloat(1);

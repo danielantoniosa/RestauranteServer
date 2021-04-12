@@ -20,10 +20,10 @@ public class ControleProduto {
     private ProdutoDAO p = new ProdutoDAO();
     private ControlePedido pc = new ControlePedido();
 
-    public DefaultComboBoxModel buscar(String produto, int emp) {
+    public DefaultComboBoxModel buscar(String produto, String u, String s) {
         DefaultComboBoxModel modelo = new DefaultComboBoxModel();
 
-        ArrayList<Produtos> pp = p.buscar(produto, emp);
+        ArrayList<Produtos> pp = p.buscar(produto, u, s);
         if (pp.size() > 0) {
             for (Produtos p : pp) {
                 modelo.addElement(p.getCodigo() + " : " + p.getNome() + " : R$ " + p.getPreco());
@@ -35,8 +35,8 @@ public class ControleProduto {
         return modelo;
     }
 
-    public ArrayList<Produtos> buscarP(String produto, int emp) {
-        ArrayList<Produtos> pp = p.buscar(produto, emp);
+    public ArrayList<Produtos> buscarP(String produto, String u, String s) {
+        ArrayList<Produtos> pp = p.buscar(produto, u, s);
         return pp;
     }
 
@@ -44,14 +44,14 @@ public class ControleProduto {
         return p.localizar(Integer.parseInt(produto));
     }
 
-    public ArrayList<ProdutoBEAN> listarAll(int emp) {
-        return p.listarALl(emp);
+    public ArrayList<ProdutoBEAN> listarAll(String u, String s) {
+        return p.listarALl(u, s);
     }
 
-    public String cadastrar(ProdutoBEAN f, int emp) {
-        ProdutoBEAN pro = p.localizar(f.getNome(), emp);
+    public String cadastrar(ProdutoBEAN f, String u, String s) {
+        ProdutoBEAN pro = p.localizar(f.getNome(), u, s);
         if (pro.getCodigo() == 0) {
-            p.adicionar(f, emp);
+            p.adicionar(f, u, s);
 
             return "Cadastro Realizado com sucesso!!";
         } else {
@@ -70,31 +70,26 @@ public class ControleProduto {
         return "Produto Excluido com sucesso!!";
     }
 
-    public Produtos buscarUm(String combo, int emp) {
-        ArrayList<Produtos> produtos = p.listarProdutos(emp);
+    public Produtos buscarUm(String combo, String u, String s) {
+        ArrayList<Produtos> produtos = p.listarProdutos(u, s);
         //  ArrayList<Produtos> todos = pc.listarPedidos(produtos);
         for (Produtos p : produtos) {
             String pro = p.getCodigo() + " : " + p.getNome() + " : R$ " + p.getPreco();
-            System.out.println(combo);
-            System.out.println(pro);
             if (combo.equals(pro)) {
-                System.out.println(combo);
                 return p;
             }
         }
         return null;
     }
 
-    public float quantidadeEstoque(int produto, int emp, float quantidade) {
+    public float quantidadeEstoque(int produto, float quantidade) {
         float qtd = p.quantidadeEstoque(produto);
         return qtd;
     }
 
     public void diminuiEstoque(int produto, float diminuicao, float atual) {
-
         p.alteraQuantidade(produto, (atual - diminuicao));
     }
-
     public void aumentaEstoque(int produto, float quantidade) {
         System.out.println(" quantidade : " + quantidade);
         float qtd = p.quantidadeEstoque(produto);

@@ -38,23 +38,14 @@ public class ListarPedidosCanceladosCaixa extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
+        String n = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String s = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(n,s);
-        if (cod > 0) {
-            response.setHeader("auth", "1");
-            ArrayList<ExcluzaoBEAN> u = pro.listarExclusaoCaixa(cod);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
 
-        } else {
-            response.setHeader("auth", "0");
-            ExcluzaoBEAN u = null;
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(new Gson().toJson(u));
-        }
+        ArrayList<ExcluzaoBEAN> u = pro.listarExclusaoCaixa(n, s);
+        response.setHeader("auth", "1");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().println(new Gson().toJson(u));
     }
 
     /**

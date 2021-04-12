@@ -41,18 +41,11 @@ public class CadastrarProduto extends HttpServlet {
             throws ServletException, IOException {
         String usuario = new String(request.getParameter("nomeUsuario").getBytes("iso-8859-1"), "UTF-8");
         String senha = new String(request.getParameter("senha").getBytes("iso-8859-1"), "UTF-8");
-        int cod = l.autenticaEmpresa(usuario,senha);
-        if (cod > 0) {
-            String str = new String (request.getParameter("produto").getBytes ("iso-8859-1"), "UTF-8");
-            response.setHeader("auth", "1");
-            ProdutoBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, ProdutoBEAN.class);
-            System.out.println(c.getNome());
-            response.setHeader("sucesso", pro.cadastrar(c, cod));
-
-        } else {
-            response.setHeader("auth", "0");
-
-        }
+        String str = new String(request.getParameter("produto").getBytes("iso-8859-1"), "UTF-8");
+        response.setHeader("auth", "1");
+        ProdutoBEAN c = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create().fromJson(str, ProdutoBEAN.class);
+        System.out.println(c.getNome());
+        response.setHeader("sucesso", pro.cadastrar(c, usuario, senha));
     }
 
     /**
